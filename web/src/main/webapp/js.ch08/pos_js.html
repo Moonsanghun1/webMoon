@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>js의 위치</title>
+<!-- 외부파일과 연결되어 있는 script tag 안에 코드들은 무시 당한다. -->
+<script type="text/javascript" src = "outter.js"></script>
+<script type="text/javascript">
+//script tag안에 js처리문 작성
+alert("실행확인 - script tag 안에");
+</script>
+</head>
+<body>
+<button onclick = "alert('버튼 클릭 - tag의 이벤트 핸들러');">클릭해서 확인</button>
+</body>
+</html>

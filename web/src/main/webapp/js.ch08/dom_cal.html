@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>5칙연산</title>
+<script type="text/javascript">
+function calcu(sym){
+	alert(sym);
+	// 입력한 객체 확인
+	// document.getElementById(id) - id 한개의 객체만 찾는다.
+	// document.getElementByClassName(class) - class 여러개의 객체를 찾는다. - 반복문
+	// document.getElementByTag(tag) - tag 여러개의 객체를 찾는다. - 반복문
+	let obj_num1 = document.getElementById("num1");
+	let obj_num2 = document.getElementById("num2");
+	//alert(obj_num1);
+	//입력한 데이터 확인
+ 	//alert(typeof(number(obj_num1.value)));
+	let num1 = Number(obj_num1.value);
+	let num2 = Number(obj_num2.value);
+	let result = 0;
+	switch(sym){
+	
+	
+	case "+" :
+		result = num1 + num2;
+		break;
+	
+	case "-" :
+		result = num1 - num2;
+		break;
+	
+	case "*" :
+		result = num1 * num2;
+		break;
+	
+	case "/" :
+		result = num1 / num2;
+		break;
+	
+	case "%" :
+		result = num1 % num2;
+		break;
+	}
+	// result를 id = result에 결과를 넣는다.
+	document.getElementById("result").innerHTML = num1 + sym + num2 + "=" + result;
+}
+</script>
+</head>
+<body>
+<input id = "num1">
+<input id = "num2">
+<hr>
+<button onclick = "calcu('+')">+</button>
+<button onclick = "calcu('-')">-</button>
+<button onclick = "calcu('*')">*</button>
+<button onclick = "calcu('/')">/</button>
+<button onclick = "calcu('%')">%</button>
+<div id = "result">연산 결과</div>
+</body>
+</html>

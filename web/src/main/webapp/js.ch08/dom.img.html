@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+
+.btn:hover{
+	cursor: pointer;
+	opacity: 0.5;
+	
+}
+.btn, .btn > img {
+	float: left;
+	width : 80px; height: 80px;
+	margin: 10px;
+}
+
+#display, #display > img{
+	width: 400px;
+	
+}
+hr{
+	clear: both;
+}
+
+</style>
+<script type="text/javascript">
+//작은 이미지를 클릭하면 해당이미지가 큰 이미지에 나타나는 프로그램 작성
+function changeImage(obj) {
+	box = document.getElementById("bigImage");
+	
+	box.src=obj.src;
+	
+}
+
+</script>
+</head>
+<body>
+<div class = "btn">
+	<img src="/img/cat01.jpg" onmouseover= "changeImage(this)">
+</div>
+
+<div class = "btn">
+	<img src="/img/cat02.jpg" onclick= "changeImage(this)">
+</div>
+
+<div class = "btn">
+	<img src="/img/cat03.jpg" onclick= "changeImage(this)">
+</div>
+
+<div class = "btn">
+	<img src="/img/cat04.jpg" onclick= "changeImage(this)">
+</div>
+
+
+<div><img src="/img/cat01.jpg" id = "bigImage"></div>
+<hr>
+</body>
+</html>

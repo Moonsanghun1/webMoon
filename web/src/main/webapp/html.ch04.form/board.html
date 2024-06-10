@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<!-- 사용자에게 데이터를 입력하는 태그 -->
+<!-- 데이터를 넘기는 방법을 생략하면 get 방식 -->
+<form action="write.jsp" method = "post">
+<!-- 데이터 한줄로 입력 : input.
+	id,class : 모든 태그에 붙일 수 있다. 쉽게 선택(css나 JS에서)
+	name 데이터를 넘길 때 사용되는 key key = value key-titel, value - 입력 값 
+	maxlength : 입력할 수 있는 최대 글자 수 
+	type : 기본 타입은 text이고 생략 가능함.
+	required : 필수 입력 항목
+	placeholder : 데이터가 입력이 되지 않았을 때 나타나는 문구 
+	readonly : 수정 불가.-->
+제목<input id = "title" name = "title" maxlength="10" required placeholder = "제목입력. 10자 이내 입력"><br>
+내용<textarea rows="7" cols="100" id= "content" name = "content"
+	placeholder = "내용 입력. 700자 이내 입력" required></textarea><br>
+작성자<input id = "writer" name = "writer" maxlength="10" required placeholder = "작성자 입력"><br>
+비밀번호<input id = "PW" name = "PW" maxlength="20" required placeholder = "비밀번호 입력"><br>
+비밀번호<input id = "PW2" maxlength="20" required placeholder = "비밀번호 입력"><br>
+<!-- button의 기본 타입 : 
+	 submit. -> click:submit()를 호출해서 데이터를 넘기는 처리한다. 
+	 reset : 페이지의 처음 데이터로 세팅해 준다. 
+	 button: 버튼처럼 보이고 동작은 안한다. 동작은 JS를 이용해서 처리한다. -->
+<button type = "submit">등록</button>
+<button type = "reset">다시입력</button>
+<button type = "button">취소</button>
+
+</form>
+</body>
+</html>

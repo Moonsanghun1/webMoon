@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+let fileCnt = 1;
+function append() {
+	alert("append file");
+	// 파일 첨부 div 객체 찾기
+	let fileDiv = document.getElementById("attachFileDiv");
+	appendTag = "<br><input type = \"file\" name = \"file" + (++ fileCnt) + "\">";
+	fileDiv.innerHTML = fileDiv.innerHTML + appendTag
+
+}
+</script>
+</head>
+<body>
+<form action="write.do" method = "post" enctype="multipart/form-data">
+<button type="button" id = "appendBtn" onclick="append();">첨부파일 추가</button>
+<div id = "attachFileDiv">
+	<input type="file" name = "file1">
+</div>
+
+
+</form>
+</body>
+</html>

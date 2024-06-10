@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+// js에서는 데이터가 있으면 true를 없으면 false를 만든다. - 조건문에서 
+// - 숫자 : 0 / 문자열 - 길이가 0
+// let a = "test";
+// let b = 0;
+// let a = "test"; // true
+
+let a = "";
+if(a) alert("a true");
+else alert("a false");
+
+let arrs = [90, 100, 85, 95];
+// 위 배열의 합계와 평균을 구해서 콘솔에 출력하는 프로그램 작성
+sum = 0;
+for(let i = 0; i < 4; i++){
+	sum += arrs[i];
+	rs = sum / arrs.length;
+}
+	alert(sum);
+	alert(rs);
+	
+// in 키워드를 이용한 index를 처리
+sum = 0;
+for(let i in arrs) sum += arrs[i];
+console.log(sum);
+console.log(sum/arrs.length);
+
+// of 키워드를 이용한 index를 처리
+sum = 0;
+for(let a of arrs) sum += a;
+console.log(sum);
+console.log(sum/arrs.length);
+
+// 배열의 forEach() 함수를 이용한 경우
+sum = 0;
+arrs.forEach((a) => {sum += a;});
+console.log(sum);
+console.log(sum/arrs.length);
+
+</script>
+</head>
+<body>
+
+</body>
+</html>

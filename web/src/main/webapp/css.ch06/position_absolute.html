@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CSS3 Position Property</title>
+<style>
+.box{
+	width: 100px; height: 100px;
+	/*절대 위치 - 시작점에서 top과 left로 위치를 지정한다.
+		- top과 left가 없으면 0으로 생각한다.*/
+	position:absolute;	
+}
+.box:nth-child(1) { 
+background-color: red;
+/* 박스 모서리를 떨어뜨리는 거리를 지정해서 위치를 잡는다. 기준은 왼쪽 상단
+  "-"값이 가능하다. */
+left: 10px; top: 10px;
+/* 올라오는 위치 숫자로 지정 - 클 수록 위로 올라온다.
+- 지정하지 않으면 객체가 생기는 순서대로 뒤에 것이 맨위로 올라온다.*/
+z-index: 100;
+}
+.box:nth-child(2) { 
+background-color: green;
+left: 50px; top: 50px;
+/*보이게/ 안보이게 속성 : display*/
+z-index: 10;
+display : block;
+}
+.box:nth-child(3) { 
+background-color: blue;
+left: 90px; top: 90px;
+z-index: 1;}
+</style>
+</head>
+<body>
+	<div class = "box"></div>
+	<div class = "box"></div>
+	<div class = "box"></div>
+</body>
+</html>
