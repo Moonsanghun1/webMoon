@@ -6,111 +6,81 @@
 <meta charset="UTF-8">
 <title>일반 게시판 글 등록 폼</title>
 
-<style type="text/css"> 
-table {
-	/* table에 여백주기 - 데이터를 반복적으로 사용 : 맨위에서 부터 시계방향으로(상우하좌)
-					   길이나 크기를 지정할 때 0이 아니면 단위를 꼭 써야합니다. (px, pt, cm, mm, m, inch, em...)*/
-	margin: 0 auto;
-	width: 1000px;
-}
+<!-- 라이브러리 등록 -->
+<!-- 라이브러리 필요하다. 웹 라이브러리(js 라이브러리)
+	1. 다운로드 : jquery.com : 내 서버에 파일을 둔다.
+	2. CDN(Content Delivery Network) - 배달 받는 방식 사용-->
+<!-- Bootstrap(디자인의 표준화) : jquery(동작의 표준화) 포함. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="/js/boardInputUtil.js"></script>
 
-th,td {
-	border: 1px solid #888; /* 테두리 */
-	padding: 5px; /* 테두리와 데이터의 공백 */
-}
+<script type="text/javascript">
+$(function() {
+	//2. jquery 확인
+	//console.log("jquery loading...")
+	$("#updateForm")submit(function() {
+		console.log("date check 진행 ....---");
+		
+		
+		// 6. 데이터 유효성 검사
+		//  - 필수 항목 검사. - 제목, 내용, 작성자, 비밀번호
+		
+		if(isEmpty("#title", "제목", 1)) return false;
+		if(isEmpty("#content", "내용", 1)) return false;
+		if(isEmpty("#writer", "작성자", 1)) return false;
+		if(isEmpty("#pw", "비밀번호", 0)) return false;
+		
+		//  - 길이 체크 - 제목, 내용, 작성자, 비밀번호
+		if(lengthCheck("#title", "제목" , 3, 100, 1)) return false;
+		if(lengthCheck("#content", "내용" , 3, 800, 1)) return false;
+		if(lengthCheck("#writer", "작성자" , 2, 10, 1)) return false;
+		if(lengthCheck("#pw", "비밀번호" , 3, 20, 0)) return false;
+		//return false;
+		
+	});
+});
 
-th {
-	background: black; /* 배경색 - #000 */;
-	color: white; /* 글자색 - #fff */;
-}
-input,select, textarea, button {
-	padding: 5px;
-}
-.textInput{
-	width: 98%;
-}
-input:focus select:focus textarea:focus{
-	background: white;
-}
-input, select, textarea{
-	background: #ccc;
-}
-</style>
+
+</script>
 
 </head>
 <body>
 <!-- get 방식 : 주소 뒤에 문자열로 붙여서 데이터 넘기기 -->
 <!-- post 방식 : 데이터 넘기는 부분에 포함시켜서 넘기기 -->
-<form action="view.jsp" method="post">
-<table>
-		<tr>
-			<!-- th : table head - 테이블 제목 텍스트 -->
-			<th colspan="2">
-				<h1>일반 게시판 글수정 폼</h1>
-			</th>
-		</tr>
-		
-		<tr>
-			<th >번호</th>
-			<td>
-			<input id = "no" name = "no" readonly
-			></td>
-		</tr>
-		
-		<tr>
-			<th >제목</th>
-			<td><input id = "title" name = "title" maxlength="100" required class = "textInput"
-			maxlength = "100" pattern="^[^ .].{2,99}$"
-			title="맨앞에 공백문자 불가 3~100자 입력" value="자바란?"
-			placeholder="제목 입력: 3자 이상 100자 이내"
-			></td>
-		</tr>
-		
-		<tr>
-			<th>내용</th>
-			<td><textarea class = "textInput" rows="7" id= "content" name = "content" 
-			placeholder = "첫글자는 공백문자나 줄바꿈을 입력할 수 없습니다." required>프로그래밍 언어입니다.</textarea></td>
-		</tr>
-		
-		<tr>
-			<th>작성자</th>
-			<td><input id = "writer" name = "writer" maxlength="10" required class = "textInput"
-			maxlength = "100" pattern="^[a-zA-Z가-힣]{2,10}$" value="홍길동"
-			title="한글과 영어만 입력. 2~10자 이내"
-			placeholder="이름은 영어와 한글만 가능"
-			></td>
-		</tr>
-		
-		<tr>
-			<th>비밀번호</th>
-			<td><input type="password" id = "pw" name = "pw" maxlength="20" required class = "textInput"
-			pattern="^.{3,20}$"
-			title="3~20자 입력 가능"
-			placeholder="본입확인용 비밀번호"
-			></td>
-		</tr>	
-		
-		<tr>
-			<th>비밀번호 확인</th>
-		
-			<td><input type="password" id = "pw2" name = "pw2" 
-			maxlength="20" required class = "textInput"
-			pattern="^.{3,20}$"
-			title="3~20자 입력 가능"
-			placeholder="비밀번호를 확인하세요"
-			></td>
-		</tr>		
-		
-		<tr>
-			<td colspan='2'>
-			<button type = "submit">수정</button>
-			<button type = "reset">다시입력</button>
-			<button type = "button" onclick="history.back();">취소</button>
-			</td>
-			
-		</tr>
 
-</table>
+<div class="container" >
+<form action="update.jsp" id = "updateForm">
+  <div class="form-group">
+    <label for="no">번호</label>
+    <input type="text" class="form-control" placeholder="번호" id="no" name = "no">
+  </div>
+  <div class="form-group">
+    <label for="title">제목</label><span class = "badge badge-dark">필수</span>
+    <input type="text" class="form-control" value = "부트스트랩" placeholder="제목 입력" id="title" name = "title">
+  </div>
+  <div class="form-group">
+    <label for="content">내용</label>
+    <textarea class="form-control" rows="7" id = "content" name= "content" placeholder="내용 입력">디자인 표준화</textarea>
+  </div>
+  <div class="form-group">
+    <label for="writer">작성자</label>
+    <input type="text" class="form-control" value = "문상훈" placeholder="작성자 입력" id="writer" name = "writer">
+  </div>
+  <div class="form-group">
+    <label for="pw">비밀번호</label>
+    <input type="password" class="form-control" placeholder="비밀번호 입력" id="pw">
+  </div>	
+  
+  <button type="submit" class="btn btn-primary">수정</button>
+  <button type="reset" class="btn btn-secondary">재입력</button>
+  <button type="button" class="btn btn-success cancelBtn">취소</button>
 </form>
+</div>
+
+
 </body>
 </html>

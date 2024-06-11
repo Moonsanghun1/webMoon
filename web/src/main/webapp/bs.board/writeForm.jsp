@@ -25,7 +25,7 @@ $(function () { // == $(document).ready(function(){~});
 	//$("#writeBtn").click(function() {
 	// 1. submit 이벤트 - writeForm
 	$("#writeForm").submit(function() {
-		alert("writeForm summit");
+		//alert("writeForm submit");
 		
 		// 필수 항목 체크
 		// 제목 체크 - 제목란의 값을 가져와서 좌우 공백을 제거한다.
@@ -39,16 +39,22 @@ $(function () { // == $(document).ready(function(){~});
 		}; // 제목 체크 끝
 		
 		// 내용 체크 
-		if(isEmpty("#content" , "내용")) return false; 
+		if(isEmpty("#content" , "내용" , 1)) return false; 
 		// 작성자 필수 항목 체크
-		if(isEmpty("#writer" , "작성자")) return false; 
-		// 비밀번호 필수 항목 체크
-		if(isEmpty("#pw" , "비밀번호")) return false; 
+		if(isEmpty("#writer" , "작성자" , 1)) return false; 
+		// 비밀번호 필수 항목 체크 - $("#pw").val() == ""
+		if(isEmpty("#pw" , "비밀번호" , 0)) return false; 
 		// 비밀번호 확인 필수 항목 체크
-		if(isEmpty("#pw2" , "비밀번호 확인")) return false; 
+		if(isEmpty("#pw2" , "비밀번호 확인" , 0)) return false; 
 		
 		
 		// 길이 제한 체크
+		
+		if(lengthCheck("#title" ,"제목", 3, 100, 1)) return false;
+		if(lengthCheck("#content" ,"내용", 3, 1000, 1)) return false;
+		if(lengthCheck("#writer" ,"작성자", 3, 10, 1)) return false;
+		if(lengthCheck("#pw" ,"비밀번호", 4, 20, 0)) return false;
+		if(lengthCheck("#pw2" ,"비밀번호 확인", 4, 20, 0)) return false;
 		
 		// 비밀번호와 비밀번호 확인
 		let pw = $("#pw").val();
@@ -62,7 +68,7 @@ $(function () { // == $(document).ready(function(){~});
 		}
 		
 		// 페이지 이동 시키지 않는다. - 최소 이벤트 처리되는 함수에 작성한다.
-		return false;
+		//return false;
 	});
 	
 });
