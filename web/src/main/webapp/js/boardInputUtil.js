@@ -45,7 +45,7 @@ function lengthCheck(objName, name, min, max, isTrim) {
 //body 부분의 문서가 로딩이 끝나면 처리되는 부분
 $(function(){
 	
-	$(".cancleBtn").click(function(){
+	$(".cancelBtn").click(function(){
 		history.back();
 		
 	});
