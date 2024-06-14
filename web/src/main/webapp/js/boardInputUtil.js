@@ -42,6 +42,27 @@ function lengthCheck(objName, name, min, max, isTrim) {
 	}
 } // end of lengthCheck()
 
+
+
+function getCheckboxValue()  {
+  // 선택된 목록 가져오기
+  const query = 'input[name="input_check"]:checked';
+  const selectedEls = 
+      document.querySelectorAll(query);
+  
+  // 선택된 목록에서 value 찾기
+  let result = '';
+  selectedEls.forEach((el) => {
+    result += el.value + ' ';
+  });
+  
+  // 출력
+  document.getElementById('result').innerText
+    = result;
+}
+
+
+
 //body 부분의 문서가 로딩이 끝나면 처리되는 부분
 $(function(){
 	

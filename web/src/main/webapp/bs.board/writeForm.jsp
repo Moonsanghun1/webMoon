@@ -106,7 +106,7 @@ $(function () { // == $(document).ready(function(){~});
   <!-- 등록 버튼을 클릭하면 1. click-btn. 2. submit-form 이벤트로 처리 가능하다. -->
 <button type="submit" class="btn btn-primary" id = "writeBtn">등록</button>
 <button type="reset" class="btn btn-secondary">새로입력</button>
-<button type="button" class="btn btn-success cancelBtn">취소</button>
+<button type="button" class="btn btn-success cancelBtn" onclick="history.back()">취소</button>
 
 </form>
 </div>

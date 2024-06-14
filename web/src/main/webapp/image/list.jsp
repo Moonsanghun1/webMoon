@@ -93,7 +93,7 @@ button:hover {
 		<div class="row">
 			<div class="col-md-4">
 				<div class="card" style="width: 100%">
-					<img class="card-img-top" src="/web/img/cat01.jpg" alt="Card image">
+					<img class="card-img-top" src="/img/cat01.jpg" alt="Card image">
 					<div class="card-body">
 						<h4 class="card-title">때껄룩</h4>
 						<p class="card-text">take a look</p>

@@ -33,13 +33,13 @@
 		<td>505</td>
 	</tr>
 	
-	<tr onclick = "location = 'view.jsp?no=6&inc=1';" class = "dataRow">
-		<td>6</td>
-		<td>누구세요</td>
-		<td>홍길동</td>
-		<td>2022-04-01</td>
-		<td>45</td>
-	</tr>
+<!-- 	<tr onclick = "location = 'view.jsp?no=6&inc=1';" class = "dataRow"> -->
+<!-- 		<td>6</td> -->
+<!-- 		<td>누구세요</td> -->
+<!-- 		<td>홍길동</td> -->
+<!-- 		<td>2022-04-01</td> -->
+<!-- 		<td>45</td> -->
+<!-- 	</tr> -->
 	
 	<tr>
 		<td colspan="5">
