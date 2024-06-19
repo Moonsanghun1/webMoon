@@ -13,7 +13,7 @@ import com.web.board.vo.BoardVO;
 import com.web.util.exe.Execute;
 import com.web.util.io.BoardPrint;
 import com.web.util.io.In;
-import com.webjjang.util.PageObject;
+import com.webjjang.util.page.PageObject;
 // Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class BoardController {
 
@@ -35,7 +35,8 @@ public class BoardController {
 				case "/board/list.do":
 					//[BoardController] - (Excute) - BoardListService - BoardDAO.list()
 					System.out.println("1. 일반 게시판 리스트");
-					
+					// 페이지 처리를 위한 객체
+					// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
 					PageObject pageObject = PageObject.getInstance(request);
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
 					result = Execute.execute(new BoardListService(), pageObject);

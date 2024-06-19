@@ -7,15 +7,16 @@ import com.web.board.vo.BoardVO;
 import com.web.main.dao.DAO;
 import com.web.util.db.DB;
 import com.web.util.io.In;
+import com.webjjang.util.page.PageObject;
 
 public class BoardDAO extends DAO {
 
 	// 필요한 객체 선언 - 상속
 	// 접속 정보 - DB 사용 - connection을 가져오게 하는 메소드만 이용
 
-	// 1. 리스트
+	// 1-1. 리스트
 	// BoardController - (Execute) - BoardListService - [BoardDAO.list()]
-	public List<BoardVO> list() throws Exception {
+	public List<BoardVO> list(PageObject pageObject) throws Exception {
 
 		List<BoardVO> list = null;
 
@@ -23,9 +24,11 @@ public class BoardDAO extends DAO {
 			// 1. 드라이버 확인 - DB
 			// 2. 연결
 			con = DB.getConnection();
-			// 3. sql - 아래 LIST
+			// 3. sql - 아래 LIST - 콘솔 확인하고 여기에 쿼리에 해당되는 
 			// 4. 실행 객체 & 데이터 세팅
 			pstmt = con.prepareStatement(LIST);
+			pstmt.setLong(1, pageObject.getStartRow()); // 기본 값 = 1
+			pstmt.setLong(2, pageObject.getEndRow());// 기본 값 = 10
 			// 5. 실행
 			rs = pstmt.executeQuery();
 			// 6. 표시 또는 담기
@@ -60,6 +63,43 @@ public class BoardDAO extends DAO {
 		// 결과 데이터를 리턴해준다.
 		return list;
 	}
+
+	// 1-2 . 전체 데이터 개수 처리
+	// BoardController - (Execute) - BoardListService - [BoardDAO.getTotalRow()]
+	public Long getTotalRow(PageObject pageObject) throws Exception {
+
+		Long totalRow = null;
+
+		try {
+			// 1. 드라이버 확인
+			// 2. DB 연결
+			con = DB.getConnection();
+
+			// 3. sql 아래에 미리 써놓음
+			// 4. 실행 객체 & 데이터 세팅
+
+			pstmt = con.prepareStatement(TOTALROW);
+			
+			// 5. 실행
+			rs = pstmt.executeQuery();
+			// 6. 표시 및 담기
+			if (rs != null && rs.next()) {
+				// rs -> rs
+				totalRow = rs.getLong(1);
+
+			} // end of if
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			DB.close(con, pstmt, rs);
+		} // end of try ~ catch ~ finally
+
+		return totalRow;
+
+	}// end of view()
+
 
 	// 2-1 . 글보기 조회수 1증가 처리
 	// BoardController - (Execute) - BoardListService - [BoardDAO.list()]
@@ -266,8 +306,18 @@ public class BoardDAO extends DAO {
 	} // end of delete()
 
 	// 실행항 쿼리를 정의해 놓은 변수 선언.
-	final String LIST = "select no, title,writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "
-			+ " from board " + " order by no desc";
+	
+	// 리스트의 페이지 처리 절차 - 원본 -> 순서 번호 -> 해당 페이지 데이터만 가져온다.
+	final String LIST = 
+			""  + "select rownum rnum, no, title, writer, writeDate, hit "
+			+ " from ( "
+				+ " select rownum rnum, no, title, writer, writeDate, hit "
+					+ " from ( "
+						+ " select no, title, writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "
+						+ " from board " + " order by no desc " 
+					+ " ) "
+			+ " ) where rnum between ? and ?";
+	final String TOTALROW = "select count(*) from board";
 	final String INCREASE = "update board set hit = hit + 1 " + " where no = ? ";
 
 	final String VIEW = "select no, title, content, writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "

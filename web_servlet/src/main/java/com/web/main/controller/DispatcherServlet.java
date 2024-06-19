@@ -18,7 +18,7 @@ public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	// Controller 선언과 생성 - 1번만 된다.
-		private BoardController boardController = new BoardController();
+	private BoardController boardController = new BoardController();
 	
 	/**
 	 * @see Servlet#init(ServletConfig)
