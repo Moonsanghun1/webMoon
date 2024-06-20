@@ -6,7 +6,6 @@ import java.util.List;
 import com.web.board.vo.BoardVO;
 import com.web.main.dao.DAO;
 import com.web.util.db.DB;
-import com.web.util.io.In;
 import com.webjjang.util.page.PageObject;
 
 public class BoardDAO extends DAO {

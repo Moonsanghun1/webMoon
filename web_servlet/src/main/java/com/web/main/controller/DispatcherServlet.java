@@ -13,7 +13,10 @@ import com.web.board.controller.BoardController;
 /**
  * Servlet implementation class DispatcherServlet
  */
-@WebServlet(urlPatterns = "*.do",loadOnStartup = 1 )
+// 웹서버와 연결하기 위해서 sevlet 으로 등록이 되어 있어야 한다.
+// 1. @WebServlet - 프로그램 수정 가능 , 2. web.xml에 등록 - 프로그램 수정 불가능
+//@WebServlet(urlPatterns = "*.do",loadOnStartup = 1 )
+// Servlet을 상속 - 기능 : URL 연결 - 서버에서 동작 프로그램 - 1번만 생성(싱글톤 프로그램)
 public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -26,6 +29,13 @@ public class DispatcherServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		// TODO Auto-generated method stub
 		// 드라이버 확인 / 객체 생성 처리 - Class.forName(class명)
+		System.out.println("DispatcherServlet.init()-----초기화 진행-----");
+		try {
+			Class.forName("com.web.main.controller.init");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -66,7 +76,7 @@ public class DispatcherServlet extends HttpServlet {
 			return;
 		}
 		// jsp로 forward 한다.
-		request.getRequestDispatcher("/WEB-INF/views/" + jsp +".jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/views/" + jsp + ".jsp").forward(request, response);
 	}
 	
 }

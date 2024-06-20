@@ -1,7 +1,3 @@
-<%@page import="com.web.board.vo.BoardVO"%>
-<%@page import="com.web.board.service.BoardListService"%>
-<%@page import="java.util.List"%>
-<%@page import="com.web.util.exe.Execute"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>

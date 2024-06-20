@@ -10,6 +10,7 @@ import com.web.board.service.BoardUpdateService;
 import com.web.board.service.BoardViewService;
 import com.web.board.service.BoardWriteService;
 import com.web.board.vo.BoardVO;
+import com.web.main.controller.init;
 import com.web.util.exe.Execute;
 import com.web.util.io.BoardPrint;
 import com.web.util.io.In;
@@ -39,7 +40,7 @@ public class BoardController {
 					// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
 					PageObject pageObject = PageObject.getInstance(request);
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
-					result = Execute.execute(new BoardListService(), pageObject);
+					result = Execute.execute(init.get(uri), pageObject);
 					// 가져온 데이터 출력하기
 					request.setAttribute("list", result);
 					// /WEB-INF/views/ + board/list + .jsp
@@ -52,7 +53,7 @@ public class BoardController {
 					no = In.getLong("글번호");
 					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(new BoardViewService(), new Long[]{no , 1L});
+					result = Execute.execute(init.get(uri), new Long[]{no , 1L});
 					// 게시판 글보기 출력 : BoardPrint 
 					new BoardPrint().print((BoardVO)result);
 					
