@@ -12,22 +12,23 @@ import com.web.board.service.BoardWriteService;
 import com.web.board.vo.BoardVO;
 import com.web.main.controller.init;
 import com.web.util.exe.Execute;
-import com.web.util.io.BoardPrint;
-import com.web.util.io.In;
 import com.webjjang.util.page.PageObject;
+
 // Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class BoardController {
 
 	public String execute(HttpServletRequest request) {
 		System.out.println("BoardController.execute() --------------------------");
+		// 게시판 기능 무한반복
+		
+			String jsp = null;
 			// 메뉴 입력
+			
 			String uri = request.getRequestURI();
 			
 			Object result = null;
 			// 메뉴 처리
 			Long no = 0L;
-			
-			String jsp = null;
 			
 			try { //정상처리
 				
@@ -36,21 +37,19 @@ public class BoardController {
 				case "/board/list.do":
 					//[BoardController] - (Excute) - BoardListService - BoardDAO.list()
 					System.out.println("1. 일반 게시판 리스트");
-					// 페이지 처리를 위한 객체
-					// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
 					PageObject pageObject = PageObject.getInstance(request);
-					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
+					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>			
 					result = Execute.execute(init.get(uri), pageObject);
-					// 가져온 데이터 출력하기
+					
 					request.setAttribute("list", result);
-					// /WEB-INF/views/ + board/list + .jsp
+					
 					jsp = "board/list";
 					break;
 				case "/board/view.do":
 					System.out.println("2. 일반 게시판 글 보기");
 					
 					// 1. 조회수 1증가(글보기)
-					String strNo = request.getParameter("no");
+					String strNo = request.getParameter("no"); 
 					no = Long.parseLong(strNo);
 					String strInc = request.getParameter("inc");
 					Long inc = Long.parseLong(strInc);
@@ -59,18 +58,16 @@ public class BoardController {
 					result = Execute.execute(init.get(uri), new Long[]{no , inc});
 					// 게시판 글보기 출력 : BoardPrint 
 					request.setAttribute("vo", result);
-					jsp = "/board/view";				
+					jsp = "board/view";
 					break;
-					
 				case "/board/writeForm.do":
-					System.out.println("3-1. 일반 게시판 글 등록 폼");
-					jsp = "/board/writeForm";
+					System.out.println("3-1. 일반 게시판 글 등록폼");
+					jsp = "board/write";
 					break;
-				
 				case "/board/write.do":
-					System.out.println("3. 일반 게시판 글등록 처리");
+					System.out.println("3-2. 일반 게시판 글 등록 처리");
 					
-					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					// 데이터 수집 - 사용자 : 제목, 내용, 작성자, 비밀번호
 					String title = request.getParameter("title");
 					String content = request.getParameter("content");
 					String writer = request.getParameter("writer");
@@ -83,50 +80,42 @@ public class BoardController {
 					vo.setWriter(writer);
 					vo.setPw(pw);
 					
-					// [BoardController] - BoardWriteService - BoardDAO.write(vo)
 					Execute.execute(init.get(uri), vo);
-					
-					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
-					// 아니면 jsp로 forward를 시킨다.
+					// [BoardController] - BoardWriteService - BoardDAO.write(vo)
 					jsp = "redirect:list.do";
 					
 					break;
 				case "/board/updateForm.do":
-					System.out.println("4-1. 일반 게시판 글 수정 폼");
-					// 사용자 -> 서버 : 글번호 
+					System.out.println("4-1. 일반 게시판 글 수정폼");
 					no = Long.parseLong(request.getParameter("no"));
-					// no 맞는 데이터 DB에서 가져온다. BoardViewService
-					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
 					result = Execute.execute(init.get("/board/view.do"), new Long[]{no , 0L});
 					// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
 					request.setAttribute("vo", result);
-					// jsp 정보
 					jsp = "board/updateForm";
 					break;
-					
 				case "/board/update.do":
 					
-					System.out.println("4-2. 일반 게시판 글 수정 처리");
+					System.out.println("4-2. 일반 게시판 글 수정처리");
+
 				
-					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					// 데이터 수집 - 사용자 : 제목, 내용, 작성자, 비밀번호
 					no = Long.parseLong(request.getParameter("no"));
 					title = request.getParameter("title");
 					content = request.getParameter("content");
 					writer = request.getParameter("writer");
 					pw = request.getParameter("pw");
 					
-					// 변수 - vo 저장하고 Service 
+					// DB에 데이터 수정하기 - BoardUpdateService
 					vo = new BoardVO();
 					vo.setNo(no);
 					vo.setTitle(title);
 					vo.setContent(content);
 					vo.setWriter(writer);
 					vo.setPw(pw);
-					
-					// DB에 데이터 수정하기 - BoardUpdateService
 					Execute.execute(init.get(uri), vo);
-					// 
-					jsp = "redirect:view.do?no=" + no + "&inc=0" ;
+					// [BoardController] - BoardWriteService - BoardDAO.write(vo)
+					jsp = "redirect:view.do?no=" + no + "&inc=0";
+					
 					break;
 					
 				case "/board/delete.do":
@@ -138,8 +127,6 @@ public class BoardController {
 					vo = new BoardVO();
 					vo.setNo(no);
 					vo.setPw(pw);
-					
-					
 					// DB 처리
 					Execute.execute(init.get(uri), vo);
 					System.out.println();
@@ -148,10 +135,6 @@ public class BoardController {
 					System.out.println("***************************");
 					jsp = "redirect:list.do";
 					break;
-				case "0":
-					System.out.println("0. 이전");
-					
-	
 				default:
 					System.out.println("================================");
 					System.out.println("==    잘못된 메뉴를 입력하셨습니다.   ==");
@@ -175,6 +158,6 @@ public class BoardController {
 				
 				
 			} // end of try ~ catch
-			return jsp;
-	} //end of execute()
+		return jsp;
+	} //end of main
 }// end of class

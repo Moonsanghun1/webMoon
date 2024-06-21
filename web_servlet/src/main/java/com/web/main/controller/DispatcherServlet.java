@@ -75,8 +75,15 @@ public class DispatcherServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/views/error/404.jsp").forward(request, response);
 			return;
 		}
+		// jsp 정보 앞에  "redirect:"이 붙어 있으면 redirect 시킨다. (페이지 자동 이동)
+		// jsp 정보 앞에  "redirect:"이 붙어 있지 않으면 jsp로 forward 시킨다. 
+		if (jsp.indexOf("redirect:") == 0) {
+			// redirect:list.do -> uri로 사용하기 위해 redirect:은 잘라버린다.
+			response.sendRedirect(jsp.substring("redirect:".length()));
+		}else {
 		// jsp로 forward 한다.
 		request.getRequestDispatcher("/WEB-INF/views/" + jsp + ".jsp").forward(request, response);
+		}
 	}
 	
 }

@@ -2,10 +2,9 @@ package com.web.util.exe;
 
 import java.util.Arrays;
 
-import com.web.main.controller.Main;
+
 import com.web.main.service.Service;
-import com.web.member.service.MemberCondateUpdateService;
-import com.web.util.auth.Authority;
+
 
 public class Execute {
 	
@@ -47,11 +46,7 @@ public class Execute {
 		
 		System.out.println("<<<----------------------------------->>>");
 		
-		// 최근 접속일 수정 - 로그인이 되어있는 경우만 
-		if(Main.login != null) {
-		new MemberCondateUpdateService().service(Main.login.getId());
-		}
-			
+		
 		//처리된 결과를 리턴한다.
 		return result;
 	}
