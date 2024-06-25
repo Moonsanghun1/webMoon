@@ -9,10 +9,12 @@ import com.web.board.service.BoardListService;
 import com.web.board.service.BoardUpdateService;
 import com.web.board.service.BoardViewService;
 import com.web.board.service.BoardWriteService;
+import com.web.boardreply.dao.BoardReplyDAO;
+import com.web.boardreply.service.BoardReplyListService;
 import com.web.main.dao.DAO;
 import com.web.main.service.Service;
 
-public class init {
+public class Init {
 	
 	// service 생성해서 저장하는 객체 - <URI, service>
 	private static Map<String, Service> serviceMap = new HashMap<>() ;
@@ -34,10 +36,16 @@ public class init {
 		serviceMap.get("/board/write.do").setDAO(daoMap.get("boardDAO"));
 		serviceMap.get("/board/update.do").setDAO(daoMap.get("boardDAO"));
 		serviceMap.get("/board/delete.do").setDAO(daoMap.get("boardDAO"));
+		// ----[일반 게시판 댓글 객체 생성과 조립] ====
+		daoMap.put("boardReplyDAO", new BoardReplyDAO());
+		
+		serviceMap.put("/boardreply/list.do", new BoardReplyListService()); 
+		serviceMap.get("/boardreply/list.do").setDAO(daoMap.get("boardReplyDAO"));
 		
 		System.out.println("Init.static 초기화 블록 ----- 객체 생성과 로딩-----");
 	}
-		public static Service get(String uri) {
+		
+	public static Service get(String uri) {
 			return serviceMap.get(uri);
 			
 		}

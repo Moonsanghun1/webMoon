@@ -5,17 +5,20 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.taglibs.standard.extra.spath.RelativePath;
+
 import com.web.board.service.BoardDeleteService;
 import com.web.board.service.BoardListService;
 import com.web.board.service.BoardUpdateService;
 import com.web.board.service.BoardViewService;
 import com.web.board.service.BoardWriteService;
 import com.web.board.vo.BoardVO;
-import com.web.main.controller.init;
+import com.web.main.controller.Init;
 import com.web.util.exe.Execute;
 import com.web.util.io.BoardPrint;
 import com.web.util.io.In;
 import com.webjjang.util.page.PageObject;
+import com.webjjang.util.page.ReplyPageObject;
 // Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class BoardController {
 
@@ -41,7 +44,7 @@ public class BoardController {
 					// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
 					PageObject pageObject = PageObject.getInstance(request);
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
-					result = Execute.execute(init.get(uri), pageObject);
+					result = Execute.execute(Init.get(uri), pageObject);
 					// PageObject 확인하기ㅏ
 					System.out.println("BoardController.execute().pageObject = " + pageObject);
 					// 가져온 데이터 출력하기
@@ -61,9 +64,14 @@ public class BoardController {
 					Long inc = Long.parseLong(strInc);
 					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(init.get(uri), new Long[]{no , inc});
+					result = Execute.execute(Init.get(uri), new Long[]{no , inc});
 					
 					request.setAttribute("vo", result);
+					
+					// 댓글 페이지 객체
+					// 데이터 전달 - page / perPageNum / no / replyPage / replyPerPageNum
+					ReplyPageObject replyPageObject = new ReplyPageObject(request);
+					request.setAttribute("replyList", Execute.execute(Init.get("/boardreply/list.do"), replyPageObject));
 					jsp = "/board/view";				
 					break;
 					
@@ -90,7 +98,7 @@ public class BoardController {
 					vo.setPw(pw);
 					
 					// [BoardController] - BoardWriteService - BoardDAO.write(vo)
-					Execute.execute(init.get(uri), vo);
+					Execute.execute(Init.get(uri), vo);
 					
 					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
 					// 아니면 jsp로 forward를 시킨다.
@@ -103,7 +111,7 @@ public class BoardController {
 					no = Long.parseLong(request.getParameter("no"));
 					// no 맞는 데이터 DB에서 가져온다. BoardViewService
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(init.get("/board/view.do"), new Long[]{no , 0L});
+					result = Execute.execute(Init.get("/board/view.do"), new Long[]{no , 0L});
 					// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
 					request.setAttribute("vo", result);
 					// jsp 정보
@@ -130,7 +138,7 @@ public class BoardController {
 					vo.setPw(pw);
 					
 					// DB에 데이터 수정하기 - BoardUpdateService
-					Execute.execute(init.get(uri), vo);
+					Execute.execute(Init.get(uri), vo);
 					//페이지 정보 받기 & uri에 붙이기
 					pageObject = PageObject.getInstance(request);					
 					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
@@ -150,7 +158,7 @@ public class BoardController {
 					
 					
 					// DB 처리
-					Execute.execute(init.get(uri), vo);
+					Execute.execute(Init.get(uri), vo);
 					System.out.println();
 					System.out.println("***************************");
 					System.out.println("**"+ vo.getNo()+"번 게시글이 삭제되었습니다. "+"**");
