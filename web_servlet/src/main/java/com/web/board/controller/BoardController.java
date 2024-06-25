@@ -1,5 +1,6 @@
 package com.web.board.controller;
 
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,8 +42,12 @@ public class BoardController {
 					PageObject pageObject = PageObject.getInstance(request);
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
 					result = Execute.execute(init.get(uri), pageObject);
+					// PageObject 확인하기ㅏ
+					System.out.println("BoardController.execute().pageObject = " + pageObject);
 					// 가져온 데이터 출력하기
 					request.setAttribute("list", result);
+					// PageObject 담기
+					request.setAttribute("pageObject", pageObject);
 					// /WEB-INF/views/ + board/list + .jsp
 					jsp = "board/list";
 					break;
@@ -57,7 +62,7 @@ public class BoardController {
 					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
 					result = Execute.execute(init.get(uri), new Long[]{no , inc});
-					// 게시판 글보기 출력 : BoardPrint 
+					
 					request.setAttribute("vo", result);
 					jsp = "/board/view";				
 					break;
@@ -75,6 +80,7 @@ public class BoardController {
 					String content = request.getParameter("content");
 					String writer = request.getParameter("writer");
 					String pw = request.getParameter("pw");
+					String perPageNum = request.getParameter("perPageNum");
 					
 					// 변수 - vo 저장하고 Service 
 					BoardVO vo = new BoardVO();
@@ -88,7 +94,7 @@ public class BoardController {
 					
 					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
 					// 아니면 jsp로 forward를 시킨다.
-					jsp = "redirect:list.do";
+					jsp = "redirect:list.do?perPageNum=" + perPageNum;
 					
 					break;
 				case "/board/updateForm.do":
@@ -125,8 +131,10 @@ public class BoardController {
 					
 					// DB에 데이터 수정하기 - BoardUpdateService
 					Execute.execute(init.get(uri), vo);
-					// 
-					jsp = "redirect:view.do?no=" + no + "&inc=0" ;
+					//페이지 정보 받기 & uri에 붙이기
+					pageObject = PageObject.getInstance(request);					
+					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
+					jsp = "redirect:view.do?no=" + no + "&inc=0" + "&" + pageObject.getPageQuery();
 					break;
 					
 				case "/board/delete.do":
@@ -134,7 +142,8 @@ public class BoardController {
 					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - BoardVO
 					no = Long.parseLong(request.getParameter("no"));
 					pw = request.getParameter("pw");
-					
+					perPageNum = request.getParameter("perPageNum");
+				
 					vo = new BoardVO();
 					vo.setNo(no);
 					vo.setPw(pw);
@@ -146,7 +155,8 @@ public class BoardController {
 					System.out.println("***************************");
 					System.out.println("**"+ vo.getNo()+"번 게시글이 삭제되었습니다. "+"**");
 					System.out.println("***************************");
-					jsp = "redirect:list.do";
+
+					jsp = "redirect:list.do?" + "&" + "perPageNum="+ perPageNum;
 					break;
 				case "0":
 					System.out.println("0. 이전");

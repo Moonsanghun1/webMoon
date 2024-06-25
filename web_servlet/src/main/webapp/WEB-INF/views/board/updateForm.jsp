@@ -10,8 +10,12 @@
 <body>
 <div class = "container">
 <form action="update.do" method = "post">
+			<input type = "hidden" name = "page" value = "${param.page }">
+			<input type = "hidden" name = "perPageNum" value = "${param.perPageNum }">
+			<input type = "hidden" name = "key" value = "${param.key }">
+			<input type = "hidden" name = "word" value = "${param.word }">
 			<h1>일반게시판 글 수정 형식</h1>
-<table class = "table">
+	<table class = "table">
 	
 	
 	<tr>

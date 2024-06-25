@@ -10,6 +10,7 @@
 <div class= "container" >
 <h1>일반게시판 글 등록 형식</h1>
 <form action="write.do" method = "post">
+<input name = "perPageNum" value = "${param.perPageNum}" type = "hidden">
 <table class= "table">
 	<tr>
 		<th colspan = "2">

@@ -1,5 +1,7 @@
 package com.web.board.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +26,16 @@ public class BoardDAO extends DAO {
 			// 2. 연결
 			con = DB.getConnection();
 			// 3. sql - 아래 LIST - 콘솔 확인하고 여기에 쿼리에 해당되는 
+			System.out.println(getListSQL(pageObject));
 			// 4. 실행 객체 & 데이터 세팅
-			pstmt = con.prepareStatement(LIST);
-			pstmt.setLong(1, pageObject.getStartRow()); // 기본 값 = 1
-			pstmt.setLong(2, pageObject.getEndRow());// 기본 값 = 10
+//			pstmt = con.prepareStatement(LIST);
+			pstmt = con.prepareStatement(getListSQL(pageObject));
+			
+			// 검색에 대한 데이터 세팅 - list()만 사용 
+			int idx = 0; // pstmt의 순서번호로 사용. 먼저 1 증가하고 사용한다.
+			idx = setSearchData(pageObject, pstmt, idx);
+			pstmt.setLong(++idx, pageObject.getStartRow()); // 기본 값 = 1
+			pstmt.setLong(++idx, pageObject.getEndRow());// 기본 값 = 10
 			// 5. 실행
 			rs = pstmt.executeQuery();
 			// 6. 표시 또는 담기
@@ -77,8 +85,9 @@ public class BoardDAO extends DAO {
 			// 3. sql 아래에 미리 써놓음
 			// 4. 실행 객체 & 데이터 세팅
 
-			pstmt = con.prepareStatement(TOTALROW);
-			
+			pstmt = con.prepareStatement(TOTALROW + getSearch(pageObject));
+			int idx= 0;
+			idx = setSearchData(pageObject, pstmt, idx);
 			// 5. 실행
 			rs = pstmt.executeQuery();
 			// 6. 표시 및 담기
@@ -313,10 +322,57 @@ public class BoardDAO extends DAO {
 				+ " select rownum rnum, no, title, writer, writeDate, hit "
 					+ " from ( "
 						+ " select no, title, writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "
-						+ " from board " + " order by no desc " 
-					+ " ) "
-			+ " ) where rnum between ? and ?";
-	final String TOTALROW = "select count(*) from board";
+						+ " from board "; // 여기에 검색이 있어야 한다.
+						
+	
+	// 검색이 있는 경우 TOTALROW + search문 
+	final String TOTALROW = "select count(*) from board ";
+	
+	// 리스트의 검색만 처리하는 쿼리 - where 
+	private String getListSQL(PageObject pageObject) {
+		String sql = LIST;
+		String word = pageObject.getWord();
+				
+		if(word != null && !word.equals("")) sql += getSearch(pageObject); 
+				sql +=  " order by no desc " 
+						+ " ) "
+						+ " ) where rnum between ? and ?";
+			
+		
+		return sql;
+	}
+	
+	// LIST에 검색을 처리해서 만들어지는 sql문 작성 메소
+	private String getSearch(PageObject pageObject) {
+		
+		String sql = "";
+		String key = pageObject.getKey();
+		String word = pageObject.getWord();
+		if(word != null && !word.equals("")) {
+			sql += " where 1 = 0 ";
+			// key 안에 t가 포함 되어있으면 title로 검색을 한다.
+		if(key.indexOf("t" ) >= 0) sql += " or title like ? ";
+		if(key.indexOf("c" ) >= 0) sql += " or content like ? ";
+		if(key.indexOf("w" ) >= 0) sql += " or writer like ? ";	
+		}
+		return sql;
+	}
+	
+	// 검색 쿼리의 ? 데이터를 세팅하는 메소드
+	private int setSearchData(PageObject pageObject, PreparedStatement pstmt , int idx) throws SQLException {
+		
+					
+					String key = pageObject.getKey();
+					String word = pageObject.getWord();
+					if(word != null && !word.equals("")) {
+					// key 안에 t가 포함 되어있으면 title로 검색을 한다.
+					if(key.indexOf("t") >= 0) pstmt.setString(++idx, "%" + word + "%");
+					if(key.indexOf("c") >= 0) pstmt.setString(++idx, "%" + word + "%");
+					if(key.indexOf("w") >= 0) pstmt.setString(++idx, "%" + word + "%");
+					}
+					return idx;
+	}
+	
 	final String INCREASE = "update board set hit = hit + 1 " + " where no = ? ";
 
 	final String VIEW = "select no, title, content, writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "

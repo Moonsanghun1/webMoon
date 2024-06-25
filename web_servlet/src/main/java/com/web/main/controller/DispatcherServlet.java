@@ -31,7 +31,10 @@ public class DispatcherServlet extends HttpServlet {
 		// 드라이버 확인 / 객체 생성 처리 - Class.forName(class명)
 		System.out.println("DispatcherServlet.init()-----초기화 진행-----");
 		try {
+			// -- 객체 생성과 초기화 , 조립
 			Class.forName("com.web.main.controller.init");
+			// -- 오라클 드라이버 확인 + 로딩
+			Class.forName("com.web.util.db.DB");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

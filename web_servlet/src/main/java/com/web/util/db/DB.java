@@ -23,7 +23,7 @@ public class DB {
 		}catch(ClassNotFoundException e) {
 			e.printStackTrace();
 			System.out.println("** 드라이버가 없음으로 프로그램을 종료합니다.**");
-			System.exit(1);
+			//System.exit(1);
 		}
 	}	
 	
