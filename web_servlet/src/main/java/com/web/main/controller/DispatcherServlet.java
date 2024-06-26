@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.web.board.controller.BoardController;
+import com.web.boardreply.controller.BoardReplyController;
 
 /**
  * Servlet implementation class DispatcherServlet
@@ -22,6 +23,7 @@ public class DispatcherServlet extends HttpServlet {
 
 	// Controller 선언과 생성 - 1번만 된다.
 	private BoardController boardController = new BoardController();
+	private BoardReplyController boardReplyController = new BoardReplyController();
 	
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -69,8 +71,14 @@ public class DispatcherServlet extends HttpServlet {
 		
 		switch (module) {
 		case "/board" : {
-			System.out.println("일반 게시판");
+			System.out.println("일반게시판");
 			jsp = boardController.execute(request);	
+			System.out.println("jsp = " + jsp);
+			break;
+		}
+		case "/boardreply" : {
+			System.out.println("일반게시판 댓글");
+			jsp = boardReplyController.execute(request);	
 			System.out.println("jsp = " + jsp);
 			break;
 		}

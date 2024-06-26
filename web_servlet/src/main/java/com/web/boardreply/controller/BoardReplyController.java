@@ -1,4 +1,4 @@
-package com.web.board.controller;
+package com.web.boardreply.controller;
 
 import java.net.URLEncoder;
 import java.util.List;
@@ -13,6 +13,7 @@ import com.web.board.service.BoardUpdateService;
 import com.web.board.service.BoardViewService;
 import com.web.board.service.BoardWriteService;
 import com.web.board.vo.BoardVO;
+import com.web.boardreply.vo.BoardReplyVO;
 import com.web.main.controller.Init;
 import com.web.util.exe.Execute;
 import com.web.util.io.BoardPrint;
@@ -20,7 +21,7 @@ import com.web.util.io.In;
 import com.webjjang.util.page.PageObject;
 import com.webjjang.util.page.ReplyPageObject;
 // Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
-public class BoardController {
+public class BoardReplyController {
 
 	public String execute(HttpServletRequest request) {
 		System.out.println("BoardController.execute() --------------------------");
@@ -35,125 +36,84 @@ public class BoardController {
 			
 			try { //정상처리
 				
+				ReplyPageObject pageObject = ReplyPageObject.getInstance(request);				
+				
 				// 메뉴 처리 : CRUD DB처리 - controller - service - DAO
 				switch (uri) {
-				case "/board/list.do":
-					//[BoardController] - (Excute) - BoardListService - BoardDAO.list()
-					System.out.println("1. 일반 게시판 리스트");
-					// 페이지 처리를 위한 객체
-					// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
-					PageObject pageObject = PageObject.getInstance(request);
-					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
-					result = Execute.execute(Init.get(uri), pageObject);
-					// PageObject 확인하기ㅏ
-					System.out.println("BoardController.execute().pageObject = " + pageObject);
-					// 가져온 데이터 출력하기
-					request.setAttribute("list", result);
-					// PageObject 담기
-					request.setAttribute("pageObject", pageObject);
-					// /WEB-INF/views/ + board/list + .jsp
-					jsp = "board/list";
-					break;
-				case "/board/view.do":
-					System.out.println("2. 일반 게시판 글 보기");
-					
-					// 1. 조회수 1증가(글보기)
-					String strNo = request.getParameter("no");
-					no = Long.parseLong(strNo);
-					String strInc = request.getParameter("inc");
-					Long inc = Long.parseLong(strInc);
-					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
-					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(Init.get(uri), new Long[]{no , inc});
-					
-					request.setAttribute("vo", result);
-					
-					// 댓글 페이지 객체
-					// 데이터 전달 - page / perPageNum / no / replyPage / replyPerPageNum
-					ReplyPageObject replyPageObject = ReplyPageObject.getInstance(request);
-					request.setAttribute("replyList", Execute.execute(Init.get("/boardreply/list.do"), replyPageObject));
-					jsp = "/board/view";				
-					break;
-					
-				case "/board/writeForm.do":
-					System.out.println("3-1. 일반 게시판 글 등록 폼");
-					jsp = "/board/writeForm";
-					break;
 				
-				case "/board/write.do":
-					System.out.println("3. 일반 게시판 글등록 처리");
+				
+				case "/boardreply/write.do":
+					System.out.println("1. 일반 게시판 댓글등록 처리");
 					
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
-					String title = request.getParameter("title");
 					String content = request.getParameter("content");
 					String writer = request.getParameter("writer");
 					String pw = request.getParameter("pw");
-					String perPageNum = request.getParameter("perPageNum");
 					
 					// 변수 - vo 저장하고 Service 
-					BoardVO vo = new BoardVO();
-					vo.setTitle(title);
+					BoardReplyVO vo = new BoardReplyVO();
 					vo.setContent(content);
 					vo.setWriter(writer);
 					vo.setPw(pw);
+					vo.setNo(pageObject.getNo());
+					
 					
 					// [BoardController] - BoardWriteService - BoardDAO.write(vo)
 					Execute.execute(Init.get(uri), vo);
 					
 					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
 					// 아니면 jsp로 forward를 시킨다.
-					jsp = "redirect:list.do?perPageNum=" + perPageNum;
+					// 
+					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
+					// 일반게시판의 페이지 & 검색 정보 붙이기
+					+pageObject.getPageObject().getPageQuery()+ "&" 
+					// 일반게시판의 댓글의 페이지 정보 붙이기
+					+pageObject.getNotPageQuery();
 					
 					break;
-				case "/board/updateForm.do":
-					System.out.println("4-1. 일반 게시판 글 수정 폼");
-					// 사용자 -> 서버 : 글번호 
-					no = Long.parseLong(request.getParameter("no"));
-					// no 맞는 데이터 DB에서 가져온다. BoardViewService
-					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(Init.get("/board/view.do"), new Long[]{no , 0L});
-					// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
-					request.setAttribute("vo", result);
-					// jsp 정보
-					jsp = "board/updateForm";
-					break;
+		
 					
-				case "/board/update.do":
+				case "/boardreply/update.do":
 					
-					System.out.println("4-2. 일반 게시판 글 수정 처리");
+					System.out.println("2. 일반 게시판 댓글 수정 처리");
 				
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
-					no = Long.parseLong(request.getParameter("no"));
-					title = request.getParameter("title");
+					Long rno = Long.parseLong(request.getParameter("rno"));
 					content = request.getParameter("content");
 					writer = request.getParameter("writer");
 					pw = request.getParameter("pw");
 					
+				
+					
 					// 변수 - vo 저장하고 Service 
-					vo = new BoardVO();
-					vo.setNo(no);
-					vo.setTitle(title);
+					vo = new BoardReplyVO();
+					vo.setRno(rno);
 					vo.setContent(content);
 					vo.setWriter(writer);
 					vo.setPw(pw);
 					
+					System.out.println("vo =" + vo);
 					// DB에 데이터 수정하기 - BoardUpdateService
 					Execute.execute(Init.get(uri), vo);
 					//페이지 정보 받기 & uri에 붙이기
-					pageObject = PageObject.getInstance(request);					
+						
 					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
-					jsp = "redirect:view.do?no=" + no + "&inc=0" + "&" + pageObject.getPageQuery();
+					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
+							// 일반게시판의 페이지 & 검색 정보 붙이기
+							+pageObject.getPageObject().getPageQuery()+ "&" 
+							// 일반게시판의 댓글의 페이지 정보 붙이기
+							+pageObject.getNotPageQuery();
 					break;
 					
-				case "/board/delete.do":
-					System.out.println("5. 일반 게시판 글 삭제");
+				case "/boardreply/delete.do":
+					System.out.println("3. 일반 게시판 댓글 삭제");
 					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - BoardVO
-					no = Long.parseLong(request.getParameter("no"));
+					rno = Long.parseLong(request.getParameter("rno"));
 					pw = request.getParameter("pw");
-					perPageNum = request.getParameter("perPageNum");
+					
 				
-					vo = new BoardVO();
-					vo.setNo(no);
+					vo = new BoardReplyVO();
+					vo.setRno(rno);
 					vo.setPw(pw);
 					
 					
@@ -164,7 +124,11 @@ public class BoardController {
 					System.out.println("**"+ vo.getNo()+"번 게시글이 삭제되었습니다. "+"**");
 					System.out.println("***************************");
 
-					jsp = "redirect:list.do?" + "&" + "perPageNum="+ perPageNum;
+					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
+							// 일반게시판의 페이지 & 검색 정보 붙이기
+							+pageObject.getPageObject().getPageQuery()+ "&" 
+							// 일반게시판의 댓글의 페이지 정보 붙이기
+							+pageObject.getNotPageQuery();
 					break;
 				case "0":
 					System.out.println("0. 이전");

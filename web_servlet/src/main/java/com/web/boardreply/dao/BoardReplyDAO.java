@@ -107,9 +107,9 @@ public class BoardReplyDAO extends DAO {
 
 	// 2. 댓글 상세보기는 리스트에서 내용이 다 표시되어 필요하진 않다.
 
-	// 3 . 글등록 처리
-	// BoardController - (Execute) - BoardwriteService - [BoardDAO.write(vo)]
-	public int write(BoardVO vo) throws Exception {
+	// 3 . 댓글글등록 처리
+	// BoardReplyController - (Execute) - BoardReplyWriteService - [BoardReplyDAO.write(vo)]
+	public int write(BoardReplyVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
 		int result = 0;
 
@@ -120,7 +120,7 @@ public class BoardReplyDAO extends DAO {
 			// 3. sql - 아래 LIST
 			// 4. 실행 객체 & 데이터 세팅
 			pstmt = con.prepareStatement(WRITE);
-			pstmt.setString(1, vo.getTitle());
+			pstmt.setLong(1, vo.getNo());
 			pstmt.setString(2, vo.getContent());
 			pstmt.setString(3, vo.getWriter());
 			pstmt.setString(4, vo.getPw());
@@ -128,7 +128,7 @@ public class BoardReplyDAO extends DAO {
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
 			System.out.println();
-			System.out.println("*** 글등록이 완료 되었습니다. ***");
+			System.out.println("*** 댓글등록이 완료 되었습니다. ***");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,11 +156,10 @@ public class BoardReplyDAO extends DAO {
 			// 3. sql - 아래 LIST
 			// 4. 실행 객체 & 데이터 세팅
 			pstmt = con.prepareStatement(UPDATE);
-			pstmt.setLong(1, vo.getRno());
-			pstmt.setString(2, vo.getContent());
-			pstmt.setString(3, vo.getWriter());
-			pstmt.setLong(4, vo.getNo());
-			pstmt.setString(5, vo.getPw());
+			pstmt.setString(1, vo.getContent());
+			pstmt.setString(2, vo.getWriter());
+			pstmt.setLong(3, vo.getRno());
+			pstmt.setString(4, vo.getPw());
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
@@ -201,7 +200,7 @@ public class BoardReplyDAO extends DAO {
 			// 4. 실행 객체 & 데이터 세팅
 			pstmt = con.prepareStatement(DELETE);
 
-			pstmt.setLong(1, vo.getNo());
+			pstmt.setLong(1, vo.getRno());
 			pstmt.setString(2, vo.getPw());
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
@@ -238,7 +237,7 @@ public class BoardReplyDAO extends DAO {
 				+ " select rownum rnum, rno, no, content, writer, writeDate "
 					+ " from ( "
 						+ " select rno, no, content, writer, " 
-						+ " to_char(writeDate, 'yyyy-mm-dd') writeDate"
+						+ " to_char(writeDate, 'yyyy-mm-dd HH24:MM:SS') writeDate"
 						+ " from board_reply " // 여기에 검색이 있어야 한다.
 						+ " where no = ? "
 						+ " order by rno desc " 
@@ -247,10 +246,10 @@ public class BoardReplyDAO extends DAO {
 	// 검색이 있는 경우 TOTALROW + search문 
 	final String TOTALROW = "select count(*) from board_reply where no = ? ";
 		
-	final String WRITE = " insert into board( " + " no, title, content, writer, pw) "
-			+ " values(board_seq.nextval, ?,?,?,?)";
+	final String WRITE = " insert into board_reply( " + " rno, no, content, writer, pw) "
+			+ " values(board_reply_seq.nextval, ?,?,?,?)";
 
-	final String UPDATE = "update board set " + " title = ?, content = ? ,writer = ? " + " where no = ? and pw = ? ";
-	final String DELETE = "delete from board " + " where no = ? and pw = ?";
+	final String UPDATE = "update board_reply set " + "  content = ? ,writer = ? " + " where rno = ? and pw = ? ";
+	final String DELETE = "delete from board_reply " + " where rno = ? and pw = ?";
 
 }

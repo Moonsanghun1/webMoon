@@ -1,7 +1,6 @@
 package com.web.boardreply.service;
 
-import com.web.board.dao.BoardDAO;
-import com.web.board.vo.BoardVO;
+
 import com.web.boardreply.dao.BoardReplyDAO;
 import com.web.boardreply.vo.BoardReplyVO;
 import com.web.main.dao.DAO;

@@ -10,7 +10,10 @@ import com.web.board.service.BoardUpdateService;
 import com.web.board.service.BoardViewService;
 import com.web.board.service.BoardWriteService;
 import com.web.boardreply.dao.BoardReplyDAO;
+import com.web.boardreply.service.BoardReplyDeleteService;
 import com.web.boardreply.service.BoardReplyListService;
+import com.web.boardreply.service.BoardReplyUpdateService;
+import com.web.boardreply.service.BoardReplyWriteService;
 import com.web.main.dao.DAO;
 import com.web.main.service.Service;
 
@@ -38,9 +41,16 @@ public class Init {
 		serviceMap.get("/board/delete.do").setDAO(daoMap.get("boardDAO"));
 		// ----[일반 게시판 댓글 객체 생성과 조립] ====
 		daoMap.put("boardReplyDAO", new BoardReplyDAO());
-		
+		// service 생성
 		serviceMap.put("/boardreply/list.do", new BoardReplyListService()); 
+		serviceMap.put("/boardreply/write.do", new BoardReplyWriteService()); 
+		serviceMap.put("/boardreply/update.do", new BoardReplyUpdateService()); 
+		serviceMap.put("/boardreply/delete.do", new BoardReplyDeleteService());		
+		// 조립 dao -> servive
 		serviceMap.get("/boardreply/list.do").setDAO(daoMap.get("boardReplyDAO"));
+		serviceMap.get("/boardreply/write.do").setDAO(daoMap.get("boardReplyDAO"));
+		serviceMap.get("/boardreply/update.do").setDAO(daoMap.get("boardReplyDAO"));
+		serviceMap.get("/boardreply/delete.do").setDAO(daoMap.get("boardReplyDAO"));
 		
 		System.out.println("Init.static 초기화 블록 ----- 객체 생성과 로딩-----");
 	}
