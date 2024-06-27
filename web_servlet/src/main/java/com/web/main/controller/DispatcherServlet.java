@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 		System.out.println("DispatcherServlet.init()-----초기화 진행-----");
 		try {
 			// -- 객체 생성과 초기화 , 조립
-			Class.forName("com.web.main.controller.init");
+			Class.forName("com.web.main.controller.Init");
 			// -- 오라클 드라이버 확인 + 로딩
 			Class.forName("com.web.util.db.DB");
 		} catch (ClassNotFoundException e) {
@@ -79,7 +79,7 @@ public class DispatcherServlet extends HttpServlet {
 		case "/boardreply" : {
 			System.out.println("일반게시판 댓글");
 			jsp = boardReplyController.execute(request);	
-			System.out.println("jsp = " + jsp);
+			System.out.println("jsp(Dispatcher) = " + jsp);
 			break;
 		}
 		default:
@@ -94,6 +94,7 @@ public class DispatcherServlet extends HttpServlet {
 		}else {
 		// jsp로 forward 한다.
 		request.getRequestDispatcher("/WEB-INF/views/" + jsp + ".jsp").forward(request, response);
+		//request.getSession().removeAttribute("msg");
 		}
 	}
 	

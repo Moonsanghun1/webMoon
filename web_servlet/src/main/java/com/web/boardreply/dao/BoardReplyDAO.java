@@ -2,8 +2,6 @@ package com.web.boardreply.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.web.board.vo.BoardVO;
 import com.web.boardreply.vo.BoardReplyVO;
 import com.web.main.dao.DAO;
 import com.web.util.db.DB;
@@ -69,7 +67,7 @@ public class BoardReplyDAO extends DAO {
 		return list;
 	}
 
-	// 1-2 . 전체 데이터 개수 처리
+	// 1-2 . 전체 댓글 데이터 개수 처리
 	// BoardController - (Execute) - BoardListService - [BoardDAO.getTotalRow()]
 	public Long getTotalRow(ReplyPageObject pageObject) throws Exception {
 
@@ -206,7 +204,7 @@ public class BoardReplyDAO extends DAO {
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
 			if (result == 0) { // 글번호가 존재하지 않는다. -> 예외로 처리한다.
-				throw new Exception("예외 발생 : 글번호나 비밀번호가 맞지 않습니다. 정보를 확인해 주세요");
+				throw new Exception("예외 발생 : 댓글번호나 비밀번호가 맞지 않습니다. 정보를 확인해 주세요");
 
 			}
 
@@ -217,7 +215,7 @@ public class BoardReplyDAO extends DAO {
 				throw e;
 			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
 			else
-				throw new Exception("예외 발생 : 게시판 글삭제 DB 처리 중 예외가 발생했습니다.");
+				throw new Exception("예외 발생 : 게시판 댓글 삭제 DB 처리 중 예외가 발생했습니다.");
 
 		} finally {
 			// 7. 닫기

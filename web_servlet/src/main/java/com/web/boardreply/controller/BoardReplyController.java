@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.taglibs.standard.extra.spath.RelativePath;
 
@@ -25,13 +26,12 @@ public class BoardReplyController {
 
 	public String execute(HttpServletRequest request) {
 		System.out.println("BoardController.execute() --------------------------");
-			// 메뉴 입력
+			
+			// session을 request에서부터 꺼낸다.
+			HttpSession session = request.getSession();
+		
 			String uri = request.getRequestURI();
-			
-			Object result = null;
-			// 메뉴 처리
-			Long no = 0L;
-			
+
 			String jsp = null;
 			
 			try { //정상처리
@@ -66,10 +66,9 @@ public class BoardReplyController {
 					// 
 					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
 					// 일반게시판의 페이지 & 검색 정보 붙이기
-					+pageObject.getPageObject().getPageQuery()+ "&" 
-					// 일반게시판의 댓글의 페이지 정보 붙이기
-					+pageObject.getNotPageQuery();
+					+pageObject.getPageObject().getPageQuery();
 					
+					session.setAttribute("msg", "댓글 등록이 성곡적으로 되었습니다.");
 					break;
 		
 					
@@ -100,9 +99,8 @@ public class BoardReplyController {
 					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
 					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
 							// 일반게시판의 페이지 & 검색 정보 붙이기
-							+pageObject.getPageObject().getPageQuery()+ "&" 
-							// 일반게시판의 댓글의 페이지 정보 붙이기
-							+pageObject.getNotPageQuery();
+							+pageObject.getPageObject().getPageQuery();
+					session.setAttribute("msg", "댓글 수정이 성곡적으로 되었습니다.");
 					break;
 					
 				case "/boardreply/delete.do":
@@ -126,9 +124,9 @@ public class BoardReplyController {
 
 					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
 							// 일반게시판의 페이지 & 검색 정보 붙이기
-							+pageObject.getPageObject().getPageQuery()+ "&" 
-							// 일반게시판의 댓글의 페이지 정보 붙이기
-							+pageObject.getNotPageQuery();
+							+pageObject.getPageObject().getPageQuery();
+					
+					session.setAttribute("msg", "댓글 삭제가 성곡적으로 되었습니다.");
 					break;
 				case "0":
 					System.out.println("0. 이전");

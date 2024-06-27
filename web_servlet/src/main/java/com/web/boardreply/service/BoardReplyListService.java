@@ -1,8 +1,6 @@
 package com.web.boardreply.service;
 
 import java.util.List;
-
-
 import com.web.boardreply.dao.BoardReplyDAO;
 import com.web.boardreply.vo.BoardReplyVO;
 import com.web.main.dao.DAO;
@@ -28,7 +26,7 @@ public class BoardReplyListService implements Service {
 		replyPageObject.setTotalRow(dao.getTotalRow(replyPageObject));
 		
 		// DB 처리는 DAO에서 처리 - BoardDAO.list()
-		// BoardController - (Execute) - [BoardListService] - [BoardDAO.list()]
+		// BoardReplyController - (Execute) - [BoardReplyListService] - [BoardReplyDAO.update()]
 		return dao.list(replyPageObject);
 		
 		

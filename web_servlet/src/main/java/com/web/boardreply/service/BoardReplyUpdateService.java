@@ -20,7 +20,7 @@ public class BoardReplyUpdateService implements Service {
 	public Integer service(Object obj) throws Exception {
 		// DB board에서 리스트 쿼리 실행해서 데이터 처리 
 		
-		// BoardController - (Execute) - [BoardListService] - [BoardDAO.update()]
+		// BoardReplyController - (Execute) - [BoardReplyUpdateService] - [BoardReplyDAO.update()]
 		return dao.update((BoardReplyVO)obj);
 		
 		

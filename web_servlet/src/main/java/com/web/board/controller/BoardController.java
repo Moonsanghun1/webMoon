@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.taglibs.standard.extra.spath.RelativePath;
 
@@ -24,6 +25,9 @@ public class BoardController {
 
 	public String execute(HttpServletRequest request) {
 		System.out.println("BoardController.execute() --------------------------");
+		
+			// session을 request에서부터 꺼낸다.
+			HttpSession session = request.getSession();
 			// 메뉴 입력
 			String uri = request.getRequestURI();
 			
@@ -53,6 +57,7 @@ public class BoardController {
 					request.setAttribute("pageObject", pageObject);
 					// /WEB-INF/views/ + board/list + .jsp
 					jsp = "board/list";
+					
 					break;
 				case "/board/view.do":
 					System.out.println("2. 일반 게시판 글 보기");
@@ -73,6 +78,7 @@ public class BoardController {
 					ReplyPageObject replyPageObject = ReplyPageObject.getInstance(request);
 					request.setAttribute("replyList", Execute.execute(Init.get("/boardreply/list.do"), replyPageObject));
 					jsp = "/board/view";				
+					
 					break;
 					
 				case "/board/writeForm.do":
@@ -103,6 +109,7 @@ public class BoardController {
 					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
 					// 아니면 jsp로 forward를 시킨다.
 					jsp = "redirect:list.do?perPageNum=" + perPageNum;
+					session.setAttribute("msg", "글 등록이 성곡적으로 되었습니다.");
 					
 					break;
 				case "/board/updateForm.do":
@@ -143,6 +150,7 @@ public class BoardController {
 					pageObject = PageObject.getInstance(request);					
 					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
 					jsp = "redirect:view.do?no=" + no + "&inc=0" + "&" + pageObject.getPageQuery();
+					session.setAttribute("msg", "글 수정이 성곡적으로 되었습니다.");
 					break;
 					
 				case "/board/delete.do":
@@ -165,6 +173,7 @@ public class BoardController {
 					System.out.println("***************************");
 
 					jsp = "redirect:list.do?" + "&" + "perPageNum="+ perPageNum;
+					session.setAttribute("msg", "글 삭제가 성곡적으로 되었습니다.");
 					break;
 				case "0":
 					System.out.println("0. 이전");
