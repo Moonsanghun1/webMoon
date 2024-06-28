@@ -264,6 +264,7 @@ public class MemberDAO extends DAO {
 			pstmt = con.prepareStatement(LOGIN);
 			pstmt.setString(1, loginvo.getId());
 			pstmt.setString(2, loginvo.getPw());
+			
 			// 5. 실행
 			rs = pstmt.executeQuery();
 			// 6. 표시 및 담기
@@ -274,8 +275,9 @@ public class MemberDAO extends DAO {
 				vo.setName(rs.getString("name"));
 				vo.setGradeNo(rs.getInt("gradeNO"));
 				vo.setGradeName(rs.getString("gradeName"));
-				vo.setPhoto(rs.getString("photo"));
-				vo.setNewMsgCnt(rs.getLong("newMsgCnt"));
+				vo.setPhoto(rs.getString("gradeName"));
+				vo.setNewMsgCnt(rs.getLong("NewMsgCnt"));
+
 
 			} // end of if
 			if (vo == null) { // 아이디와 비밀번로가 맞지 않는 경우
@@ -346,7 +348,7 @@ public class MemberDAO extends DAO {
 	final String VIEW = "select m.id, m.name, m.gender, to_char(m.birth, 'yyyy-mm-dd') birth, m.email, m.tel,m.photo, m.email, m.regDate, m.conDate , m.gradeNo, g.gradeName "
 			+ " from member m , grade g " + " where id = ? and (g.gradeNo = m.gradeNo) ";
 
-	final String WRITE = " insert into member( " + " id, pw, name, gender, birth, tel, email, photo) "
+	final String WRITE = " insert into member( id, pw, name, gender, birth, tel, email, photo) "
 			+ " values(?,?,?,?,?,?,?,?)";
 
 	final String UPDATE = "update member set " + " name = ?, gender = ? , birth = ?, tel = ? , email = ? , photo = ? "
@@ -354,7 +356,7 @@ public class MemberDAO extends DAO {
 
 	final String DELETE = "update member set status = '탈퇴' " + " where id = ? and pw = ?";
 
-	final String LOGIN = "select m.id, m.name, m.gradeNo, g.gradeName, m.photo, m.newMsgCnt "
+	final String LOGIN = "select m.id, m.name, m.gradeNo, g.gradeName , m.photo, m.newMsgCnt "
 			+ " from member m , grade g " + " where (id = ? and pw = ? and status = '정상') "
 			+ " and (g.gradeNo = m.gradeNo) ";
 

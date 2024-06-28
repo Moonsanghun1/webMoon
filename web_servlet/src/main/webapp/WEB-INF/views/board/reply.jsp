@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri = "http://java.sun.com/jsp/jstl/core"%>
-
-
+<%@ taglib prefix="pageNav"  tagdir="/WEB-INF/tags"%>
 <div class="card">
   <div class="card-header">
   <button class="btn btn-primary  float-right" id = "replyWriteBtn">등록</button>
@@ -32,7 +31,9 @@
 			<!-- 데이터가 있는 만큼 반복 처리 끝 -->
 		</c:if>
 	</div>
-  <div class="card-footer">Footer</div>
+  <div class="card-footer">
+	<pageNav:replayPageNav listURI="view.do" pageObject="${replyPageObject}" query="&inc=0"></pageNav:replayPageNav>
+</div>
 </div>
 
 <!-- 댓글 등록 / 수정 / 삭제를 위한 모달창 -->
@@ -89,7 +90,6 @@
     </div>
   </div>
 </div>
-
 
 <script type="text/javascript">
 	$(function() {

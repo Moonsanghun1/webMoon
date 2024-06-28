@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import com.web.main.controller.Main;
 import com.web.main.service.Service;
-import com.web.util.auth.Authority;
 
 public class Execute {
 	
@@ -13,7 +12,6 @@ public class Execute {
 	
 	public static Object execute(Service service, Object obj) throws Exception {
 		// 권한 처리
-//		Authority.checkAuth(service);
 		
 		//처리된 결과를 저장하는 변수
 		Object result = null;
@@ -45,7 +43,7 @@ public class Execute {
 		System.out.println("실행 시간(ns) : " + (end - start));
 		
 		System.out.println("<<<----------------------------------->>>");
-
+		
 		//처리된 결과를 리턴한다.
 		return result;
 	}

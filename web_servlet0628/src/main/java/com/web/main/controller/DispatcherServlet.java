@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.web.board.controller.BoardController;
-import com.web.boardreply.controller.BoardReplyController;
-import com.web.member.controller.MemberController;
+
 
 /**
  * Servlet implementation class DispatcherServlet
@@ -24,8 +23,7 @@ public class DispatcherServlet extends HttpServlet {
 
 	// Controller 선언과 생성 - 1번만 된다.
 	private BoardController boardController = new BoardController();
-	private BoardReplyController boardReplyController = new BoardReplyController();
-	private MemberController memberController = new MemberController();
+
 	
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -81,19 +79,6 @@ public class DispatcherServlet extends HttpServlet {
 			System.out.println("jsp = " + jsp);
 			break;
 		}
-		case "/boardreply" : {
-			System.out.println("일반게시판 댓글");
-			jsp = boardReplyController.execute(request);	
-			System.out.println("jsp(Dispatcher) = " + jsp);
-			break;
-		}
-		case "/member" : {
-			System.out.println("회원관리");
-			// 컨트롤러를 생성해야한다.
-			jsp = memberController.execute(request);	
-			System.out.println("jsp(Dispatcher) = " + jsp);
-			break;
-		}
 		default:
 			request.getRequestDispatcher("/WEB-INF/views/error/404.jsp").forward(request, response);
 			return;
@@ -102,10 +87,14 @@ public class DispatcherServlet extends HttpServlet {
 		// jsp 정보 앞에  "redirect:"이 붙어 있지 않으면 jsp로 forward 시킨다. 
 		if (jsp.indexOf("redirect:") == 0) {
 			// redirect:list.do -> uri로 사용하기 위해 redirect:은 잘라버린다.
+			System.out.println(1);
 			response.sendRedirect(jsp.substring("redirect:".length()));
 		}else {
 		// jsp로 forward 한다.
+		System.out.println(2);
+		System.out.println("/WEB-INF/views/" + jsp + ".jsp");
 		request.getRequestDispatcher("/WEB-INF/views/" + jsp + ".jsp").forward(request, response);
+		
 		//request.getSession().removeAttribute("msg");
 		}
 	}

@@ -76,7 +76,10 @@ public class BoardController {
 					// 댓글 페이지 객체
 					// 데이터 전달 - page / perPageNum / no / replyPage / replyPerPageNum
 					ReplyPageObject replyPageObject = ReplyPageObject.getInstance(request);
+					// 가져온 댓글 데이터 request에 "담기"
 					request.setAttribute("replyList", Execute.execute(Init.get("/boardreply/list.do"), replyPageObject));
+					// 댓글 페이지 객체 "담기"
+					request.setAttribute("replyPageObject",replyPageObject);
 					jsp = "/board/view";				
 					
 					break;
