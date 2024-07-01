@@ -14,6 +14,12 @@ import com.web.boardreply.service.BoardReplyDeleteService;
 import com.web.boardreply.service.BoardReplyListService;
 import com.web.boardreply.service.BoardReplyUpdateService;
 import com.web.boardreply.service.BoardReplyWriteService;
+import com.web.image.dao.ImageDAO;
+import com.web.image.service.ImageDeleteService;
+import com.web.image.service.ImageListService;
+import com.web.image.service.ImageUpdateService;
+import com.web.image.service.ImageViewService;
+import com.web.image.service.ImageWriteService;
 import com.web.main.dao.DAO;
 import com.web.main.service.Service;
 import com.web.member.dao.MemberDAO;
@@ -61,6 +67,23 @@ public class Init {
 		serviceMap.put("/member/login.do", new MemberLoginService()); 
 		// 조립 dao -> servive
 		serviceMap.get("/member/login.do").setDAO(daoMap.get("memberDAO"));
+		
+		System.out.println("Init.static 초기화 블록 ----- 객체 생성과 로딩-----");
+		// ----[이미지 객체 생성과 조립] ====
+		
+		daoMap.put("imageDAO", new ImageDAO());
+		// service 생성
+		serviceMap.put("/image/list.do", new ImageListService()); 
+//		serviceMap.put("/image/view.do", new ImageViewService()); 
+//		serviceMap.put("/image/write.do", new ImageWriteService()); 
+//		serviceMap.put("/image/update.do", new ImageUpdateService()); 
+//		serviceMap.put("/image/delete.do", new ImageDeleteService()); 
+		// 조립 dao -> servive
+		serviceMap.get("/image/list.do").setDAO(daoMap.get("imageDAO"));
+//		serviceMap.get("/image/view.do").setDAO(daoMap.get("imageDAO"));
+//		serviceMap.get("/image/write.do").setDAO(daoMap.get("imageDAO"));
+//		serviceMap.get("/image/update.do").setDAO(daoMap.get("imageDAO"));
+//		serviceMap.get("/image/delete.do").setDAO(daoMap.get("imageDAO"));
 		
 		System.out.println("Init.static 초기화 블록 ----- 객체 생성과 로딩-----");
 	}

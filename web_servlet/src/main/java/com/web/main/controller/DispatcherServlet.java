@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.web.board.controller.BoardController;
 import com.web.boardreply.controller.BoardReplyController;
+import com.web.image.controller.ImageController;
 import com.web.member.controller.MemberController;
 
 /**
@@ -26,6 +27,7 @@ public class DispatcherServlet extends HttpServlet {
 	private BoardController boardController = new BoardController();
 	private BoardReplyController boardReplyController = new BoardReplyController();
 	private MemberController memberController = new MemberController();
+	private ImageController imageController = new ImageController();
 	
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -91,6 +93,13 @@ public class DispatcherServlet extends HttpServlet {
 			System.out.println("회원관리");
 			// 컨트롤러를 생성해야한다.
 			jsp = memberController.execute(request);	
+			System.out.println("jsp(Dispatcher) = " + jsp);
+			break;
+		}
+		case "/image" : {
+			System.out.println("이미지 게시판");
+			// 컨트롤러를 생성해야한다.
+			jsp = imageController.execute(request);	
 			System.out.println("jsp(Dispatcher) = " + jsp);
 			break;
 		}
