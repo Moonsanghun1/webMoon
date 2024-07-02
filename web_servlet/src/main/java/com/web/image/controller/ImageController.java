@@ -4,8 +4,13 @@ package com.web.image.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.web.board.vo.BoardVO;
+import com.web.image.vo.ImageVO;
 import com.web.main.controller.Init;
+import com.web.member.vo.LoginVO;
 import com.web.util.exe.Execute;
 import com.webjjang.util.page.PageObject;
 import com.webjjang.util.page.ReplyPageObject;
@@ -15,27 +20,50 @@ public class ImageController {
 	public String execute(HttpServletRequest request) {
 		System.out.println("BoardController.execute() --------------------------");
 		
-			// session을 request에서부터 꺼낸다.
-			HttpSession session = request.getSession();
+			
 			// 메뉴 입력
 			String uri = request.getRequestURI();
 			
 			Object result = null;
+			Object perPageNum = null;
 			// 메뉴 처리
 			Long no = 0L;
 			
 			String jsp = null;
+			
+			// 로그인 아이디 꺼내기
+			// session을 request에서부터 꺼낸다.
+			HttpSession session = request.getSession();
+			LoginVO loginVO = (LoginVO) session.getAttribute("login");
+			
+			String id = null;
+			if(loginVO != null) id = loginVO.getId();
+			
+			// 파일 업로드 설정 -----------
+			// 파일의 상대적인 저장위치
+			String savePath = "/upload/image";
+			// 파일 시스템에서는 절대 저장위치가 필요하다. - 파일 업로드 시 필요.
+			String realSavePath = request.getServletContext().getRealPath(savePath); 
+			
+			// 업로드 파일 용량 제한
+			int sizeLimit = 100 * 1024 * 1024;
+			
 			
 			try { //정상처리
 				
 				// 메뉴 처리 : CRUD DB처리 - controller - service - DAO
 				switch (uri) {
 				case "/image/list.do":
-					//[BoardController] - (Excute) - BoardListService - BoardDAO.list()
+					//[ImageController] - (Excute) - ImageListService - BoardDAO.image()
 					System.out.println("1. 이미지 게시판 리스트");
 					// 페이지 처리를 위한 객체
 					// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
 				    PageObject pageObject = PageObject.getInstance(request);
+				    
+				    // 이미지 게시판의 한 페이지 이미지의 개수의 기본 값을 6으로 처리하자.
+				    // 중복처리 - 앞의 데이터에 덮어쓰기가 된다.
+				    String strPerPageNum = request.getParameter("perPageNum");
+				    if(strPerPageNum == null) pageObject.setPerPageNum(6);
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
 					result = Execute.execute(Init.get(uri), pageObject);
 					// PageObject 확인하기ㅏ
@@ -80,28 +108,34 @@ public class ImageController {
 				
 				case "/image/write.do":
 					System.out.println("3. 이미지 게시판 글등록 처리");
+					//이미지 업로드 처리
+					// new MultipartRequest(request, 실제저장위치, 사이즈 제한, encoding, 중복처리 객체)
+					MultipartRequest multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 					
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
-					String title = request.getParameter("title");
-					String content = request.getParameter("content");
-					String writer = request.getParameter("writer");
-					String pw = request.getParameter("pw");
-					String perPageNum = request.getParameter("perPageNum");
+					String title = multi.getParameter("title");
+					String content = multi.getParameter("content");
+					String fileName = multi.getFilesystemName("imageFile");
+					// 아이디는 session에서 받아야한다. -> 위에서 처리함 
+					
+					// id는 sesstion에서 받아야한다.
 					
 					// 변수 - vo 저장하고 Service 
-					BoardVO vo = new BoardVO();
+					ImageVO vo = new ImageVO();
 					vo.setTitle(title);
 					vo.setContent(content);
-					vo.setWriter(writer);
-					vo.setPw(pw);
-					
-					// [BoardController] - BoardWriteService - BoardDAO.write(vo)
+					vo.setId(id);
+					// fileName은 위치 정보 + 파일명
+					vo.setFileName(savePath + "/" + fileName);
+					// [ImageController] - ImageWriteService - ImageDAO.write(vo)
 					Execute.execute(Init.get(uri), vo);
+					
+					// 메세지출력
+					session.setAttribute("msg", "글 등록이 성곡적으로 되었습니다.");
 					
 					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
 					// 아니면 jsp로 forward를 시킨다.
-					jsp = "redirect:list.do?perPageNum=" + perPageNum;
-					session.setAttribute("msg", "글 등록이 성곡적으로 되었습니다.");
+					jsp = "redirect:list.do?perPageNum=" + multi.getParameter("perPageNum");
 					
 					break;
 				case "/image/updateForm.do":
@@ -125,16 +159,14 @@ public class ImageController {
 					no = Long.parseLong(request.getParameter("no"));
 					title = request.getParameter("title");
 					content = request.getParameter("content");
-					writer = request.getParameter("writer");
-					pw = request.getParameter("pw");
+				
 					
 					// 변수 - vo 저장하고 Service 
-					vo = new BoardVO();
+					vo = new ImageVO();
 					vo.setNo(no);
 					vo.setTitle(title);
 					vo.setContent(content);
-					vo.setWriter(writer);
-					vo.setPw(pw);
+					
 					
 					// DB에 데이터 수정하기 - BoardUpdateService
 					Execute.execute(Init.get(uri), vo);
@@ -149,12 +181,12 @@ public class ImageController {
 					System.out.println("5. 이미지 게시판 글 삭제");
 					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - BoardVO
 					no = Long.parseLong(request.getParameter("no"));
-					pw = request.getParameter("pw");
+				
 					perPageNum = request.getParameter("perPageNum");
 				
-					vo = new BoardVO();
+					vo = new ImageVO();
 					vo.setNo(no);
-					vo.setPw(pw);
+					
 					
 					
 					// DB 처리

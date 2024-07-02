@@ -6,8 +6,9 @@ public class ImageVO {
 	private String title;
 	private String content;
 	private String id;
+	private String name; // member table
 	private String writeDate;
-	private String fileName;
+	private String fileName; // 실제적으로 서버에 저장된 파일명 - 위치 정보 포함
 	public Long getNo() {
 		return no;
 	}
@@ -44,11 +45,15 @@ public class ImageVO {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	@Override
 	public String toString() {
-		return "ImageVO [no=" + no + ", title=" + title + ", content=" + content + ", id=" + id + ", writeDate="
-				+ writeDate + ", fileName=" + fileName + "]";
+		return "ImageVO [no=" + no + ", title=" + title + ", content=" + content + ", id=" + id + ", name=" + name
+				+ ", writeDate=" + writeDate + ", fileName=" + fileName + "]";
 	}
-	
-	
 }

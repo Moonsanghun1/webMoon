@@ -11,6 +11,7 @@
 
 <style type="text/css">
 .dataRow:hover{
+opacity: 20%;
 cursor: pointer;
 }
 </style>
@@ -77,10 +78,10 @@ $(function() {
 
 						</div>
 						<select id = "perPageNum" name = "perPageNum" class="form-control" >
-						 	<option>10</option>
-						 	<option>15</option>
-						 	<option>20</option>
-						 	<option>25</option>
+						 	<option>6</option>
+						 	<option>9</option>
+						 	<option>12</option>
+						 	<option>18</option>
 						</select>
 					</div>
 				</div>
@@ -88,12 +89,49 @@ $(function() {
 				<!-- col-md-4의 끝 : 한 페이지당 표시 데이터 개수 -->
 			</div>
 		</form>
-
-	${list }
-
+ 	<c:if test="${empty list }">
+ 		<div class = "jumbotron">
+ 			<h4>데이터가 존재하지 않습니다.</h4>
+ 		</div>
+	</c:if>
+ 	<c:if test="${!empty list }">
+ 		<div class="row">
+ 		<!-- 이미지의 데이터가 있는 만큼 반복해서 표시하는 처리 시작 -->
+	 		<c:forEach items="${list }" var="vo" varStatus="vs">
+	 			<!-- 줄바굼 처리 - 찍는 인덱스 번호가 3의 배수이면 줄바꿈을 한다. -->
+	 			<c:if test="${(vs.index != 0) && (vs.index % 3 == 0 ) }">
+	 			 ${"</div>"}
+	 			 ${"<div class='row'>"}
+	 			</c:if>
+	 			<!-- 데이터 표시 시작 -->
+	  			<div class="col-md-4 dataRow" >
+	  				<div class="card" style="width:100%">
+					  	<img class="card-img-top" src="${vo.fileName }" alt="image">
+					  	<div class="card-body">
+					    	<h5 class="card-title">
+					    		<span class= "float-right">${vo.writeDate }</span>
+								${vo.name }(${vo.id })
+							</h5>
+					    	<p class="card-text">
+					    		<span class = "no">${vo.no }</span>. ${vo.title }
+					    	</p>
+					  	</div>
+					</div>
+	  			</div>
+	 			<!-- 데이터 표시 끝 -->
+	 		 </c:forEach>		
+ 		<!-- 이미지의 데이터가 있는 만큼 반복해서 표시하는 처리 끝 -->	
+		</div>
+		
+	</c:if>
+	
 	<div> 
 	<pageNav:pageNav listURI="list.do" pageObject="${pageObject }"></pageNav:pageNav>
 	</div>
+	<c:if test="${!empty login }">
+	<!-- 로그인이 되어있으면 보이게 하자. -->
+	<a href="writeForm.do?perPageNum=${pageObject.perPageNum }" class="btn btn-primary">등록</a>
+	</c:if>
 </div>
 </body>
 </html>

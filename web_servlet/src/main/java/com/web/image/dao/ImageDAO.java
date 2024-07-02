@@ -110,7 +110,7 @@ public class ImageDAO extends DAO {
 
 
 	// 2-1 . 글보기 조회수 1증가 처리
-	// BoardController - (Execute) - BoardListService - [ImageDAO.list()]
+	// ImageController - (Execute) - ImageListService - [ImageDAO.list()]
 	public int increase(Long no) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
 		int result = 0;
@@ -150,7 +150,7 @@ public class ImageDAO extends DAO {
 	} // end of increase()
 
 	// 2-2 . 글보기 상세보기
-	// BoardController - (Execute) - BoardListService - [ImageDAO.list()]
+	// ImageController - (Execute) - ImageListService - [ImageDAO.list()]
 	public ImageVO view(Long no) throws Exception {
 
 		ImageVO vo = null;
@@ -171,12 +171,10 @@ public class ImageDAO extends DAO {
 			if (rs != null && rs.next()) {
 				// rs -> rs
 				vo = new ImageVO();
-				vo.setNo(rs.getLong("no"));
 				vo.setTitle(rs.getString("title"));
+				vo.setNo(rs.getLong("no"));
 				vo.setContent(rs.getString("Content"));
-				//vo.setWriter(rs.getString("Writer"));
 				vo.setWriteDate(rs.getString("writeDate"));
-				//vo.setHit(rs.getLong("hit"));
 
 			} // end of if
 
@@ -192,7 +190,7 @@ public class ImageDAO extends DAO {
 	}// end of view()
 
 	// 3 . 글등록 처리
-	// BoardController - (Execute) - BoardwriteService - [ImageDAO.write(vo)]
+	// ImageController - (Execute) - ImagewriteService - [ImageDAO.write(vo)]
 	public int write(ImageVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
 		int result = 0;
@@ -206,8 +204,9 @@ public class ImageDAO extends DAO {
 			pstmt = con.prepareStatement(WRITE);
 			pstmt.setString(1, vo.getTitle());
 			pstmt.setString(2, vo.getContent());
-			//pstmt.setString(3, vo.getWriter());
-			//pstmt.setString(4, vo.getPw());
+			pstmt.setString(3, vo.getId());
+			pstmt.setString(4, vo.getFileName());
+
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
@@ -228,7 +227,7 @@ public class ImageDAO extends DAO {
 	} // end of increase()
 
 	// 4 . 글 수정 처리
-	// BoardController - (Execute) - BoardListService - [ImageDAO.list()]
+	// ImageController - (Execute) - ImageListService - [ImageDAO.list()]
 	public int update(ImageVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
 		int result = 0;
@@ -380,7 +379,7 @@ public class ImageDAO extends DAO {
 
 	final String VIEW = "select no, title, content, writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "
 			+ " from image " + " where no = ? ";
-	final String WRITE = " insert into image( " + " no, title, content, writer, pw) "
+	final String WRITE = " insert into image( " + "no, title, content, id, fileName) "
 			+ " values(image_seq.nextval, ?,?,?,?)";
 
 	final String UPDATE = "update image set " + " title = ?, content = ? ,writer = ? " + " where no = ? and pw = ? ";
