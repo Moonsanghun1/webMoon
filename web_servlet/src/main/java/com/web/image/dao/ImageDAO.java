@@ -108,49 +108,8 @@ public class ImageDAO extends DAO {
 
 	}// end of view()
 
-
-	// 2-1 . 글보기 조회수 1증가 처리
-	// ImageController - (Execute) - ImageListService - [ImageDAO.list()]
-	public int increase(Long no) throws Exception {
-		// 결과를 저장할 수 있는 변수 선언.
-		int result = 0;
-
-		try {
-			// 1. 드라이버 확인 - DB
-			// 2. 연결
-			con = DB.getConnection();
-			// 3. sql - 아래 LIST
-			// 4. 실행 객체 & 데이터 세팅
-			pstmt = con.prepareStatement(INCREASE);
-			pstmt.setLong(1, no);
-			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
-			result = pstmt.executeUpdate();
-			// 6. 표시 또는 담기
-			if (result == 0) { // 글번호가 존재하지 않는다. -> 예외로 처리한다.
-				throw new Exception("예외 발생 : 글번호가 존재하지 않습니다. 글번호를 확인해 주세요");
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			// 특별한 예외는 그냥 전달한다.
-			if (e.getMessage().indexOf("예외 발생") >= 0)
-				throw e;
-			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
-			else
-				throw new Exception("예외 발생 : 게시판 글보기 조회수 DB 처리 중 예외가 발생했습니다.");
-
-		} finally {
-			// 7. 닫기
-			DB.close(con, pstmt, rs);
-		}
-
-		// 결과 데이터를 리턴해준다.
-		return result;
-	} // end of increase()
-
-	// 2-2 . 글보기 상세보기
-	// ImageController - (Execute) - ImageListService - [ImageDAO.list()]
+	// 2 . 이미지 보기 처리
+	// ImageController - (Execute) - ImageViewService - [ImageDAO.list()]
 	public ImageVO view(Long no) throws Exception {
 
 		ImageVO vo = null;
@@ -173,8 +132,11 @@ public class ImageDAO extends DAO {
 				vo = new ImageVO();
 				vo.setTitle(rs.getString("title"));
 				vo.setNo(rs.getLong("no"));
+				vo.setId(rs.getString("id"));
 				vo.setContent(rs.getString("Content"));
 				vo.setWriteDate(rs.getString("writeDate"));
+				vo.setFileName(rs.getString("fileName"));
+				vo.setName(rs.getString("name"));
 
 			} // end of if
 
@@ -377,8 +339,8 @@ public class ImageDAO extends DAO {
 	
 	final String INCREASE = "update board set hit = hit + 1 " + " where no = ? ";
 
-	final String VIEW = "select no, title, content, writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "
-			+ " from image " + " where no = ? ";
+	final String VIEW = "select i.no, i.title, i.content, i.id, m.name, " + " to_char(i.writeDate, 'yyyy-mm-dd') writeDate, i.fileName "
+			+ " from image i , member m " + " where (i.no = ?) and (m.id = i.id) ";
 	final String WRITE = " insert into image( " + "no, title, content, id, fileName) "
 			+ " values(image_seq.nextval, ?,?,?,?)";
 

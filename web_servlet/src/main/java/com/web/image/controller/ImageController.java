@@ -77,26 +77,25 @@ public class ImageController {
 					
 					break;
 				case "/image/view.do":
-					System.out.println("2. 이미지 게시판 글 보기");
+					System.out.println("2. 이미지 보기");
 					
-					// 1. 조회수 1증가(글보기)
+					
 					String strNo = request.getParameter("no");
 					no = Long.parseLong(strNo);
-					String strInc = request.getParameter("inc");
-					Long inc = Long.parseLong(strInc);
-					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
+					
+					// 2. 이미지 게시판 이미지 보기 데이터 가져오기 : 글보기 , 글수정
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(Init.get(uri), new Long[]{no , inc});
+					result = Execute.execute(Init.get(uri), no);
 					
 					request.setAttribute("vo", result);
 					
-					// 댓글 페이지 객체
-					// 데이터 전달 - page / perPageNum / no / replyPage / replyPerPageNum
-					ReplyPageObject replyPageObject = ReplyPageObject.getInstance(request);
-					// 가져온 댓글 데이터 request에 "담기"
-					request.setAttribute("replyList", Execute.execute(Init.get("/imagereply/list.do"), replyPageObject));
-					// 댓글 페이지 객체 "담기"
-					request.setAttribute("replyPageObject",replyPageObject);
+//					// 댓글 페이지 객체
+//					// 데이터 전달 - page / perPageNum / no / replyPage / replyPerPageNum
+//					ReplyPageObject replyPageObject = ReplyPageObject.getInstance(request);
+//					// 가져온 댓글 데이터 request에 "담기"
+//					request.setAttribute("replyList", Execute.execute(Init.get("/image/list.do"), replyPageObject));
+//					// 댓글 페이지 객체 "담기"
+//					request.setAttribute("replyPageObject",replyPageObject);
 					jsp = "/image/view";				
 					
 					break;

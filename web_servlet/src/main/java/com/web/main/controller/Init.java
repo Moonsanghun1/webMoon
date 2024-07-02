@@ -74,13 +74,13 @@ public class Init {
 		daoMap.put("imageDAO", new ImageDAO());
 		// service 생성
 		serviceMap.put("/image/list.do", new ImageListService()); 
-//		serviceMap.put("/image/view.do", new ImageViewService()); 
+		serviceMap.put("/image/view.do", new ImageViewService()); 
 		serviceMap.put("/image/write.do", new ImageWriteService()); 
 //		serviceMap.put("/image/update.do", new ImageUpdateService()); 
 //		serviceMap.put("/image/delete.do", new ImageDeleteService()); 
 		// 조립 dao -> servive
 		serviceMap.get("/image/list.do").setDAO(daoMap.get("imageDAO"));
-//		serviceMap.get("/image/view.do").setDAO(daoMap.get("imageDAO"));
+		serviceMap.get("/image/view.do").setDAO(daoMap.get("imageDAO"));
 		serviceMap.get("/image/write.do").setDAO(daoMap.get("imageDAO"));
 //		serviceMap.get("/image/update.do").setDAO(daoMap.get("imageDAO"));
 //		serviceMap.get("/image/delete.do").setDAO(daoMap.get("imageDAO"));

@@ -4,11 +4,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>일반게시판 글 상세보기</title>
+<title>이미지 보기</title>
 </head>
 <body>
-<div class= "container"></div>
-<h1>일반게시판 글 상세보기</h1>
+<div class= "container">
+<h1>이미지 보기</h1>
 
 <table class = "table">
 	<tr>
@@ -22,8 +22,8 @@
 	</tr>
 	
 	<tr>
-		<th>조회수</th>
-		<td>${vo.hit}</td>
+		<th>사진</th>
+		<td> <img alt="사진" src="${vo.fileName}"></td>
 	</tr>
 	
 	<tr>
@@ -33,7 +33,7 @@
  	
  	<tr>
 		<th>작성자</th>
-		<td>${vo.writer}</td>
+		<td>${vo.id}</td>
 	</tr>
 	
 	<tr>
@@ -49,36 +49,6 @@
 		</td>
 	</tr>
 </table>
-<!-- 댓글 처리 시작 -->
-<jsp:include page="reply.jsp"/> 
-<!-- 댓글 처리 끝 -->
-
-<!-- The Modal -->
-  <div class="modal fade" id="myModal">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-      	<form action="delete.do?no=${param.no }" method="post">
-      	<input type="hidden" name = "no" value = ${param.no }>
-      	<input type = "hidden" value = "${param.perPageNum}" name = "perPageNum">
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">글삭제 비밀번호 입력</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        
-        <!-- Modal body -->
-        <div class="modal-body">
-         	<input type = "password" class ="form-control" placeholder="비밀번호 입력" name="pw" >
-        </div>
-        
-        <!-- Modal footer -->
-        <div class="modal-footer">
-        	<button class = "btn btn-danger">삭제</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-        </form>
-      </div>
-    </div>
-  </div>
+</div>
 </body>
 </html>
