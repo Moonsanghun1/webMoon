@@ -2,6 +2,8 @@ package com.web.image.controller;
 
 
 
+import java.io.File;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -109,9 +111,11 @@ public class ImageController {
 					System.out.println("3. 이미지 게시판 글등록 처리");
 					//이미지 업로드 처리
 					// new MultipartRequest(request, 실제저장위치, 사이즈 제한, encoding, 중복처리 객체)
+					// file 객체 업로드 시 input의 name이 같으면 한개만 처리 가능.
+					// name을 다르게 해서 올려야 한다. file1, file2 
 					MultipartRequest multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 					
-					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					// 데이터 수집 - 사용자 -> 서버 : form - input - name : multi에서 
 					String title = multi.getParameter("title");
 					String content = multi.getParameter("content");
 					String fileName = multi.getFilesystemName("imageFile");
@@ -141,13 +145,13 @@ public class ImageController {
 					System.out.println("4-1. 이미지 게시판 글 수정 폼");
 					// 사용자 -> 서버 : 글번호 
 					no = Long.parseLong(request.getParameter("no"));
-					// no 맞는 데이터 DB에서 가져온다. BoardViewService
+					// no 맞는 데이터 DB에서 가져온다. ImageViewService
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(Init.get("/image/view.do"), new Long[]{no , 0L});
+					result = Execute.execute(Init.get("/image/view.do"), no);
 					// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
 					request.setAttribute("vo", result);
 					// jsp 정보
-					jsp = "board/updateForm";
+					jsp = "image/updateForm";
 					break;
 					
 				case "/image/update.do":
@@ -165,20 +169,21 @@ public class ImageController {
 					vo.setNo(no);
 					vo.setTitle(title);
 					vo.setContent(content);
+					vo.setId(id);
 					
 					
 					// DB에 데이터 수정하기 - BoardUpdateService
 					Execute.execute(Init.get(uri), vo);
 					//페이지 정보 받기 & uri에 붙이기
-//					pageObject = PageObject.getInstance(request);					
-//					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
-//					jsp = "redirect:view.do?no=" + no + "&inc=0" + "&" + pageObject.getPageQuery();
+					pageObject = PageObject.getInstance(request);					
+					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
+					jsp = "redirect:view.do?no=" + no + "&inc=0" + "&" + pageObject.getPageQuery();
 					session.setAttribute("msg", "글 수정이 성곡적으로 되었습니다.");
 					break;
 					
 				case "/image/delete.do":
 					System.out.println("5. 이미지 게시판 글 삭제");
-					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - BoardVO
+					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - ImageVO
 					no = Long.parseLong(request.getParameter("no"));
 				
 					perPageNum = request.getParameter("perPageNum");
@@ -198,8 +203,42 @@ public class ImageController {
 					jsp = "redirect:list.do?" + "&" + "perPageNum="+ perPageNum;
 					session.setAttribute("msg", "글 삭제가 성곡적으로 되었습니다.");
 					break;
-				case "0":
-					System.out.println("0. 이전");
+					
+					case "/image/changeImage.do":
+					
+					System.out.println("6. 이미지 바꾸기 처리");
+				
+					// 파일 업로드 [cos 라이브러리] 사용  MultipartRequest
+					// new MultipartRequest(request, 실제저장위치, 사이즈 제한, encoding, 중복처리 객체)
+					// file 객체 업로드 시 input의 name이 같으면 한개만 처리 가능.
+					// name을 다르게 해서 올려야 한다. file1, file2 
+					multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
+					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					no = Long.parseLong(multi.getParameter("no"));
+					fileName = multi.getFilesystemName("imageFile");
+					
+				
+					String deleteFileName = multi.getParameter("deleteFileName");
+					
+					// 변수 - vo 저장하고 Service 
+					vo = new ImageVO();
+					vo.setNo(no);
+					vo.setFileName(savePath+ "/" + fileName);
+					
+					
+					// DB에 데이터 수정하기 - ImageChangeService
+					Execute.execute(Init.get(uri), vo);
+					// 지난 이미지 파일이 존재하면 지운다.
+					File deleteFile = new File(request.getServletContext().getRealPath(deleteFileName));
+					if (deleteFile.exists()) deleteFile.delete();
+					// 처리결과 메세지 전달
+					session.setAttribute("msg", "이미지가 바꾸기에 성공하셨습니다.");
+					//페이지 정보 받기 & uri에 붙이기
+					pageObject = PageObject.getInstance(request);					
+					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
+					jsp = "redirect:view.do?no=" + no + "&inc=0" + "&" + pageObject.getPageQuery();
+					session.setAttribute("msg", "글 수정이 성곡적으로 되었습니다.");
+					break;
 					
 	
 				default:
