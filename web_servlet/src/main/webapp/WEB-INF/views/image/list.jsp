@@ -14,9 +14,41 @@
 opacity: 20%;
 cursor: pointer;
 }
+
+.imageDiv{
+	background:black;
+}
+.title{
+	height: 60px;
+}
 </style>
 <script type="text/javascript">
 $(function() {
+	
+	// 이미지 사이즈 조정 5:4
+	let imgWidth = $(".imageDiv:first").width();
+	let imgHeight = $(".imageDiv:first").height();
+	console.log("image width= " + imgWidth + ", image Height= " + imgHeight);
+	// 높이 계산 = 너비는 동일하다. : 이미지와 이미지를 감싸고 있는 div의 높이로 사용
+	let height= imgWidth / 5 * 4;
+	// 이미지 배열로 처리하지 않는다. foreach를 사용한다. - jquery each()
+	$(".imageDiv > img").each(function(idx, image){		
+	// 전체 ImageDiv의 높이를 조정한다.
+		$(".imageDiv").height(height);
+	// 이미지가 계산된 높이보다 크면 줄인다.
+		if($(image).height() > height)
+			let image_width =  $(image).width();
+			let image_height =  $(image).height();
+			let width = height / image_width * image_height; 
+			
+			
+			
+			// 이미지 넓이 줄이기
+			$(image).imgHeight(width);
+			//이미지 높이 줄이기
+			$(image).height(height);
+	});
+	
 	// 이벤트 처리
 	$(".dataRow").click(function() {
 // 		alert("click");
@@ -52,11 +84,8 @@ $(function() {
 							<select name="key" id="key" class="form-control">
 								<option value="t">제목</option>
 								<option value="c">내용</option>
-								<option value="w">작성자</option>
 								<option value="tc">제목/내용</option>
-								<option value="tw">제목/작성자</option>
-								<option value="cw">내용/작성자</option>
-								<option value="tcw">모두</option>
+								<option value="f">파일명</option>
 							</select>
 
 						</div>
@@ -106,13 +135,15 @@ $(function() {
 	 			<!-- 데이터 표시 시작 -->
 	  			<div class="col-md-4 dataRow" >
 	  				<div class="card" style="width:100%">
+	  				<div class = "imageDiv text-center align-self-center" >
 					  	<img class="card-img-top" src="${vo.fileName }" alt="image">
+					</div>  	
 					  	<div class="card-body">
 					    	<h5 class="card-title">
 					    		<span class= "float-right">${vo.writeDate }</span>
 								${vo.name }(${vo.id })
 							</h5>
-					    	<p class="card-text">
+					    	<p class="card-text text-truncate title">
 					    		<span class = "no">${vo.no }</span>. ${vo.title }
 					    	</p>
 					  	</div>

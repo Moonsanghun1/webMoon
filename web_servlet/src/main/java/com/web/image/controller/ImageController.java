@@ -20,7 +20,7 @@ import com.webjjang.util.page.ReplyPageObject;
 public class ImageController {
 
 	public String execute(HttpServletRequest request) {
-		System.out.println("BoardController.execute() --------------------------");
+		System.out.println("ImageController.execute() --------------------------");
 		
 			
 			// 메뉴 입력
@@ -183,24 +183,31 @@ public class ImageController {
 					
 				case "/image/delete.do":
 					System.out.println("5. 이미지 게시판 글 삭제");
-					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - ImageVO
+					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - session
 					no = Long.parseLong(request.getParameter("no"));
 				
-					perPageNum = request.getParameter("perPageNum");
-				
-					vo = new ImageVO();
-					vo.setNo(no);
+					
+					ImageVO deleteVO = new ImageVO();
+					deleteVO.setNo(no);
+					deleteVO.setId(id);
 					
 					
 					
 					// DB 처리
-					Execute.execute(Init.get(uri), vo);
+					Execute.execute(Init.get(uri), deleteVO);
 					System.out.println();
 					System.out.println("***************************");
-					System.out.println("**"+ vo.getNo()+"번 게시글이 삭제되었습니다. "+"**");
+					System.out.println("**"+ deleteVO.getNo()+"번 게시글이 삭제되었습니다. "+"**");
 					System.out.println("***************************");
 
-					jsp = "redirect:list.do?" + "&" + "perPageNum="+ perPageNum;
+					// 파일 삭제 
+					// 삭제할 파일 이름
+					String deleteFileName = request.getParameter("deleteFileName");
+					File deleteFile = new File(request.getServletContext().getRealPath(deleteFileName));
+					if (deleteFile.exists()) deleteFile.delete();
+					
+					
+					jsp = "redirect:list.do?" + "&" + "perPageNum="+ request.getParameter("perPageNum");
 					session.setAttribute("msg", "글 삭제가 성곡적으로 되었습니다.");
 					break;
 					
@@ -218,7 +225,7 @@ public class ImageController {
 					fileName = multi.getFilesystemName("imageFile");
 					
 				
-					String deleteFileName = multi.getParameter("deleteFileName");
+					deleteFileName = multi.getParameter("deleteFileName");
 					
 					// 변수 - vo 저장하고 Service 
 					vo = new ImageVO();
@@ -229,7 +236,7 @@ public class ImageController {
 					// DB에 데이터 수정하기 - ImageChangeService
 					Execute.execute(Init.get(uri), vo);
 					// 지난 이미지 파일이 존재하면 지운다.
-					File deleteFile = new File(request.getServletContext().getRealPath(deleteFileName));
+					deleteFile = new File(request.getServletContext().getRealPath(deleteFileName));
 					if (deleteFile.exists()) deleteFile.delete();
 					// 처리결과 메세지 전달
 					session.setAttribute("msg", "이미지가 바꾸기에 성공하셨습니다.");

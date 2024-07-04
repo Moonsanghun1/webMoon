@@ -7,7 +7,7 @@ public class BoardVO {
 	private String writer;
 	private String writeDate;
 	private Long hit;
-	private Long pw;
+	private String pw;
 	public Long getNo() {
 		return no;
 	}
@@ -44,10 +44,10 @@ public class BoardVO {
 	public void setHit(Long hit) {
 		this.hit = hit;
 	}
-	public Long getPw() {
+	public String getPw() {
 		return pw;
 	}
-	public void setPw(Long pw) {
+	public void setPw(String pw) {
 		this.pw = pw;
 	}
 	@Override
