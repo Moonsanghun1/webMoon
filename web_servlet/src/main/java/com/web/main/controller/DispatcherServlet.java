@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.web.ajax.controller.AjaxController;
 import com.web.board.controller.BoardController;
 import com.web.boardreply.controller.BoardReplyController;
 import com.web.image.controller.ImageController;
@@ -28,6 +29,7 @@ public class DispatcherServlet extends HttpServlet {
 	private BoardReplyController boardReplyController = new BoardReplyController();
 	private MemberController memberController = new MemberController();
 	private ImageController imageController = new ImageController();
+	private AjaxController ajaxController = new AjaxController();
 	
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -64,7 +66,8 @@ public class DispatcherServlet extends HttpServlet {
 		System.out.println("pos = " + pos);
 		
 		if (pos == -1) {
-			request.getRequestDispatcher("/WEB-INF/views/error/404.jsp").forward(request, response);
+			request.setAttribute("uri", request.getRequestURI());
+			request.getRequestDispatcher("/WEB-INF/views/error/noModule_404.jsp").forward(request, response);
 			return;
 		} 
 		
@@ -103,8 +106,16 @@ public class DispatcherServlet extends HttpServlet {
 			System.out.println("jsp(Dispatcher) = " + jsp);
 			break;
 		}
+		case "/ajax" : {
+			System.out.println("AJAX 게시판");
+			// 컨트롤러를 생성해야한다.
+			jsp = ajaxController.execute(request);	
+			System.out.println("jsp(Dispatcher) = " + jsp);
+			break;
+		}
 		default:
-			request.getRequestDispatcher("/WEB-INF/views/error/404.jsp").forward(request, response);
+			request.setAttribute("uri", request.getRequestURI());
+			request.getRequestDispatcher("/WEB-INF/views/error/noModule_404.jsp").forward(request, response);
 			return;
 		}
 		// jsp 정보 앞에  "redirect:"이 붙어 있으면 redirect 시킨다. (페이지 자동 이동)

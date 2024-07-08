@@ -78,7 +78,7 @@ public class Main {
 				break;
 			case "5" : 
 				System.out.println("5. 회원관리");
-				new MemberController().execute();
+				//new MemberController().execute();
 				break;
 			case "0" : 
 				System.out.println("0. 종료");

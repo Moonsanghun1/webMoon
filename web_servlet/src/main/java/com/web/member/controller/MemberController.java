@@ -8,6 +8,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.taglibs.standard.extra.spath.RelativePath;
 
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.web.board.service.BoardDeleteService;
 import com.web.board.service.BoardListService;
 import com.web.board.service.BoardUpdateService;
@@ -16,6 +18,7 @@ import com.web.board.service.BoardWriteService;
 import com.web.board.vo.BoardVO;
 import com.web.main.controller.Init;
 import com.web.member.vo.LoginVO;
+import com.web.member.vo.MemberVO;
 import com.web.util.exe.Execute;
 import com.web.util.io.BoardPrint;
 import com.web.util.io.In;
@@ -25,7 +28,7 @@ import com.webjjang.util.page.ReplyPageObject;
 public class MemberController {
 
 	public String execute(HttpServletRequest request) {
-		System.out.println("BoardController.execute() --------------------------");
+		System.out.println("MemberController.execute() --------------------------");
 		
 			// 로그인 처리를 sesstion으로 한다.
 			HttpSession session = request.getSession();
@@ -35,7 +38,14 @@ public class MemberController {
 			LoginVO login = (LoginVO) session.getAttribute("login");
 			// login이 되어 있는 경우만 id를 꺼내온다.
 			if(login != null) id = login.getId();
-					
+			// 파일 업로드 설정 -----------
+			// 파일의 상대적인 저장위치
+						String savePath = "/upload/image";
+						// 파일 시스템에서는 절대 저장위치가 필요하다. - 파일 업로드 시 필요.
+						String realSavePath = request.getServletContext().getRealPath(savePath); 
+						
+						// 업로드 파일 용량 제한
+						int sizeLimit = 100 * 1024 * 1024;
 			
 			// uri
 			String uri = request.getRequestURI();
@@ -134,36 +144,66 @@ public class MemberController {
 					break;
 					
 				case "/member/writeForm.do":
-					System.out.println("3-1. 일반 게시판 글 등록 폼");
+					System.out.println("3-1. 회원가입 폼");
 					jsp = "/member/writeForm";
 					break;
 				
 				case "/member/write.do":
-					System.out.println("3. 일반 게시판 글등록 처리");
+					System.out.println("3-2. 회원가입 처리");
+					
+					MultipartRequest multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 					
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
-					String title = request.getParameter("title");
-					String content = request.getParameter("content");
-					String writer = request.getParameter("writer");
-					pw = request.getParameter("pw");
-					String perPageNum = request.getParameter("perPageNum");
-					
+					id = multi.getParameter("id");
+					pw = multi.getParameter("pw");
+					String name = multi.getParameter("name");
+					String gender = multi.getParameter("gender");
+					String birth = multi.getParameter("birth");
+					String tel = multi.getParameter("tel");
+					String email = multi.getParameter("email");
+					String image = multi.getFilesystemName("photoFile");
+					System.out.println("@@@@@@@@@photoFile = " + image);
 					// 변수 - vo 저장하고 Service 
-					BoardVO vo = new BoardVO();
-					vo.setTitle(title);
-					vo.setContent(content);
-					vo.setWriter(writer);
+					MemberVO vo = new MemberVO();
+					vo.setId(id);
 					vo.setPw(pw);
+					vo.setGender(gender);
+					vo.setName(name);
+					vo.setBirth(birth);
+					vo.setTel(tel);
+					vo.setEmail(email);
+					vo.setPhoto(savePath + "/" + image);
 					
-					// [MemberController] - (Execute) - [MemberListService] - [MemberDAO.login(vo)]
+					// [MemberController] - (Execute) - [MemberWriteService] - [MemberDAO.write(vo)]
 					// session에 데이터를 담아서 로그인 처리한다.
-					session.setAttribute("login", (LoginVO)Execute.execute(Init.get(uri), vo));
+					Execute.execute(Init.get(uri), vo);
 					
 					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
 					// 아니면 jsp로 forward를 시킨다.
 					// 원래는 main이나 진행하려고 했던 uri로 이동시킨다.
 					// 그러나 완성이 안되어 있어서 완성되어진 게시판 리스트로 보낸다.
-					jsp = "redirect:/board/list.do?perPageNum=" + perPageNum;
+					jsp = "/member/loginForm";
+					session.setAttribute("msg", "회원가입이 성곡적으로 되었습니다.");
+					
+					break;
+				case "/member/checkId.do":
+					System.out.println("3-3. 아이디 중복 확인");
+					
+					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					id = request.getParameter("id");
+
+					
+					// [MemberController] - (Execute) - [MembercheckIdService] - [MemberDAO.checkId(id)]
+					// session에 데이터를 담아서 로그인 처리한다.
+					id = (String) Execute.execute(Init.get(uri), id);
+					
+					request.setAttribute("id", id);
+					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
+					// 아니면 jsp로 forward를 시킨다.
+					// 원래는 main이나 진행하려고 했던 uri로 이동시킨다.
+					// 그러나 완성이 안되어 있어서 완성되어진 게시판 리스트로 보낸다.
+					jsp = "member/checkId";
+					
 					session.setAttribute("msg", "글 등록이 성곡적으로 되었습니다.");
 					
 					break;
@@ -186,17 +226,17 @@ public class MemberController {
 				
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
 					no = Long.parseLong(request.getParameter("no"));
-					title = request.getParameter("title");
-					content = request.getParameter("content");
-					writer = request.getParameter("writer");
+					String title = request.getParameter("title");
+					String content = request.getParameter("content");
+					String writer = request.getParameter("writer");
 					pw = request.getParameter("pw");
 					
 					// 변수 - vo 저장하고 Service 
-					vo = new BoardVO();
-					vo.setNo(no);
-					vo.setTitle(title);
-					vo.setContent(content);
-					vo.setWriter(writer);
+					vo = new MemberVO();
+					/*
+					 * vo.setNo(no); vo.setTitle(title); vo.setContent(content);
+					 * vo.setWriter(writer);
+					 */
 					vo.setPw(pw);
 					
 					// DB에 데이터 수정하기 - BoardUpdateService
@@ -213,10 +253,10 @@ public class MemberController {
 					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - BoardVO
 					no = Long.parseLong(request.getParameter("no"));
 					pw = request.getParameter("pw");
-					perPageNum = request.getParameter("perPageNum");
+					String perPageNum = request.getParameter("perPageNum");
 				
-					vo = new BoardVO();
-					vo.setNo(no);
+					vo = new MemberVO();
+//					vo.setNo(no);
 					vo.setPw(pw);
 					
 					
@@ -224,7 +264,7 @@ public class MemberController {
 					Execute.execute(Init.get(uri), vo);
 					System.out.println();
 					System.out.println("***************************");
-					System.out.println("**"+ vo.getNo()+"번 게시글이 삭제되었습니다. "+"**");
+//					System.out.println("**"+ vo.getNo()+"번 게시글이 삭제되었습니다. "+"**");
 					System.out.println("***************************");
 
 					jsp = "redirect:list.do?" + "&" + "perPageNum="+ perPageNum;

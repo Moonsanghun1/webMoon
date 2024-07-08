@@ -4,29 +4,28 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>404 Error</title>
+<title>권한 오류</title>
 </head>
 <body>
 <div class = "container">
 <div class="card">
-  		<div class="card-header">처리 프로세스 오류(404)</div>
+  		<div class="card-header"><h3>권한 오류</h3></div>
   		<div class="card-body" id = "errorDiv">
   			<div>
-  			<i class="fa fa-exclamation-circle" style="font-size:100px;color:red"></i>
+  			<i class="fa fa-exclamation-circle" style="font-size:100px;color:red">error</i>
   			</div>
   			<div class = "row">
-  				<div class= "col-md-3" ><i class="fa fa-check"></i>오류객체</div>
-  				<div class= "col-md-9" >${e.getClass().simpleName }</div>
+  				<div class= "col-md-3" ><i class="fa fa-check"></i>요청 URI</div>
+  				<div class= "col-md-9" >${uri }</div>
   			</div>
   			<div class = "row">
   				<div class= "col-md-3" ><i class="fa fa-check"></i>오류 메세지</div>
-  				<div class= "col-md-9" >${e.message }</div>
+  				<div class= "col-md-9" >요청하신 페이지 주소는 존재하지 않거나 지원하지 않습니다.</div>
   			</div>
   			<div class = "row">
   				<div class= "col-md-3" ><i class="fa fa-check"></i>조치 사항</div>
   				<div class= "col-md-9" >
-  				다시 시도하시오 <br>
-  				오류가 계속 발생되면 전산담당자에게 문의하시오
+  				로그인 정보의 등급을 확인해 주세요. 오류가 있는 경우 관리자에게 문의하세요.
   				</div>
   			</div>
   		</div>

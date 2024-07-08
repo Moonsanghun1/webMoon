@@ -24,7 +24,9 @@ import com.web.image.service.ImageWriteService;
 import com.web.main.dao.DAO;
 import com.web.main.service.Service;
 import com.web.member.dao.MemberDAO;
+import com.web.member.service.MemberCheckIdService;
 import com.web.member.service.MemberLoginService;
+import com.web.member.service.MemberWriteService;
 
 public class Init {
 	
@@ -66,10 +68,14 @@ public class Init {
 		daoMap.put("memberDAO", new MemberDAO());
 		// service 생성
 		serviceMap.put("/member/login.do", new MemberLoginService()); 
+		serviceMap.put("/ajax/checkId.do", new MemberCheckIdService()); 
+		serviceMap.put("/member/write.do", new MemberWriteService()); 
 		// 조립 dao -> servive
 		serviceMap.get("/member/login.do").setDAO(daoMap.get("memberDAO"));
+		serviceMap.get("/ajax/checkId.do").setDAO(daoMap.get("memberDAO"));
+		serviceMap.get("/member/write.do").setDAO(daoMap.get("memberDAO"));
 		
-		System.out.println("Init.static 초기화 블록 ----- 객체 생성과 로딩-----");
+		
 		// ----[이미지 객체 생성과 조립] ====
 		
 		daoMap.put("imageDAO", new ImageDAO());

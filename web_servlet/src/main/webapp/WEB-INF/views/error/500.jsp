@@ -4,12 +4,25 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>404 Error</title>
+<title>500 Error</title>
+
+<style type="text/css">
+
+	#errorDiv>div{
+		padding: 10px;
+		border-top: 1px dotted #ccc;
+	}
+	#errorDiv{
+		padding: 30px;
+	}
+
+</style>
+
 </head>
 <body>
 <div class = "container">
-<div class="card">
-  		<div class="card-header">처리 프로세스 오류(404)</div>
+	<div class="card">
+  		<div class="card-header">처리 프로세스 오류(500)</div>
   		<div class="card-body" id = "errorDiv">
   			<div>
   			<i class="fa fa-exclamation-circle" style="font-size:100px;color:red"></i>

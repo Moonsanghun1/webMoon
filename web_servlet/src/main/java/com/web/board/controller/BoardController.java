@@ -1,23 +1,10 @@
 package com.web.board.controller;
 
-import java.net.URLEncoder;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.apache.taglibs.standard.extra.spath.RelativePath;
-
-import com.web.board.service.BoardDeleteService;
-import com.web.board.service.BoardListService;
-import com.web.board.service.BoardUpdateService;
-import com.web.board.service.BoardViewService;
-import com.web.board.service.BoardWriteService;
 import com.web.board.vo.BoardVO;
 import com.web.main.controller.Init;
 import com.web.util.exe.Execute;
-import com.web.util.io.BoardPrint;
-import com.web.util.io.In;
 import com.webjjang.util.page.PageObject;
 import com.webjjang.util.page.ReplyPageObject;
 // Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
@@ -183,25 +170,18 @@ public class BoardController {
 					
 	
 				default:
-					System.out.println("================================");
-					System.out.println("==    잘못된 메뉴를 입력하셨습니다.   ==");
-					System.out.println("== [0~5,0] 중에서 입력하셔야 합니다. ==");
-					System.out.println("================================");
+					jsp = "error/404";
 					break;
 				}// end of switch
 			
 			}catch (Exception e) {
 				// TODO: handle exception
 				//e.printStackTrace();
-				System.out.println();
-				System.out.println("$%@$%@%$%@$%$@%@$%$@$%@%$$@%$%@$%@$%@$%@$%@$%$@$@%");
-				System.out.println("$%@$%@%$%@$%$@%       오류 출력        @$%@$%@$%$@$@%");
-				System.out.println("$%@$%@%$%@$%$@%@$%$@$%@%$$@%$%@$%@$%@$%@$%@$%$@$@%");
-				System.out.println("$%@$%@%$%@$%  타입 : "+ e.getClass().getSimpleName() + "@$%@$%@$%$@$@%");
-				System.out.println("$%@$%@%$%@$%  내용 : "+ e.getMessage() + "@$%@$%@$%$@$@%");
-				System.out.println("$%@$%@%$%@$%  조치 : "+ "데이터를 확인후 다시 실행하시오" + "@$%@$%@$%$@$@%");
-				System.out.println("$%@$%@%$%@$%   : "+ "계속 오류가 나면 전산담당자에게 연락하시오" + "@$%@$%@$%$@$@%");
-				System.out.println("$%@$%@%$%@$%$@%@$%$@$%@%$$@%$%@$%@$%@$%@$%@$%$@$@%");
+				
+				// 예외객체를 jsp에서 사용하기 위해 request에 담는다.
+				request.setAttribute("e", e);
+				
+				jsp = "error/500";
 				
 				
 			} // end of try ~ catch

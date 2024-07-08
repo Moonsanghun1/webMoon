@@ -36,17 +36,18 @@ $(function() {
 	// 전체 ImageDiv의 높이를 조정한다.
 		$(".imageDiv").height(height);
 	// 이미지가 계산된 높이보다 크면 줄인다.
-		if($(image).height() > height)
-			let image_width =  $(image).width();
-			let image_height =  $(image).height();
-			let width = height / image_width * image_height; 
+		if($(image).height() > height){
+			let image_width = $(image).width();
+		let image_height = $(image).height();
+			let width = height  / image_height * image_width;
 			
+			console.log("chaged image width = " + width);
 			
-			
-			// 이미지 넓이 줄이기
-			$(image).imgHeight(width);
-			//이미지 높이 줄이기
+			// 이미지 높이 줄이기
 			$(image).height(height);
+			// 이미지 너비 줄이기
+			$(image).width(width);
+		}	
 	});
 	
 	// 이벤트 처리

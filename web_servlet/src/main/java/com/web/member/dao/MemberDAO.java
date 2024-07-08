@@ -153,6 +153,42 @@ public class MemberDAO extends DAO {
 		return result;
 	} // end of increase()
 
+	// 3-1 . 아이디 중복 확인 
+	// MemberController - (Execute) - MemberCheckIdService - [MemberDAO.checkId()]
+	public String checkId(String id) throws Exception {
+		// 결과(id)룰 저장할 수 있는 변수 선언
+		String result = null;
+
+		try {
+			// 1. 드라이버 확인
+			// 2. DB 연결
+			con = DB.getConnection();
+
+			// 3. sql 아래에 미리 써놓음
+			// 4. 실행 객체 & 데이터 세팅
+
+			pstmt = con.prepareStatement(CHECKID);
+			pstmt.setString(1, id);
+			// 5. 실행
+			rs = pstmt.executeQuery();
+			// 6. 표시 및 담기
+			if (rs != null && rs.next()) {
+				
+				result = rs.getString("id");
+
+			} // end of if
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			DB.close(con, pstmt, rs);
+		} // end of try ~ catch ~ finally
+		// 결과 데이터(id)를 리턴 해준다.
+		return result;
+
+	}// end of view()
+	
 	// 4 . 회원정보 수정 처리
 	// MemberController - (Execute) - MemberListService - [MemberDAO.list()]
 	public int update(MemberVO vo) throws Exception {
@@ -264,7 +300,7 @@ public class MemberDAO extends DAO {
 			pstmt = con.prepareStatement(LOGIN);
 			pstmt.setString(1, loginvo.getId());
 			pstmt.setString(2, loginvo.getPw());
-			
+			System.out.println(LOGIN);
 			// 5. 실행
 			rs = pstmt.executeQuery();
 			// 6. 표시 및 담기
@@ -350,6 +386,8 @@ public class MemberDAO extends DAO {
 
 	final String WRITE = " insert into member( id, pw, name, gender, birth, tel, email, photo) "
 			+ " values(?,?,?,?,?,?,?,?)";
+	
+	final String CHECKID = " select id from member where id = ? ";
 
 	final String UPDATE = "update member set " + " name = ?, gender = ? , birth = ?, tel = ? , email = ? , photo = ? "
 			+ " where id = ? and pw = ?";
