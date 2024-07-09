@@ -85,8 +85,12 @@ article {
 				<li class="nav-item ${(empty module || module == '/notice')?'active':'' }"><a class="nav-link" href="/notice/list.do">공지사항</a></li>
 				<li class="nav-item ${(empty module || module == '/shop')?'active':'' }"><a class="nav-link" href="/shop/list.do">쇼핑몰</a></li>
 				<li class="nav-item ${(empty module || module == '/image')?'active':'' }"><a class="nav-link" href="/image/list.do">Galley</a></li>
-				<li class="nav-item ${(empty module || module == '/board')?'active':'' }"><a class="nav-link" href="/board/list.do">일반 게시판</a>
-				</li>
+				<li class="nav-item ${(empty module || module == '/board')?'active':'' }"><a class="nav-link" href="/board/list.do">일반 게시판</a></li>
+				
+				<c:if test="${!empty login && login.gradeNo == 9 }">
+				<!-- 관리자 메뉴 -->
+				<li class="nav-item ${(empty module || module == '/board')?'active':'' }"><a class="nav-link" href="/member/list.do">회원관리</a></li>
+				</c:if>
 			</ul>
 			<c:if test="${empty login }">
 			<!-- 로그인을 안했을 때  -->
@@ -109,6 +113,14 @@ article {
 			<c:if test="${!empty login }">
 			<!-- 로그인을 했을 때  -->
 				<ul class="navbar-nav float-right">
+					<li class="nav-item">
+						<c:if test="${empty login.photo }">
+							<i class="fa fa-user-circle-o"></i>
+						</c:if>
+						<c:if test="${!empty login.photo }">
+							<img alt="사진" src="${login.photo }" style="width: 35px; height: 35px;" class = "rounded-circle">
+						</c:if>
+					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/member/logout.do">
 						<i class ="fa fa-sign-out"></i>

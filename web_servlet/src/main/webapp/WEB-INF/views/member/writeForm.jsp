@@ -115,7 +115,7 @@
 <body>
 <div class= "container" >
 <h2>회원가입 폼</h2>
-<form action="write.do" method="get" enctype="multipart/form-data">
+<form action="write.do" method="post" enctype="multipart/form-data">
 <input name = "perPageNum" value = "${param.perPageNum}" type = "hidden">
 	 
 	 <div class="form-group">

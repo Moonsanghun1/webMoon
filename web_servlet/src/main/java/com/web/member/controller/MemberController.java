@@ -1,5 +1,6 @@
 package com.web.member.controller;
 
+import java.io.File;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -40,12 +41,16 @@ public class MemberController {
 			if(login != null) id = login.getId();
 			// 파일 업로드 설정 -----------
 			// 파일의 상대적인 저장위치
-						String savePath = "/upload/image";
+			String savePath = "/upload/image";
 						// 파일 시스템에서는 절대 저장위치가 필요하다. - 파일 업로드 시 필요.
-						String realSavePath = request.getServletContext().getRealPath(savePath); 
+			String realSavePath = request.getServletContext().getRealPath(savePath); 
 						
-						// 업로드 파일 용량 제한
-						int sizeLimit = 100 * 1024 * 1024;
+			// 업로드 파일 용량 제한
+			int sizeLimit = 100 * 1024 * 1024;
+			
+			// realSavdPath 폴더가 존재하지 않으면 만들자.
+			File realSavePathFile = new File(realSavePath);
+			if(!realSavePathFile.exists()) realSavePathFile.mkdirs();
 			
 			// uri
 			String uri = request.getRequestURI();
@@ -101,21 +106,25 @@ public class MemberController {
 					jsp = "redirect:/board/list.do";
 					break;
 				case "/member/list.do":
-					//[BoardController] - (Excute) - BoardListService - BoardDAO.list()
-					System.out.println("1. 일반 게시판 리스트");
+					//[MemberController] - (Excute) - MemberListService - MemberDAO.list()
+					System.out.println("1. 회원 리스트");
 					// 페이지 처리를 위한 객체
 					// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
 					PageObject pageObject = PageObject.getInstance(request);
-					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
+					// id setting - 관리자 계정은 제외시키기 위해서=> accepter
+					pageObject.setAccepter(id);
+					// DB에서 데이터 가져오기 - 가져온 데이터는 List<MemberVO>
 					result = Execute.execute(Init.get(uri), pageObject);
-					// PageObject 확인하기ㅏ
-					System.out.println("BoardController.execute().pageObject = " + pageObject);
+					System.out.println("@@@@@@@@@ result = " +  result);
+					
+					// PageObject 확인하기
+					System.out.println("MemberController.execute().pageObject = " + pageObject);
 					// 가져온 데이터 출력하기
 					request.setAttribute("list", result);
 					// PageObject 담기
 					request.setAttribute("pageObject", pageObject);
-					// /WEB-INF/views/ + board/list + .jsp
-					jsp = "board/list";
+					// /WEB-INF/views/ + member/list + .jsp
+					jsp = "member/list";
 					
 					break;
 				case "/member/view.do":
@@ -172,6 +181,9 @@ public class MemberController {
 					vo.setBirth(birth);
 					vo.setTel(tel);
 					vo.setEmail(email);
+					// fileName은 위치 정보 + 파일명
+					// 이미지가 있으면 세팅한다. 없으면 세팅하지 않는다.
+					if(!(image == null || image.equals("")))
 					vo.setPhoto(savePath + "/" + image);
 					
 					// [MemberController] - (Execute) - [MemberWriteService] - [MemberDAO.write(vo)]
@@ -208,7 +220,7 @@ public class MemberController {
 					
 					break;
 				case "/member/updateForm.do":
-					System.out.println("4-1. 일반 게시판 글 수정 폼");
+					System.out.println("4-1. 회원 정보 수정 폼");
 					// 사용자 -> 서버 : 글번호 
 					no = Long.parseLong(request.getParameter("no"));
 					// no 맞는 데이터 DB에서 가져온다. BoardViewService
@@ -222,7 +234,7 @@ public class MemberController {
 					
 				case "/member/update.do":
 					
-					System.out.println("4-2. 일반 게시판 글 수정 처리");
+					System.out.println("4-2. 회원 정보 수정 처리");
 				
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
 					no = Long.parseLong(request.getParameter("no"));
@@ -247,6 +259,50 @@ public class MemberController {
 					jsp = "redirect:view.do?no=" + no + "&inc=0" + "&" + pageObject.getPageQuery();
 					session.setAttribute("msg", "글 수정이 성곡적으로 되었습니다.");
 					break;
+					
+				case "/member/changeGrade.do":
+					
+					System.out.println("4-3. 회원등급 변경 처리");
+					
+					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					int gradeNo = Integer.parseInt(request.getParameter("gradeNo"));
+					id = request.getParameter("id");
+					
+					// 변수 - vo 저장하고 Service 
+					vo = new MemberVO();
+					vo.setGradeNo(gradeNo);
+					vo.setId(id);
+					
+					// DB에 데이터 수정하기 - BoardUpdateService
+					Execute.execute(Init.get(uri), vo);
+					//페이지 정보 받기 & uri에 붙이기
+					pageObject = PageObject.getInstance(request);					
+					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
+					jsp = "redirect:list.do?"+ pageObject.getPageQuery();
+					session.setAttribute("msg", "회원 ["+ id +"]의 등급이 "+ ((gradeNo == 1)? "일반회원으로" : "관리자로")+"변경되었습니다.");
+					break;
+					
+					case "/member/changeStatus.do":
+					
+					System.out.println("4-4. 회원상태 변경 처리");
+					
+					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					String status = request.getParameter("status");
+					id = request.getParameter("id");
+					
+					// 변수 - vo 저장하고 Service 
+					vo = new MemberVO();
+					vo.setStatus(status);
+					vo.setId(id);
+					
+					// DB에 데이터 수정하기 - BoardUpdateService
+					Execute.execute(Init.get(uri), vo);
+					//페이지 정보 받기 & uri에 붙이기
+					pageObject = PageObject.getInstance(request);					
+					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
+					jsp = "redirect:list.do?"+ pageObject.getPageQuery();
+					session.setAttribute("msg", "회원 ["+ id +"]의 상태가 "+ status +"으로 변경되었습니다.");
+					break;		
 					
 				case "/member/delete.do":
 					System.out.println("5. 일반 게시판 글 삭제");

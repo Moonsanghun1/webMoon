@@ -8,6 +8,7 @@ import com.web.member.vo.MemberVO;
 import com.web.main.dao.DAO;
 import com.web.util.db.DB;
 import com.web.util.io.In;
+import com.webjjang.util.page.PageObject;
 
 public class MemberDAO extends DAO {
 
@@ -16,7 +17,7 @@ public class MemberDAO extends DAO {
 
 	// 1. 회원 리스트
 	// MemberController - (Execute) - MemberListService - [MemberDAO.list()]
-	public List<MemberVO> list() throws Exception {
+	public List<MemberVO> list(PageObject pageObject) throws Exception {
 
 		List<MemberVO> list = null;
 
@@ -27,6 +28,9 @@ public class MemberDAO extends DAO {
 			// 3. sql - 아래 LIST
 			// 4. 실행 객체 & 데이터 세팅
 			pstmt = con.prepareStatement(LIST);
+			pstmt.setString(1, pageObject.getAccepter()); // id = accepter
+			pstmt.setLong(2, pageObject.getStartRow()); 
+			pstmt.setLong(3, pageObject.getEndRow()); 
 			// 5. 실행
 			rs = pstmt.executeQuery();
 			// 6. 표시 또는 담기
@@ -35,17 +39,19 @@ public class MemberDAO extends DAO {
 					// rs - > vo -> list
 					// list가 null이면 생성해서 저장할 수 있게 해줘야 한다.
 					if (list == null)
-						list = new ArrayList<MemberVO>();
+						list = new ArrayList<>();
 					// rs -> vo
 					MemberVO vo = new MemberVO();
 					vo.setId(rs.getString("id"));
 					vo.setName(rs.getString("name"));
 					vo.setBirth(rs.getString("birth"));
+					vo.setGender(rs.getString("gender"));
 					vo.setTel(rs.getString("tel"));
 					vo.setGradeNo(rs.getInt("gradeNo"));
 					vo.setGradeName(rs.getString("gradeName"));
 					vo.setStatus(rs.getString("Status"));
-
+					vo.setPhoto(rs.getString("photo"));
+					
 					// vo -> list
 					list.add(vo);
 				}
@@ -189,7 +195,7 @@ public class MemberDAO extends DAO {
 
 	}// end of view()
 	
-	// 4 . 회원정보 수정 처리
+	// 4-1 . 회원정보 수정 처리
 	// MemberController - (Execute) - MemberListService - [MemberDAO.list()]
 	public int update(MemberVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
@@ -238,6 +244,94 @@ public class MemberDAO extends DAO {
 		// 결과 데이터를 리턴해준다.
 		return result;
 	} // end of increase()
+	// 4-2. 회원 등급 수정 처리
+	// MemberController - (Execute) - MemberChangeGradeService - [MemberDAO.changeGrade()]
+	public int changeGrade(MemberVO vo) throws Exception {
+		// 결과를 저장할 수 있는 변수 선언.
+		int result = 0;
+		
+		try {
+			// 1. 드라이버 확인 - DB
+			// 2. 연결
+			con = DB.getConnection();
+			// 3. sql - 아래 LIST
+			// 4. 실행 객체 & 데이터 세팅
+			pstmt = con.prepareStatement(CHANGEGRADE);
+			pstmt.setInt(1, vo.getGradeNo());
+			pstmt.setString(2, vo.getId());
+			
+			
+			
+			
+			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
+			result = pstmt.executeUpdate();
+			// 6. 표시 또는 담기
+			if (result == 0) { // 글번호가 존재하지 않는다. -> 예외로 처리한다.
+				throw new Exception("예외 발생 : 아이디나 비밀번호가 맞지 않습니다. 정보를 확인해 주세요");
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			// 특별한 예외는 그냥 전달한다.
+			if (e.getMessage().indexOf("예외 발생") >= 0)
+				throw e;
+			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
+			else
+				throw new Exception("예외 발생 : 회원정보 수정 DB 처리 중 예외가 발생했습니다.");
+			
+		} finally {
+			// 7. 닫기
+			DB.close(con, pstmt, rs);
+		}
+		
+		// 결과 데이터를 리턴해준다.
+		return result;
+	} // end of changeGrade()
+	// 4-3. 회원 상태 수정 처리
+	// MemberController - (Execute) - MemberChangeStatusService - [MemberDAO.changeStatus()]
+	public int changeStatus(MemberVO vo) throws Exception {
+		// 결과를 저장할 수 있는 변수 선언.
+		int result = 0;
+		
+		try {
+			// 1. 드라이버 확인 - DB
+			// 2. 연결
+			con = DB.getConnection();
+			// 3. sql - 아래 LIST
+			// 4. 실행 객체 & 데이터 세팅
+			pstmt = con.prepareStatement(CHANGESTATUS);
+			pstmt.setString(1, vo.getStatus());
+			pstmt.setString(2, vo.getId());
+			
+			
+			
+			
+			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
+			result = pstmt.executeUpdate();
+			// 6. 표시 또는 담기
+			if (result == 0) { // 글번호가 존재하지 않는다. -> 예외로 처리한다.
+				throw new Exception("예외 발생 : 아이디나 비밀번호가 맞지 않습니다. 정보를 확인해 주세요");
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			// 특별한 예외는 그냥 전달한다.
+			if (e.getMessage().indexOf("예외 발생") >= 0)
+				throw e;
+			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
+			else
+				throw new Exception("예외 발생 : 회원정보 수정 DB 처리 중 예외가 발생했습니다.");
+			
+		} finally {
+			// 7. 닫기
+			DB.close(con, pstmt, rs);
+		}
+		
+		// 결과 데이터를 리턴해준다.
+		return result;
+	} // end of changeGrade()
 
 	// 5 . 회원탈퇴 처리 : 상태 - 탈퇴로 변경
 	// MemberController - (Execute) - MemberDeleteService - [MemberDAO.list()]
@@ -311,7 +405,7 @@ public class MemberDAO extends DAO {
 				vo.setName(rs.getString("name"));
 				vo.setGradeNo(rs.getInt("gradeNO"));
 				vo.setGradeName(rs.getString("gradeName"));
-				vo.setPhoto(rs.getString("gradeName"));
+				vo.setPhoto(rs.getString("photo"));
 				vo.setNewMsgCnt(rs.getLong("NewMsgCnt"));
 
 
@@ -379,9 +473,19 @@ public class MemberDAO extends DAO {
 	} // end of increase()
 
 	// 실행항 쿼리를 정의해 놓은 변수 선언.
-	final String LIST = "select m.id, m.name, to_char(m.birth, 'yyyy-mm-dd') birth, m.tel , g.gradeName, g.gradeNo, m.Status "
-			+ " from member m , grade g " + " where " + " g.gradeNo = m.gradeNo order by id asc";
-	final String VIEW = "select m.id, m.name, m.gender, to_char(m.birth, 'yyyy-mm-dd') birth, m.email, m.tel,m.photo, m.email, m.regDate, m.conDate , m.gradeNo, g.gradeName "
+	final String LIST = ""
+			+ " select id, name, birth, gender, tel , gradeNo, gradeName, status, photo "
+			+ " from ( "
+				+ " select rownum rnum, id, name, birth, gender, tel , gradeNo, gradeName, status, photo "
+				+ " from ( "
+					+ "select m.id, m.name, "
+					+ "to_char(m.birth, 'yyyy-mm-dd') birth, m.gender, m.tel , g.gradeName, g.gradeNo, m.Status, m.photo "
+					+ " from member m , grade g " + " where 1 = 1 and (id != ?) and " + " (g.gradeNo = m.gradeNo) order by id asc"
+				+ " ) "
+			+ " ) "
+			+ " where rnum between ? and ? "
+			;
+	final String VIEW = "select m.id, m.name, m.gender, to_char(m.birth, 'yyyy-mm-dd') birth, m.email, m.tel, m.photo, m.email, m.regDate, m.conDate , m.gradeNo, g.gradeName "
 			+ " from member m , grade g " + " where id = ? and (g.gradeNo = m.gradeNo) ";
 
 	final String WRITE = " insert into member( id, pw, name, gender, birth, tel, email, photo) "
@@ -391,6 +495,11 @@ public class MemberDAO extends DAO {
 
 	final String UPDATE = "update member set " + " name = ?, gender = ? , birth = ?, tel = ? , email = ? , photo = ? "
 			+ " where id = ? and pw = ?";
+	
+	final String CHANGEGRADE = "update member set " + " gradeNo = ? "
+			+ " where id = ? ";
+	final String CHANGESTATUS = "update member set " + " Status = ? "
+			+ " where id = ? ";
 
 	final String DELETE = "update member set status = '탈퇴' " + " where id = ? and pw = ?";
 
