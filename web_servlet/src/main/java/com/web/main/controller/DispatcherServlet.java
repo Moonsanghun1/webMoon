@@ -30,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
 	private MemberController memberController = new MemberController();
 	private ImageController imageController = new ImageController();
 	private AjaxController ajaxController = new AjaxController();
-	
+	private MainController mainController = new MainController();
 	/**
 	 * @see Servlet#init(ServletConfig)
 	 */
@@ -61,9 +61,16 @@ public class DispatcherServlet extends HttpServlet {
 		String uri = request.getRequestURI();
 		System.out.println("uri =" +uri);
 		
+		// main 처리 - localhost -> localhost/main.do -> /main/main.do
+		if(uri.equals("/") || uri.equals("/main.do") ) {
+			response.sendRedirect("/main/main.do");
+			return;
+		}
+		
 		// uri = /module/기능 -> /board/list.do
 		int pos = uri.indexOf("/", 1);
 		System.out.println("pos = " + pos);
+		
 		
 		if (pos == -1) {
 			request.setAttribute("uri", request.getRequestURI());
@@ -110,6 +117,13 @@ public class DispatcherServlet extends HttpServlet {
 			System.out.println("AJAX 게시판");
 			// 컨트롤러를 생성해야한다.
 			jsp = ajaxController.execute(request);	
+			System.out.println("jsp(Dispatcher) = " + jsp);
+			break;
+		}
+		case "/main" : {
+			System.out.println("Main");
+			// 컨트롤러를 생성해야한다.
+			jsp = mainController.execute(request);	
 			System.out.println("jsp(Dispatcher) = " + jsp);
 			break;
 		}
