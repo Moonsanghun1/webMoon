@@ -69,7 +69,7 @@ public class Main {
 			case "3" : 
 				System.out.println("3. 일반 게시판");
 				// 생성하고 호출한다. - 1번만 실행한다. : 변수 사용하지 않아도 된다.new하고 바로 실행
-				new BoardController().execute();
+			
 				break;
 			case "4" : 
 				System.out.println("4. 구매 관리 ");

@@ -9,13 +9,11 @@ import javax.servlet.http.HttpSession;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
-import com.web.board.vo.BoardVO;
 import com.web.image.vo.ImageVO;
 import com.web.main.controller.Init;
 import com.web.member.vo.LoginVO;
 import com.web.util.exe.Execute;
 import com.webjjang.util.page.PageObject;
-import com.webjjang.util.page.ReplyPageObject;
 // Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class ImageController {
 

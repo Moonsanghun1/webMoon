@@ -27,7 +27,7 @@
 	<tr>
 		<th>제목</th>
 		<td><input id = "title" name = "title" required class = "form-control"
-		maxlength="100" pattern="^[^ .].{2,99}"
+		maxlength="100" pattern="^[^ .].{2,99}" 
 		title = "맨앞에 공백문자 불가 3~100자 입력" value = "${vo.title}"
 		placeholder=""></td>
 	</tr>

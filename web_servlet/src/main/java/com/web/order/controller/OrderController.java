@@ -1,15 +1,11 @@
 package com.web.order.controller;
 
-import java.util.List;
-
-import com.web.board.service.BoardDeleteService;
 import com.web.board.service.BoardListService;
 import com.web.board.service.BoardUpdateService;
 import com.web.board.service.BoardViewService;
 import com.web.board.service.BoardWriteService;
 import com.web.board.vo.BoardVO;
 import com.web.util.exe.Execute;
-import com.web.util.io.BoardPrint;
 import com.web.util.io.In;
 // Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class OrderController {
@@ -43,7 +39,7 @@ public class OrderController {
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
 					result = Execute.execute(new BoardListService(), null);
 					// 가져온 데이터 출력하기
-					new BoardPrint().print((List<BoardVO>) result);
+					
 					break;
 				case "2":
 					System.out.println("2. 주문상세 보기");
@@ -54,7 +50,7 @@ public class OrderController {
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
 					result = Execute.execute(new BoardViewService(), new Long[]{no , 1L});
 					// 게시판 글보기 출력 : BoardPrint 
-					new BoardPrint().print((BoardVO)result);
+				
 					
 					break;
 				case "3":
@@ -70,7 +66,7 @@ public class OrderController {
 					// 가져온 데이터 수정하기 - 데이터 수집
 					whileLoop:
 					while(true) {
-						new BoardPrint().print(updateVO);
+						
 						System.out.println();
 						System.out.println("------------------------------------------------------------");
 						System.out.println("  1. 제목 /  2. 내용  /  3. 작성자  /  9 . 수정 취소  /  0. 수정완료  ");

@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>일반게시판 리스트</title>
+<title>공지사항 리스트</title>
 
 <style type="text/css">
 .dataRow:hover{
@@ -40,7 +40,7 @@ $(function() {
 </head>
 <body>
 <div class = "container">
-	<h1>일반 게시판 리스트</h1>
+	<h1>공지사항 리스트</h1>
 	<form action="list.do" id = "searchForm">
 		<input name = "page" value="1" type="hidden">
 			<div class="row">
@@ -51,11 +51,8 @@ $(function() {
 							<select name="key" id="key" class="form-control">
 								<option value="t">제목</option>
 								<option value="c">내용</option>
-								<option value="w">작성자</option>
 								<option value="tc">제목/내용</option>
-								<option value="tw">제목/작성자</option>
-								<option value="cw">내용/작성자</option>
-								<option value="tcw">모두</option>
+								<option value="tc">모두</option>
 							</select>
 
 						</div>
@@ -88,22 +85,23 @@ $(function() {
 				<!-- col-md-4의 끝 : 한 페이지당 표시 데이터 개수 -->
 			</div>
 		</form>
+
 <table class = "table">
 	<tr>
 		<th>번호</th>
 		<th>제목</th>
-		<th>작성자</th>
-		<th>작성일</th>
-		<th>조회수</th>
+		<th>수정일</th>
+		<th>시작일</th>
+		<th>종료일</th>
 	</tr>
 	
 	<c:forEach items="${list }" var="vo">
 	<tr class = "dataRow">
 		<td class = "no">${vo.no}</td>
 		<td>${vo.title}</td>
-		<td>${vo.writer}</td>
-		<td>${vo.writeDate}</td>
-		<td>${vo.hit}</td>
+		<td>${vo.updateDate}</td>
+		<td>${vo.startDate}</td>
+		<td>${vo.endDate}</td>
 	</tr>
 	</c:forEach>
 	
@@ -116,7 +114,7 @@ $(function() {
 	</tr>
 </table>
 	<div> 
-		<pageNav:pageNav listURI="list.do" pageObject="${pageObject }"></pageNav:pageNav>
+	<pageNav:pageNav listURI="list.do" pageObject="${pageObject }"></pageNav:pageNav>
 	</div>
 </div>
 </body>

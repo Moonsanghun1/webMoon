@@ -1,25 +1,10 @@
 package com.web.boardreply.controller;
 
-import java.net.URLEncoder;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.apache.taglibs.standard.extra.spath.RelativePath;
-
-import com.web.board.service.BoardDeleteService;
-import com.web.board.service.BoardListService;
-import com.web.board.service.BoardUpdateService;
-import com.web.board.service.BoardViewService;
-import com.web.board.service.BoardWriteService;
-import com.web.board.vo.BoardVO;
 import com.web.boardreply.vo.BoardReplyVO;
 import com.web.main.controller.Init;
 import com.web.util.exe.Execute;
-import com.web.util.io.BoardPrint;
-import com.web.util.io.In;
-import com.webjjang.util.page.PageObject;
 import com.webjjang.util.page.ReplyPageObject;
 // Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class BoardReplyController {

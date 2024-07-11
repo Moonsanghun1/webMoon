@@ -13,6 +13,7 @@ import com.web.board.controller.BoardController;
 import com.web.boardreply.controller.BoardReplyController;
 import com.web.image.controller.ImageController;
 import com.web.member.controller.MemberController;
+import com.web.notice.controller.NoticeController;
 
 /**
  * Servlet implementation class DispatcherServlet
@@ -31,6 +32,8 @@ public class DispatcherServlet extends HttpServlet {
 	private ImageController imageController = new ImageController();
 	private AjaxController ajaxController = new AjaxController();
 	private MainController mainController = new MainController();
+	private NoticeController noticeController = new NoticeController();
+	
 	/**
 	 * @see Servlet#init(ServletConfig)
 	 */
@@ -124,6 +127,13 @@ public class DispatcherServlet extends HttpServlet {
 			System.out.println("Main");
 			// 컨트롤러를 생성해야한다.
 			jsp = mainController.execute(request);	
+			System.out.println("jsp(Dispatcher) = " + jsp);
+			break;
+		}
+		case "/notice" : {
+			System.out.println("공지사항 게시판");
+			// 컨트롤러를 생성해야한다.
+			jsp = noticeController.execute(request);	
 			System.out.println("jsp(Dispatcher) = " + jsp);
 			break;
 		}
