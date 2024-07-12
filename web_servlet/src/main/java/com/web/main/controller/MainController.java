@@ -2,11 +2,9 @@ package com.web.main.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import com.web.board.vo.BoardVO;
-import com.web.main.controller.Init;
+import com.web.member.vo.LoginVO;
 import com.web.util.exe.Execute;
 import com.webjjang.util.page.PageObject;
-import com.webjjang.util.page.ReplyPageObject;
 // main Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class MainController {
 
@@ -20,31 +18,49 @@ public class MainController {
 			
 			Object result = null;
 			// 메뉴 처리
-			Long no = 0L;
+			
 			
 			String jsp = null;
 			
+			int gradeNo = 0;
+			LoginVO login = (LoginVO) session.getAttribute("login");
+			if(login != null) {
+				gradeNo = login.getGradeNo();
+			}
 			try { //정상처리
 				
 				// 메뉴 처리 : CRUD DB처리 - controller - service - DAO
 				switch (uri) {
 				case "/main/main.do":
-					//[MainController] - (Excute) - BoardListService - BoardDAO.list()
 					System.out.println("1. 메인 처리");
 					// 페이지 처리를 위한 객체
 					PageObject pageObject =  new PageObject();
 					
+					if(gradeNo == 9) {
+						pageObject.setPeriod("all");
+					}else {
+						pageObject.setPeriod("pre");
+					}
 					
-					// 메인에 표시할 데이터 - 일반 게시판 / 이미지 
+					// 메인에 표시할 데이터 - 일반 게시판 / 이미지 /공지사항
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
 					// 일반 게시판
 					pageObject.setPerPageNum(7);
+					//[MainController] - (Excute) - BoardListService - BoardDAO.list()
 					result = Execute.execute(Init.get("/board/list.do"), pageObject);
 					request.setAttribute("boardList", result);
 					// 이미지 게시판
 					pageObject.setPerPageNum(6);
+					//[MainController] - (Excute) - ImageListService - ImageDAO.list()
 					result = Execute.execute(Init.get("/image/list.do"), pageObject);
 					request.setAttribute("imageList", result);
+					
+					
+					// 공지사항 게시판
+					pageObject.setPerPageNum(7);
+					//[MainController] - (Excute) - NoticeListService - NoticeDAO.list()
+					result = Execute.execute(Init.get("/notice/list.do"), pageObject);
+					request.setAttribute("noticeList", result);
 					
 					
 					// /WEB-INF/views/ + board/list + .jsp

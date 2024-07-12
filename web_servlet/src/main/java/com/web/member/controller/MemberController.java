@@ -77,7 +77,7 @@ public class MemberController {
 					// 아니면 jsp로 forward를 시킨다.
 					// 원래는 main이나 진행하려고 했던 uri로 이동시킨다.
 					// 그러나 완성이 안되어 있어서 완성되어진 게시판 리스트로 보낸다.
-					jsp = "redirect:/board/list.do";
+					jsp = "redirect:/";
 					// 로그인 완료 메세지 처리
 					session.setAttribute("msg", "글 등록이 성곡적으로 되었습니다.");
 					
@@ -89,7 +89,7 @@ public class MemberController {
 					session.removeAttribute("login");
 					
 					session.setAttribute("msg", "로그아웃 되었습니다.");
-					jsp = "redirect:/board/list.do";
+					jsp = "redirect:/";
 					break;
 				case "/member/list.do":
 					//[MemberController] - (Excute) - MemberListService - MemberDAO.list()
@@ -224,9 +224,6 @@ public class MemberController {
 				
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
 					no = Long.parseLong(request.getParameter("no"));
-					String title = request.getParameter("title");
-					String content = request.getParameter("content");
-					String writer = request.getParameter("writer");
 					pw = request.getParameter("pw");
 					
 					// 변수 - vo 저장하고 Service 

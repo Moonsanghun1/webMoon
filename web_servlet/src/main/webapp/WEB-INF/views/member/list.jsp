@@ -201,7 +201,7 @@ $(function() {
 	<tr>
 		<td colspan="5">
 			
-			<a href = "writeForm.do?perPageNum=${pageObject.perPageNum }"><button>등록</button></a>
+			<a href = "writeForm.do?perPageNum=${pageObject.perPageNum }" class = "btn btn-primary">등록</a>
 		</td>
 	</tr>
 </table>

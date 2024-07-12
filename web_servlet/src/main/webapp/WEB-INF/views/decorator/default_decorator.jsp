@@ -31,6 +31,9 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
 	rel="stylesheet">
 <style type="text/css">
+.container{
+	padding: 30px 5px;
+}
 pre {
 	background: white;
 	border: 0px;
@@ -64,12 +67,15 @@ footer {
 
 article {
 	min-height: 795px;
+	margin-top: 80px; 
 }
 
 #welcome {
 	color: grey;
 	margin: 0 auto;
 }
+
+
 </style>
 
 <!-- 개발자가 작성한 소스의 head 태그를 여기에 넣게 된다. title은 제외 -->
@@ -77,9 +83,13 @@ article {
 </head>
 <body>
 	<header>
-		<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+		<nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top">
+			<a class="navbar-brand ${(empty module || module == '/main')?'active':'' }" href="/">웹</a>
+  			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+   				 <span class="navbar-toggler-icon"></span>
+  			</button>
+  			<div class="collapse navbar-collapse" id="collapsibleNavbar">
 			<ul class="navbar-nav mr-auto">				
-				<li class="nav-item ${(empty module || module == '/main')?'active':'' }"><a class="nav-link" href="/">웹</a></li>				
 				<!-- 주메뉴 부분 -->
 				<!-- 오른쪽 부분의 내용을 오른쪽 끝에 두기 위해서 mr-* 오른쪽 마진 사용. auto : 데이터 -->
 				<li class="nav-item ${(empty module || module == '/notice')?'active':'' }"><a class="nav-link" href="/notice/list.do">공지사항</a></li>
@@ -92,9 +102,10 @@ article {
 				<li class="nav-item ${(empty module || module == '/board')?'active':'' }"><a class="nav-link" href="/member/list.do">회원관리</a></li>
 				</c:if>
 			</ul>
+			
 			<c:if test="${empty login }">
 			<!-- 로그인을 안했을 때  -->
-				<ul class="navbar-nav float-right">
+				<ul class="navbar-nav">
 					<li class="nav-item">
 						<a class="nav-link" href="/member/loginForm.do">
 						<i class ="fa fa-sign-in"></i>
@@ -112,7 +123,7 @@ article {
 			</c:if>
 			<c:if test="${!empty login }">
 			<!-- 로그인을 했을 때  -->
-				<ul class="navbar-nav float-right">
+				<ul class="navbar-nav">
 					<li class="nav-item">
 						<c:if test="${empty login.photo }">
 							<i class="fa fa-user-circle-o"></i>
@@ -136,6 +147,7 @@ article {
 					</li>
 				</ul>
 			</c:if>
+			</div>
 		</nav>
 
 	</header>

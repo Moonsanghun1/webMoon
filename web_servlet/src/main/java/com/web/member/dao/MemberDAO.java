@@ -7,7 +7,6 @@ import com.web.member.vo.LoginVO;
 import com.web.member.vo.MemberVO;
 import com.web.main.dao.DAO;
 import com.web.util.db.DB;
-import com.web.util.io.In;
 import com.webjjang.util.page.PageObject;
 
 public class MemberDAO extends DAO {

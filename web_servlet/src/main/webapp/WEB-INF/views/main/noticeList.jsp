@@ -5,26 +5,22 @@
     
 
 
-
-
-
-	<h3>일반 게시판 리스트</h3>
+<h3>공지사항 게시판 리스트</h3>
 
 <table class = "table">
 	<tr>
 		<th>번호</th>
 		<th>제목</th>
-		<th>작성일</th>
+
 	</tr>
 	
-	<c:forEach items="${boardList }" var="vo">
-	<tr class = "dataRow board boardLink" >
+	<c:forEach items="${noticeList }" var="vo">
+	<tr class = "dataRow notice noticeLink">
 		<td class = "no">${vo.no}</td>
-		<td>${vo.writer}</td>
-		<td>${vo.writeDate}</td>
+		<td>${vo.title}</td>
+
 	</tr>
 	</c:forEach>
-	
 </table>
 	
 	

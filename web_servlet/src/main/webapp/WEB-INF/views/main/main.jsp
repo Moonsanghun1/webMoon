@@ -13,8 +13,13 @@
 <div class= "container">
 	<h2>웹 닷컴</h2>
 	<div class="row">
-  		<div class="col-md-12 module">
+		<!-- 한줄을 유지 되는 것 정의 - col-해상도-6 : md-중간, lg-큰, xl-제일큰
+		- 해상도 보다 작아지면 2줄로 표시된다.  -->
+  		<div class="col-lg-6 module">
 			<jsp:include page="boardList.jsp"/>
+		</div>
+  		<div class="col-lg-6 module">
+			<jsp:include page="noticeList.jsp"/>
 		</div>
   	</div>	
   	<div class="row">
@@ -22,8 +27,6 @@
 		<jsp:include page="imageList.jsp"/>
 		</div>
 	</div>
-  	
- 
 </div>
 </body>
 </html>

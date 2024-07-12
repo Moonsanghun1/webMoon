@@ -25,7 +25,7 @@ public class ImageController {
 			String uri = request.getRequestURI();
 			
 			Object result = null;
-			Object perPageNum = null;
+			//Object perPageNum = null;
 			// 메뉴 처리
 			Long no = 0L;
 			

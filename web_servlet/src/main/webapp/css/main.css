@@ -18,7 +18,11 @@
 	background: #e0e0e0;
 	cursor: pointer;
 }
+.noticeLink:hover{
+	background: #e0e0e0;
+	cursor: pointer;
+}
 
 .module{
-	margin: 15px 5px;
+	padding: 15px 5px;
 }

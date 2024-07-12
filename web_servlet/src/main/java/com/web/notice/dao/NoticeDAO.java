@@ -29,7 +29,7 @@ public class NoticeDAO extends DAO {
 			// 2. 연결
 			con = DB.getConnection();
 			// 3. sql - 아래 LIST - 콘솔 확인하고 여기에 쿼리에 해당되는 
-			System.out.println(getListSQL(pageObject));
+			System.out.println("NoticeDAO.list().sql=" + getListSQL(pageObject));
 			// 4. 실행 객체 & 데이터 세팅
 //			pstmt = con.prepareStatement(LIST);
 			pstmt = con.prepareStatement(getListSQL(pageObject));
@@ -289,22 +289,22 @@ public class NoticeDAO extends DAO {
 					+ " to_char(startDate, 'yyyy-mm-dd') startDate, "
 					+ " to_char(endDate, 'yyyy-mm-dd') endDate, "
 					+ " to_char(updateDate, 'yyyy-mm-dd') updateDate "
-					+ " from notice ";
+					+ " from notice "
+					+ " where (1 = 1)";
 	
 							
 	
 	// 검색이 있는 경우 TOTALROW + search문 
-	final String TOTALROW = "select count(*) from notice ";
+	final String TOTALROW = "select count(*) from notice where ( 1 = 1) ";
 		
 	// 리스트의 검색만 처리하는 쿼리 - where 
 	private String getListSQL(PageObject pageObject) {
 		String sql = LIST;
-		String word = pageObject.getWord();
-				
-		if(word != null && !word.equals("")) sql += getSearch(pageObject); 
-				sql +=  " order by updatedate desc, no desc " 
-						+ " ) "
-						+ " ) where rnum between ? and ?";
+		sql += getSearch(pageObject); 
+		sql += getPeriod(pageObject); 
+		sql +=  " order by updatedate desc, no desc " 
+				+ " ) "
+				+ " ) where rnum between ? and ?";
 		return sql;
 	}
 		
@@ -315,21 +315,43 @@ public class NoticeDAO extends DAO {
 		String key = pageObject.getKey();
 		String word = pageObject.getWord();
 		if(word != null && !word.equals("")) {
-			sql += " where 1 = 0 ";
+			sql += "and ( 1=0 ";
 			// key 안에 t가 포함 되어있으면 title로 검색을 한다.
 		if(key.indexOf("t" ) >= 0) sql += " or title like ? ";
 		if(key.indexOf("c" ) >= 0) sql += " or content like ? ";
-			
+			sql += " ) ";
 		}
 		return sql;
 	}
 		
+	
+	// LIST의 기간 검색만 처리해서 만들어지는 sql문 작성 메소드
+	private String getPeriod(PageObject pageObject) {
+		
+		String sql = "";
+		String period = pageObject.getPeriod();
+		
+			sql += "and ( 1=1 ";
+			// key 안에 t가 포함 되어있으면 title로 검색을 한다.
+			// 현재 공지
+			if(period.equals("pre" )) sql += " and ( 1 = 1 and trunc(sysdate) between trunc(startDate) and trunc(endDate)) ";
+			// 지난 공지
+			else if(period.equals("old" )) sql += " and ( 1 = 1 and trunc(sysdate) > trunc(endDate)) ";
+			// 예약 공지
+			else if(period.equals("res" )) sql += " and ( 1 = 1 and trunc(sysdate) < trunc(startDate) ) ";
+			else sql += "";
+			sql += " ) ";
+		
+		return sql;
+	}
+	
 		// 검색 쿼리의 ? 데이터를 세팅하는 메소드
 	private int setSearchData(PageObject pageObject, PreparedStatement pstmt, int idx) throws SQLException {
-
+		
 		String key = pageObject.getKey();
 		String word = pageObject.getWord();
 		if (word != null && !word.equals("")) {
+			
 			// key 안에 t가 포함 되어있으면 title로 검색을 한다.
 			if (key.indexOf("t") >= 0) pstmt.setString(++idx, "%" + word + "%");
 			if (key.indexOf("c") >= 0) pstmt.setString(++idx, "%" + word + "%");

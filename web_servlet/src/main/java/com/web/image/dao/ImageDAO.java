@@ -340,7 +340,7 @@ public class ImageDAO extends DAO {
 	// 리스트의 검색만 처리하는 쿼리 - where 
 	private String getListSQL(PageObject pageObject) {
 		String sql = LIST;
-		String word = pageObject.getWord();
+		//String word = pageObject.getWord();
 				// 검색 쿼리 추가 - where를 추가 안한다. : false
 				sql += getSearch(pageObject, false); 
 				sql +=  " and (m.id = i.id ) ";

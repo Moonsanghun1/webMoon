@@ -25,7 +25,7 @@ public class OrderController {
 			// 메뉴 입력
 			String menu = In.getStr("메뉴");
 			
-			Object result = null;
+			
 			// 메뉴 처리
 			Long no = 0L;
 			
@@ -37,7 +37,7 @@ public class OrderController {
 					//[BoardController] - (Excute) - BoardListService - BoardDAO.list()
 					System.out.println("1. 주문 리스트");
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
-					result = Execute.execute(new BoardListService(), null);
+					Execute.execute(new BoardListService(), null);
 					// 가져온 데이터 출력하기
 					
 					break;
@@ -48,7 +48,7 @@ public class OrderController {
 					no = In.getLong("글번호");
 					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(new BoardViewService(), new Long[]{no , 1L});
+					Execute.execute(new BoardViewService(), new Long[]{no , 1L});
 					// 게시판 글보기 출력 : BoardPrint 
 				
 					

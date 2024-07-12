@@ -16,6 +16,10 @@ cursor: pointer;
 </style>
 <script type="text/javascript">
 $(function() {
+<%--	$("#${pageObject.period}").prop('checked', true); --%> // 태그 선택을 아이디로 
+	$("[value = '${pageObject.period}']").prop('checked', true); // 태그 선택 속성으로 
+		
+
 	// 이벤트 처리
 	$(".dataRow").click(function() {
 // 		alert("click");
@@ -35,12 +39,53 @@ $(function() {
 	// 검색 데이터 세팅
 	$("#key").val("${(empty pageObject.key)?'t':pageObject.key}");
 	$("#perPageNum").val("${(empty pageObject.perPageNum)?'10':pageObject.perPageNum}");
+	
+	$(".noticeOption").change(function() {
+		//alert("라디오 버튼");
+		if(this.optionList[0].checked){
+			location = "/notice/list.do?period=pre";
+		}
+		else if(this.optionList[1].checked){
+			location = "/notice/list.do?period=old";
+		}
+		else if(this.optionList[2].checked){
+			location = "/notice/list.do?period=res";
+		}
+		else if(this.optionList[3].checked){
+			location = "/notice/list.do?period=all";
+		};
+	});
 });
 	</script>
 </head>
 <body>
 <div class = "container">
 	<h1>공지사항 리스트</h1>
+	
+	<c:if test="${!empty login && login.gradeNo == 9 }">
+			<form class= "noticeOption">
+			 	<div class="custom-control custom-radio custom-control-inline">
+					<label class="custom-control-label" for="pre">
+					<input type="radio" class="custom-control-input" id="pre" name="optionList" value="pre"> 현재공지
+					</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+					<input type="radio" class="custom-control-input" id="old" name="optionList" value="old"> 
+					<label class="custom-control-label" for="old">이전공지</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+					<input type="radio" class="custom-control-input" id="res" name="optionList" value="res"> 
+					<label class="custom-control-label" for="res">예정공지</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+					<input type="radio" class="custom-control-input" id="all" name="optionList" value="all"> 
+					<label class="custom-control-label" for="all">모든공지</label>
+				</div>
+			</form>
+	</c:if>
+	
+	
+	<!-- 검색란의 시작 -->
 	<form action="list.do" id = "searchForm">
 		<input name = "page" value="1" type="hidden">
 			<div class="row">
@@ -106,15 +151,16 @@ $(function() {
 	</c:forEach>
 	
 	
+	<c:if test="${!empty login && login.gradeNo == 9 }">
 	<tr>
 		<td colspan="5">
-			
-			<a href = "writeForm.do?perPageNum=${pageObject.perPageNum }"><button>등록</button></a>
+			<a href = "writeForm.do?perPageNum=${pageObject.perPageNum }"><button class = "btn btn-primary">등록</button></a>
 		</td>
 	</tr>
-</table>
+	</c:if>
+	</table>
 	<div> 
-	<pageNav:pageNav listURI="list.do" pageObject="${pageObject }"></pageNav:pageNav>
+		<pageNav:pageNav listURI="list.do" pageObject="${pageObject }"></pageNav:pageNav>
 	</div>
 </div>
 </body>

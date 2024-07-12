@@ -1,11 +1,8 @@
 package com.web.member.service;
 
-import com.web.board.dao.BoardDAO;
-import com.web.board.vo.BoardVO;
 import com.web.main.dao.DAO;
 import com.web.main.service.Service;
 import com.web.member.dao.MemberDAO;
-import com.web.member.vo.LoginVO;
 
 public class MemberCheckIdService implements Service {
 	

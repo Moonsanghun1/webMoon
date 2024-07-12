@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.web.main.controller.Init;
+import com.web.member.vo.LoginVO;
 import com.web.notice.vo.NoticeVO;
 import com.web.util.exe.Execute;
 import com.webjjang.util.page.PageObject;
@@ -16,6 +17,11 @@ public class NoticeController {
 			System.out.println("@@@@ uri= " + uri);
 			// 처리 결과를 화면에 표시하기 위해서
 			HttpSession session = request.getSession();
+			int gradeNo = 0;
+			LoginVO login = (LoginVO) session.getAttribute("login");
+			if(login != null) {
+				gradeNo = login.getGradeNo();
+			}
 			
 			Object result = null;
 			// 메뉴 처리
@@ -32,6 +38,19 @@ public class NoticeController {
 					System.out.println("1. 공지사항 리스트");
 					// 페이지 처리를 위한 객체
 					PageObject pageObject = PageObject.getInstance(request);
+					
+					String period = request.getParameter("period");
+					
+					if(gradeNo == 9 ) {
+						if(period == null || period == "") {
+							pageObject.setPeriod("all");
+						}
+						else {
+						pageObject.setPeriod(period);
+						}
+					}else {
+						pageObject.setPeriod("pre");
+					};
 					
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<NoticeVO>
 					result = Execute.execute(Init.get(uri), pageObject);
