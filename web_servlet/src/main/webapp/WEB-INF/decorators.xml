@@ -17,6 +17,7 @@
 		<pattern>/teacher/*</pattern>
 		<pattern>/schedule/*</pattern>
 		<pattern>/image/*</pattern>
+		<pattern>/qna/*</pattern>
 
  	</decorator>
 <!-- 	<decorator name="admin" page="admin_decorator.jsp"> -->

@@ -77,9 +77,19 @@ article {
 
 
 </style>
-
 <!-- 개발자가 작성한 소스의 head 태그를 여기에 넣게 된다. title은 제외 -->
 <decorator:head />
+
+<script type="text/javascript">
+
+$(function() {
+	$(".cancelBtn").click(function() {
+		history.back();
+	});
+});
+
+</script>
+
 </head>
 <body>
 	<header>
@@ -95,7 +105,8 @@ article {
 				<li class="nav-item ${(empty module || module == '/notice')?'active':'' }"><a class="nav-link" href="/notice/list.do">공지사항</a></li>
 				<li class="nav-item ${(empty module || module == '/shop')?'active':'' }"><a class="nav-link" href="/shop/list.do">쇼핑몰</a></li>
 				<li class="nav-item ${(empty module || module == '/image')?'active':'' }"><a class="nav-link" href="/image/list.do">Galley</a></li>
-				<li class="nav-item ${(empty module || module == '/board')?'active':'' }"><a class="nav-link" href="/board/list.do">일반 게시판</a></li>
+				<li class="nav-item ${(empty module || module == '/board')?'active':'' }"><a class="nav-link" href="/board/list.do">일반게시판</a></li>
+				<li class="nav-item ${(empty module || module == '/qna')?'active':'' }"><a class="nav-link" href="/qna/list.do">질문답변</a></li>
 				
 				<c:if test="${!empty login && login.gradeNo == 9 }">
 				<!-- 관리자 메뉴 -->
