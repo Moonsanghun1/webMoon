@@ -76,7 +76,7 @@ public class QnaDAO extends DAO {
 	// QnaController - (Execute) - QnaListService - [QnaDAO.getTotalRow()]
 	public Long getTotalRow(PageObject pageObject) throws Exception {
 
-		Long totalRow = null;
+	Long totalRow = null;
 
 		try {
 			// 1. 드라이버 확인
@@ -109,49 +109,7 @@ public class QnaDAO extends DAO {
 
 	}// end of view()
 
-
-	// 2-1 . 글보기 조회수 1증가 처리
-	// QnaController - (Execute) - QnaListService - [QnaDAO.list()]
-	public int increaseOrdNo(QnaVO vo) throws Exception {
-		// 결과를 저장할 수 있는 변수 선언.
-		int result = 0;
-
-		try {
-			// 1. 드라이버 확인 - DB
-			// 2. 연결
-			con = DB.getConnection();
-			// 3. sql - 아래 LIST
-			// 4. 실행 객체 & 데이터 세팅
-			pstmt = con.prepareStatement(INCREASEORDNO);
-			pstmt.setLong(1, vo.getRefNo());
-			pstmt.setLong(2, vo.getOrdNo());
-			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
-			result = pstmt.executeUpdate();
-			// 6. 표시 또는 담기
-			if (result == 0) { // 글번호가 존재하지 않는다. -> 예외로 처리한다.
-				throw new Exception("예외 발생 : 글번호가 존재하지 않습니다. 글번호를 확인해 주세요");
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			// 특별한 예외는 그냥 전달한다.
-			if (e.getMessage().indexOf("예외 발생") >= 0)
-				throw e;
-			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
-			else
-				throw new Exception("예외 발생 : 질분답변 순서번호 DB 처리 중 예외가 발생했습니다.");
-
-		} finally {
-			// 7. 닫기
-			DB.close(con, pstmt, rs);
-		}
-
-		// 결과 데이터를 리턴해준다.
-		return result;
-	} // end of increase()
-
-	// 2-2 . 글보기 상세보기
+	// 2. 글보기 처리
 	// QnaController - (Execute) - QnaListService - [QnaDAO.list()]
 	public QnaVO view(Long no) throws Exception {
 
@@ -176,7 +134,12 @@ public class QnaDAO extends DAO {
 				vo.setNo(rs.getLong("no"));
 				vo.setTitle(rs.getString("title"));
 				vo.setContent(rs.getString("Content"));
+				vo.setId(rs.getString("Id"));
+				vo.setName(rs.getString("Name"));
 				vo.setWriteDate(rs.getString("writeDate"));
+				vo.setRefNo(rs.getLong("RefNo"));
+				vo.setOrdNo(rs.getLong("OrdNo"));
+				vo.setLevNo(rs.getLong("LevNo"));
 
 			} // end of if
 
@@ -191,12 +154,51 @@ public class QnaDAO extends DAO {
 
 	}// end of view()
 
-	// 3-1 . 질문 답변의 글번호 받아오기
-		// QnaController - (Execute) - QnaListService - [QnaDAO.getNo()]
-		public Long getNo() throws Exception {
+	// 3-1 . 순서번호 1증가 처리
+	// QnaController - (Execute) - QnaWriteService - [QnaDAO.list()]
+	public int increaseOrdNo(QnaVO vo) throws Exception {
+		// 결과를 저장할 수 있는 변수 선언.
+		int result = 0;
 
-			Long no = null;
+			try {
+				// 1. 드라이버 확인 - DB
+				// 2. 연결
+				con = DB.getConnection();
+				// 3. sql - 아래 LIST
+				// 4. 실행 객체 & 데이터 세팅
+				pstmt = con.prepareStatement(INCREASEORDNO);
+				pstmt.setLong(1, vo.getRefNo());
+				pstmt.setLong(2, vo.getOrdNo());
+				// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
+				result = pstmt.executeUpdate();
+				// 6. 표시 또는 담기
+				System.out.println("QnaDAO.increaseOrdNo() - 순서번호 1증가 처리 완료");
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			// 특별한 예외는 그냥 전달한다.
+			if (e.getMessage().indexOf("예외 발생") >= 0)
+				throw e;
+			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
+			else
+				throw new Exception("예외 발생 : 질분답변 순서번호 DB 처리 중 예외가 발생했습니다.");
+
+		} finally {
+			// 7. 닫기
+			DB.close(con, pstmt, rs);
+		}
+
+		// 결과 데이터를 리턴해준다.
+		return result;
+	} // end of increase()
+
+
+	
+	// 3-2 . 질문 답변의 글번호 받아오기
+	// QnaController - (Execute) - QnaListService - [QnaDAO.getNo()]
+	public Long getNo() throws Exception {
+
+		Long no = null;
 			try {
 				// 1. 드라이버 확인
 				// 2. DB 연결
@@ -227,7 +229,7 @@ public class QnaDAO extends DAO {
 		}// end of view()
 
 
-	// 3 . 글등록 처리
+	// 3-3 . 글등록 처리
 	// QnaController - (Execute) - QnawriteService - [QnaDAO.write(vo)]
 	public int write(QnaVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
@@ -421,10 +423,12 @@ public class QnaDAO extends DAO {
 			return idx;
 	}
 	
+	// 순서 번호 1증가
 	final String INCREASEORDNO = "update qna set ordNo = ordNo + 1 " + " where refNo = ? and ordNo >= ? ";
 
-	final String VIEW = "select no, title, content, writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "
-			+ " from Qna " + " where no = ? ";
+	final String VIEW = "select q.no, q.title, q.content, q.id, m.name, " + " to_char(q.writeDate, 'yyyy-mm-dd') writeDate, q.refNo, "
+			+ " q.ordNo, q.levNo "
+			+ " from qna q, member m " + " where (q.no = ?) and (q.id = m.id) ";
 	final String QUESTION = " insert into qna( " + " no, title, content, id, refNO, ordNO, levNO ) "
 			+ " values(?, ?,?,?,?,?,? )";
 	final String ANSWER = " insert into qna( " + " no, title, content, id, refNO, ordNO, levNO, parentNO ) "

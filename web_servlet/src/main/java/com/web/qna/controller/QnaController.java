@@ -58,11 +58,9 @@ public class QnaController {
 					// 1. 조회수 1증가(글보기)
 					String strNo = request.getParameter("no");
 					no = Long.parseLong(strNo);
-					String strInc = request.getParameter("inc");
-					Long inc = Long.parseLong(strInc);
 					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(Init.get(uri), new Long[]{no , inc});
+					result = Execute.execute(Init.get(uri), no);
 					
 					request.setAttribute("vo", result);
 					
@@ -73,7 +71,7 @@ public class QnaController {
 					request.setAttribute("replyList", Execute.execute(Init.get("/boardreply/list.do"), replyPageObject));
 					// 댓글 페이지 객체 "담기"
 					request.setAttribute("replyPageObject",replyPageObject);
-					jsp = "board/view";				
+					jsp = "qna/view";				
 					
 					break;
 					
@@ -89,6 +87,12 @@ public class QnaController {
 					System.out.println("3-2. 답변 등록 폼");
 					request.setAttribute("headTitle", "답변하기 폼");
 					
+					strNo = request.getParameter("no");
+					no = Long.parseLong(strNo);
+					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
+					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
+					result = Execute.execute(Init.get("/qna/view.do"), no);
+					request.setAttribute("vo", result);
 					// 넘어온 글번호에 따른 데이터를 가져와서 request에 저장한다.
 					
 					jsp = "qna/writeForm";
@@ -115,14 +119,13 @@ public class QnaController {
 					// 답변인 경우의 처리
 					if(strRefNo != null && !strRefNo.equals("")) {
 						vo.setRefNo(Long.parseLong(strRefNo));
+						vo.setParentNo(Long.parseLong(strParentNo));
 						vo.setQuestion(false); // 답변임
 					// 질문인 경우의 처리
 					} else {
 						vo.setQuestion(true); // 질문임
 					}
-					// 넘길 때 no를 parentNo로 넘김.
-					if(strParentNo != null && !strParentNo.equals(""))
-						vo.setParentNo(Long.parseLong(strParentNo));
+					
 					
 					
 					// [BoardController] - BoardWriteService - BoardDAO.write(vo)

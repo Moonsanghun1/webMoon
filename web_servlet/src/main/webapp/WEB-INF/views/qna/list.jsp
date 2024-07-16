@@ -7,6 +7,22 @@
 <head>
 <meta charset="UTF-8">
 <title>질문답변 리스트</title>
+<style type="text/css">
+.dataRow:hover {
+	background: #e0e0e0;
+	cursor: pointer;
+}
+</style>
+
+<script type="text/javascript">
+$(function() {
+
+	$(".dataRow").click(function() {
+		let no = $(this).find(".no").text();
+		location = "view.do?no=" + no + "&${pageObject.pageQuery}"
+	});
+});
+</script>
 </head>
 <body>
 

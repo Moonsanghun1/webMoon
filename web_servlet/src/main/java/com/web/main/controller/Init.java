@@ -27,6 +27,7 @@ import com.web.member.dao.MemberDAO;
 import com.web.member.service.MemberChangeGradeService;
 import com.web.member.service.MemberChangeStatusService;
 import com.web.member.service.MemberCheckIdService;
+import com.web.member.service.MemberCondateUpdateService;
 import com.web.member.service.MemberListService;
 import com.web.member.service.MemberLoginService;
 import com.web.member.service.MemberWriteService;
@@ -38,6 +39,7 @@ import com.web.notice.service.NoticeViewService;
 import com.web.notice.service.NoticeWriteService;
 import com.web.qna.dao.QnaDAO;
 import com.web.qna.service.QnaListService;
+import com.web.qna.service.QnaViewService;
 import com.web.qna.service.QnaWriteService;
 
 public class Init {
@@ -85,6 +87,8 @@ public class Init {
 		serviceMap.put("/member/list.do", new MemberListService()); 
 		serviceMap.put("/member/changeGrade.do", new MemberChangeGradeService()); 
 		serviceMap.put("/member/changeStatus.do", new MemberChangeStatusService()); 
+		//  MemberController 에서 들어오지 않고 UpdateCondateFilter에서 
+		serviceMap.put("/member/updateConDate.do", new MemberCondateUpdateService()); 
 		// 조립 dao -> servive
 		serviceMap.get("/member/login.do").setDAO(daoMap.get("memberDAO"));
 		serviceMap.get("/ajax/checkId.do").setDAO(daoMap.get("memberDAO"));
@@ -92,6 +96,7 @@ public class Init {
 		serviceMap.get("/member/list.do").setDAO(daoMap.get("memberDAO"));
 		serviceMap.get("/member/changeGrade.do").setDAO(daoMap.get("memberDAO"));
 		serviceMap.get("/member/changeStatus.do").setDAO(daoMap.get("memberDAO"));
+		serviceMap.get("/member/updateConDate.do").setDAO(daoMap.get("memberDAO"));
 		
 		
 		// ----[이미지 객체 생성과 조립] ====
@@ -135,13 +140,13 @@ public class Init {
 		daoMap.put("qnaDAO", new QnaDAO());
 		// service 생성
 		serviceMap.put("/qna/list.do", new QnaListService());
-		serviceMap.put("/notice/view.do", new NoticeViewService());
+		serviceMap.put("/qna/view.do", new QnaViewService());
 		serviceMap.put("/qna/write.do", new QnaWriteService());
 		serviceMap.put("/notice/update.do", new NoticeUpdateService());
 		serviceMap.put("/notice/delete.do", new NoticeDeleteService());
 		// 조립 dao -> service
 		serviceMap.get("/qna/list.do").setDAO(daoMap.get("qnaDAO"));
-		serviceMap.get("/notice/view.do").setDAO(daoMap.get("noticeDAO"));
+		serviceMap.get("/qna/view.do").setDAO(daoMap.get("qnaDAO"));
 		serviceMap.get("/qna/write.do").setDAO(daoMap.get("qnaDAO"));
 		serviceMap.get("/notice/update.do").setDAO(daoMap.get("noticeDAO"));
 		serviceMap.get("/notice/delete.do").setDAO(daoMap.get("noticeDAO"));

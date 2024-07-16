@@ -26,7 +26,7 @@ public class QnaListService implements Service {
 		pageObject.setTotalRow(dao.getTotalRow(pageObject));
 		
 		// DB 처리는 DAO에서 처리 - BoardDAO.list()
-		// BoardController - (Execute) - [BoardListService] - [BoardDAO.list()]
+		// QnaController - (Execute) - [QnaListService] - [QnaDAO.list()]
 		return dao.list(pageObject);
 		
 		
