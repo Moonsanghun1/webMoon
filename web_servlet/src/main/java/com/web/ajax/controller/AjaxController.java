@@ -7,11 +7,11 @@ import com.web.main.controller.Init;
 import com.web.member.vo.LoginVO;
 import com.web.util.exe.Execute;
 
-// Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
+// Ajax Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class AjaxController {
 
 	public String execute(HttpServletRequest request) {
-		System.out.println("BoardController.execute() --------------------------");
+		System.out.println("AjaxController.execute() --------------------------");
 		
 			// 로그인 처리를 sesstion으로 한다.
 			HttpSession session = request.getSession();
@@ -42,7 +42,7 @@ public class AjaxController {
 					id = request.getParameter("id");
 
 					
-					// [MemberController] - (Execute) - [MembercheckIdService] - [MemberDAO.checkId(id)]
+					// [AjaxController] - (Execute) - [MembercheckIdService] - [MemberDAO.checkId(id)]
 					// session에 데이터를 담아서 로그인 처리한다.
 					id = (String) Execute.execute(Init.get(uri), id);
 					

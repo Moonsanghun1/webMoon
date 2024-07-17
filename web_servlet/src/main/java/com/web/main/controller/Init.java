@@ -31,6 +31,9 @@ import com.web.member.service.MemberCondateUpdateService;
 import com.web.member.service.MemberListService;
 import com.web.member.service.MemberLoginService;
 import com.web.member.service.MemberWriteService;
+import com.web.message.dao.MessageDAO;
+import com.web.message.service.MessageListService;
+import com.web.message.service.MessageWriteService;
 import com.web.notice.dao.NoticeDAO;
 import com.web.notice.service.NoticeDeleteService;
 import com.web.notice.service.NoticeListService;
@@ -117,7 +120,7 @@ public class Init {
 		serviceMap.get("/image/update.do").setDAO(daoMap.get("imageDAO"));
 		serviceMap.get("/image/delete.do").setDAO(daoMap.get("imageDAO"));
 		
-		// ----[이미지 객체 생성과 조립] ====
+		// ----[공지사항 객체 생성과 조립] ====
 		
 		// dao 생성
 		daoMap.put("noticeDAO", new NoticeDAO());
@@ -134,7 +137,7 @@ public class Init {
 		serviceMap.get("/notice/update.do").setDAO(daoMap.get("noticeDAO"));
 		serviceMap.get("/notice/delete.do").setDAO(daoMap.get("noticeDAO"));
 		
-		// ----[이미지 객체 생성과 조립] ====
+		// ----[QnA 객체 생성과 조립] ====
 		
 		// dao 생성
 		daoMap.put("qnaDAO", new QnaDAO());
@@ -148,6 +151,23 @@ public class Init {
 		serviceMap.get("/qna/list.do").setDAO(daoMap.get("qnaDAO"));
 		serviceMap.get("/qna/view.do").setDAO(daoMap.get("qnaDAO"));
 		serviceMap.get("/qna/write.do").setDAO(daoMap.get("qnaDAO"));
+		serviceMap.get("/notice/update.do").setDAO(daoMap.get("noticeDAO"));
+		serviceMap.get("/notice/delete.do").setDAO(daoMap.get("noticeDAO"));
+		
+		// ----[메세지 객체 생성과 조립] ====
+		
+		// dao 생성
+		daoMap.put("messageDAO", new MessageDAO());
+		// service 생성
+		serviceMap.put("/message/list.do", new MessageListService());
+		serviceMap.put("/qna/view.do", new QnaViewService());
+		serviceMap.put("/message/write.do", new MessageWriteService());
+		serviceMap.put("/notice/update.do", new NoticeUpdateService());
+		serviceMap.put("/notice/delete.do", new NoticeDeleteService());
+		// 조립 dao -> service
+		serviceMap.get("/message/list.do").setDAO(daoMap.get("messageDAO"));
+		serviceMap.get("/qna/view.do").setDAO(daoMap.get("qnaDAO"));
+		serviceMap.get("/message/write.do").setDAO(daoMap.get("messageDAO"));
 		serviceMap.get("/notice/update.do").setDAO(daoMap.get("noticeDAO"));
 		serviceMap.get("/notice/delete.do").setDAO(daoMap.get("noticeDAO"));
 

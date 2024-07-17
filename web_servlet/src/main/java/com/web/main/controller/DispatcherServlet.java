@@ -12,6 +12,7 @@ import com.web.board.controller.BoardController;
 import com.web.boardreply.controller.BoardReplyController;
 import com.web.image.controller.ImageController;
 import com.web.member.controller.MemberController;
+import com.web.message.controller.MessageController;
 import com.web.notice.controller.NoticeController;
 import com.web.qna.controller.QnaController;
 
@@ -34,6 +35,7 @@ public class DispatcherServlet extends HttpServlet {
 	private MainController mainController = new MainController();
 	private NoticeController noticeController = new NoticeController();
 	private QnaController qnaController = new QnaController();
+	private MessageController messageController = new MessageController();
 	
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -94,7 +96,7 @@ public class DispatcherServlet extends HttpServlet {
 		case "/board" : {
 			System.out.println("일반게시판");
 			jsp = boardController.execute(request);	
-			System.out.println("jsp = " + jsp);
+			System.out.println("jsp(Dispatcher) = " + jsp);
 			break;
 		}
 		case "/boardreply" : {
@@ -142,6 +144,13 @@ public class DispatcherServlet extends HttpServlet {
 			System.out.println("질문답변 게시판");
 			// 컨트롤러를 생성해야한다.
 			jsp = qnaController.execute(request);	
+			System.out.println("jsp(Dispatcher) = " + jsp);
+			break;
+		}
+		case "/message" : {
+			System.out.println("메세지 게시판");
+			// 컨트롤러를 생성해야한다.
+			jsp = messageController.execute(request);	
 			System.out.println("jsp(Dispatcher) = " + jsp);
 			break;
 		}

@@ -108,9 +108,13 @@ $(function() {
 				<li class="nav-item ${(empty module || module == '/board')?'active':'' }"><a class="nav-link" href="/board/list.do">일반게시판</a></li>
 				<li class="nav-item ${(empty module || module == '/qna')?'active':'' }"><a class="nav-link" href="/qna/list.do">질문답변</a></li>
 				
-				<c:if test="${!empty login && login.gradeNo == 9 }">
+				<!-- 회원(로그인) 메뉴 -->
+				<c:if test="${!empty login }">
+				<li class="nav-item ${(empty module || module == '/message')?'active':'' }"><a class="nav-link" href="/message/list.do">메세지</a></li>
+				</c:if>
 				<!-- 관리자 메뉴 -->
-				<li class="nav-item ${(empty module || module == '/board')?'active':'' }"><a class="nav-link" href="/member/list.do">회원관리</a></li>
+				<c:if test="${!empty login && login.gradeNo == 9 }">
+				<li class="nav-item ${(empty module || module == '/member')?'active':'' }"><a class="nav-link" href="/member/list.do">회원관리</a></li>
 				</c:if>
 			</ul>
 			
@@ -135,13 +139,16 @@ $(function() {
 			<c:if test="${!empty login }">
 			<!-- 로그인을 했을 때  -->
 				<ul class="navbar-nav">
+					<!-- 새로운 메세지 처리 -->
 					<li class="nav-item">
-						<c:if test="${empty login.photo }">
-							<i class="fa fa-user-circle-o"></i>
-						</c:if>
+						<span class="nav-link">
+							<span class="badge badge-pill badge-danger">
+							 	${(login.newMsgCnt) }
+							</span>
 						<c:if test="${!empty login.photo }">
 							<img alt="사진" src="${login.photo }" style="width: 35px; height: 35px;" class = "rounded-circle">
 						</c:if>
+						</span>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/member/logout.do">
