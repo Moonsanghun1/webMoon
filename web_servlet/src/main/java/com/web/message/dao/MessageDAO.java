@@ -123,8 +123,48 @@ public class MessageDAO extends DAO {
 	}// end of view()
 
 
-		// 2-2 . 글보기 상세보기
-	// MessageController - (Execute) - MessageListService - [MessageDAO.list()]
+
+	// 2-1. 받은 날짜가 null인 데이터를 현재 날짜로 세팅해 준다.
+	// MessageController - (Execute) - MessageSetReadedService - [MessageDAO.setReaded()]
+	public int setReaded(Long no) throws Exception {
+		// 결과를 저장할 수 있는 변수 선언. - 1: 수정 성공 -> 새로운 메세지 개수 -1 처리 , 0 : 수정 안됨.
+		int result = 0;
+
+		try {
+			// 1. 드라이버 확인 - DB
+				// 2. 연결
+			con = DB.getConnection();
+			// 3. sql - 아래 LIST
+			// 4. 실행 객체 & 데이터 세팅
+			pstmt = con.prepareStatement(READED);
+			pstmt.setLong(1, no);
+			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
+			result = pstmt.executeUpdate();
+			// 6. 표시 또는 담기
+			System.out.println("MessageDAO.setReaded() - 메세지 읽기 성공 표시");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			// 특별한 예외는 그냥 전달한다.
+			if (e.getMessage().indexOf("예외 발생") >= 0)
+				throw e;
+			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
+			else
+				throw new Exception("예외 발생 : 메세지 읽기 DB 처리 중 예외가 발생했습니다.");
+			
+		} finally {
+				// 7. 닫기
+			DB.close(con, pstmt, rs);
+		}
+
+		// 결과 데이터를 리턴해준다.
+		return result;
+	} // end of increase()
+
+
+	
+	// 2-2. 메세지 보기 상세보기
+	// MessageController - (Execute) - MessageViewService - [MessageDAO.view()]
 	public MessageVO view(Long no) throws Exception {
 
 		MessageVO vo = null;
@@ -146,11 +186,15 @@ public class MessageDAO extends DAO {
 				// rs -> rs
 				vo = new MessageVO();
 				vo.setNo(rs.getLong("no"));
-//				vo.setTitle(rs.getString("title"));
-//				vo.setContent(rs.getString("Content"));
-//				vo.setWriter(rs.getString("Writer"));
-//				vo.setWriteDate(rs.getString("writeDate"));
-//				vo.setHit(rs.getLong("hit"));
+				vo.setContent(rs.getString("Content"));
+				vo.setSenderId(rs.getString("senderId"));
+				vo.setSenderName(rs.getString("senderName"));
+				vo.setSendDate(rs.getString("sendDate"));
+				vo.setSenderPhoto(rs.getString("senderPhoto"));
+				vo.setAccepterId(rs.getString("accepterId"));
+				vo.setAccepterName(rs.getString("accepterName"));
+				vo.setAcceptDate(rs.getString("acceptDate"));
+				vo.setAccepterPhoto(rs.getString("accepterPhoto"));
 
 			} // end of if
 
@@ -165,6 +209,47 @@ public class MessageDAO extends DAO {
 
 	}// end of view()
 
+
+	// 2-3. 받은 날짜가 변경되면 회원의 새로운 메세지 개수 항목을 -1해준다.
+	// MessageController - (Execute) - MessageDecreaseNewMsgCntService - [MessageDAO.decreaseNewMsgCnt()]
+	// 2-1의 결과값이 1일때 실행
+	public int decreaseNewMsgCnt(String id) throws Exception {
+		// 결과를 저장할 수 있는 변수 선언.
+		int result = 0;
+
+		try {
+			// 1. 드라이버 확인 - DB
+				// 2. 연결
+			con = DB.getConnection();
+			// 3. sql - 아래 LIST
+			// 4. 실행 객체 & 데이터 세팅
+			pstmt = con.prepareStatement(DECREASENEWMSGCNT);
+			pstmt.setString(1, id);
+			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
+			result = pstmt.executeUpdate();
+			// 6. 표시 또는 담기
+			System.out.println("MessageDAO.decreaseNewMsgCnt() - 새로운 메세지 카운트 1 감소");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			// 특별한 예외는 그냥 전달한다.
+			if (e.getMessage().indexOf("예외 발생") >= 0)
+				throw e;
+			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
+			else
+				throw new Exception("예외 발생 : 새로운 메세지 1감소 DB 처리 중 예외가 발생했습니다.");
+			
+		} finally {
+				// 7. 닫기
+			DB.close(con, pstmt, rs);
+		}
+
+		// 결과 데이터를 리턴해준다.
+		return result;
+	} // end of increase()
+
+	
+	
 	// 3 . 메세지 전송 처리
 	// MessageController - (Execute) - MessagewriteService - [MessageDAO.write(vo)]
 	public int write(MessageVO vo) throws Exception {
@@ -201,7 +286,7 @@ public class MessageDAO extends DAO {
 	} // end of increase()
 
 	// 3-1. 새로운 메세지가 전달된 회원 테이블의 새로운 메세지 개수를 1 증가시킨다.
-	// MessageController - (Execute) - MessageListService - [MessageDAO.list()]
+	// MessageController - (Execute) - MessageListService - [MessageDAO.increaseNewMsgCnt()]
 	public int increaseNewMsgCnt(String id) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
 		int result = 0;
@@ -244,7 +329,7 @@ public class MessageDAO extends DAO {
 
 	
 	// 4 . 글 수정 처리
-	// MessageController - (Execute) - MessageListService - [MessageDAO.list()]
+	// MessageController - (Execute) - MessageUpdateService - [MessageDAO.update()]
 	public int update(MessageVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
 		int result = 0;
@@ -343,7 +428,8 @@ public class MessageDAO extends DAO {
 						+ " to_char(m.sendDate, 'yyyy-mm-dd') sendDate,  "
 						+ " m.accepterId , am.name accepterName, am.photo accepterPhoto,"
 						+ " to_char(m.acceptDate, 'yyyy-mm-dd') acceptDate "
-						+ " from Message m, member sm , member am"; // 여기에 검색이 있어야 한다.
+						+ " from Message m, member sm , member am"; 
+						// 여기에 검색이 있어야 한다.
 						// mode 조건 처리 + 검색 조건 처리
 	
 	// 검색이 있는 경우 TOTALROW + search문 
@@ -426,9 +512,21 @@ public class MessageDAO extends DAO {
 	}
 	
 	final String INCREASENEWMSGCNT = "update member set newMsgCnt = newMsgCnt + 1 " + " where id = ? ";
+	
+	final String READED = "update message set acceptDate = sysDate " + " where (no = ? ) and acceptDate is null ";
 
-	final String VIEW = "select no, title, content, writer, " + " to_char(writeDate, 'yyyy-mm-dd') writeDate, hit "
-			+ " from Message " + " where no = ? ";
+	final String VIEW = "select no, content, "
+			+ " m.senderId, sm.name senderName, sm.photo senderPhoto, " 
+			+ " to_char(m.sendDate, 'yyyy-mm-dd') sendDate,  "
+			+ " m.accepterId , am.name accepterName, am.photo accepterPhoto,"
+			+ " to_char(m.acceptDate, 'yyyy-mm-dd') acceptDate "
+			+ " from Message m, member sm , member am"
+			+ " where (no = ?)"
+			+ " and ( "
+			+ " m.accepterId = am.id and m.senderId = sm.id"
+			+ " ) "; 
+	final String DECREASENEWMSGCNT = "update member set newMsgCnt = newMsgCnt - 1 " + " where id = ? ";
+	
 	final String WRITE = " insert into Message( no, content, accepterId, senderId ) "
 			+ " values(Message_seq.nextval, ?,?,?)";
 

@@ -1,7 +1,5 @@
 package com.web.message.service;
 
-import com.web.board.dao.BoardDAO;
-import com.web.board.vo.BoardVO;
 import com.web.main.dao.DAO;
 import com.web.main.service.Service;
 import com.web.message.dao.MessageDAO;

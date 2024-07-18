@@ -7,7 +7,6 @@ import com.web.member.vo.LoginVO;
 import com.web.message.vo.MessageVO;
 import com.web.util.exe.Execute;
 import com.webjjang.util.page.PageObject;
-import com.webjjang.util.page.ReplyPageObject;
 // message Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class MessageController {
 
@@ -57,26 +56,26 @@ public class MessageController {
 					
 					break;
 				case "/message/view.do":
-					System.out.println("2. 일반 게시판 글 보기");
+					System.out.println("2. 메세지 보기");
 					
-					// 1. 조회수 1증가(글보기)
 					String strNo = request.getParameter("no");
 					no = Long.parseLong(strNo);
-					String strInc = request.getParameter("inc");
-					Long inc = Long.parseLong(strInc);
+					
+					MessageVO vo = new MessageVO();
+					vo.setNo(no);
+					
+					if (request.getParameter("acception").equals("1")) 
+						vo.setAccepterId(id);
 					// 2. 일반게시판 글보기 데이터 가져오기 : 글보기 , 글수정
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(Init.get(uri), new Long[]{no , inc});
+					result = Execute.execute(Init.get(uri), vo);
 					
 					request.setAttribute("vo", result);
+					// JSP 보여지는 
+					loginVO.setNewMsgCnt((Long) Execute.execute(Init.get("/ajax/getNewMsgCnt.do"), id));
 					
-					// 댓글 페이지 객체
-					// 데이터 전달 - page / perPageNum / no / replyPage / replyPerPageNum
-					ReplyPageObject replyPageObject = ReplyPageObject.getInstance(request);
-					// 가져온 댓글 데이터 request에 "담기"
-					request.setAttribute("replyList", Execute.execute(Init.get("/messagereply/list.do"), replyPageObject));
-					// 댓글 페이지 객체 "담기"
-					request.setAttribute("replyPageObject",replyPageObject);
+					request.setAttribute("pageObject", PageObject.getInstance(request));
+					
 					jsp = "/message/view";				
 					
 					break;
@@ -92,7 +91,7 @@ public class MessageController {
 					
 					
 					// 변수 - vo 저장하고 Service 
-					MessageVO vo = new MessageVO();
+					vo = new MessageVO();
 					vo.setContent(content);
 					vo.setAccepterId(accepterId);
 					vo.setSenderId(id);

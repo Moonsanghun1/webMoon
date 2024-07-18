@@ -21,12 +21,9 @@ public class AjaxController {
 			LoginVO login = (LoginVO) session.getAttribute("login");
 			// login이 되어 있는 경우만 id를 꺼내온다.
 			if(login != null) id = login.getId();
-					
-			
+
 			// uri
 			String uri = request.getRequestURI();
-			
-			
 			
 			String jsp = null;
 			
@@ -54,6 +51,21 @@ public class AjaxController {
 					jsp = "member/checkId";
 					
 					session.setAttribute("msg", "글 등록이 성곡적으로 되었습니다.");
+					
+					break;
+				case "/ajax/getNewMsgCnt.do":
+					System.out.println("2. 새로운 메세지 가져오기");
+					
+					// [AjaxController] - (Execute) - [MembercheckIdService] - [MemberDAO.checkId(id)]
+					// session에 데이터를 담아서 로그인 처리한다.
+					Long result = (Long) Execute.execute(Init.get(uri), id);
+					
+					request.setAttribute("newMsgCnt", result);
+					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
+					// 아니면 jsp로 forward를 시킨다.
+					// 원래는 main이나 진행하려고 했던 uri로 이동시킨다.
+					// 그러나 완성이 안되어 있어서 완성되어진 게시판 리스트로 보낸다.
+					jsp = "member/newMsgCnt";
 					
 					break;
 				

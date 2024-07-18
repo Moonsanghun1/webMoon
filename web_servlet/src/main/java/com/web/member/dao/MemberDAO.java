@@ -69,7 +69,7 @@ public class MemberDAO extends DAO {
 		return list;
 	}
 
-	// 2 . 회원정보 상세보기
+	// 2. 회원정보 상세보기
 	// LoginController - (Execute) - LoginListService - [LoginDAO.list()]
 	public MemberVO view(String id) throws Exception {
 
@@ -116,7 +116,7 @@ public class MemberDAO extends DAO {
 
 	}// end of view()
 
-	// 3 . 회원가입 처리
+	// 3. 회원가입 처리
 	// MemberController - (Execute) - MemberwriteService - [MemberDAO.write(vo)]
 	public int write(MemberVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
@@ -243,6 +243,7 @@ public class MemberDAO extends DAO {
 		// 결과 데이터를 리턴해준다.
 		return result;
 	} // end of increase()
+
 	// 4-2. 회원 등급 수정 처리
 	// MemberController - (Execute) - MemberChangeGradeService - [MemberDAO.changeGrade()]
 	public int changeGrade(MemberVO vo) throws Exception {
@@ -287,6 +288,7 @@ public class MemberDAO extends DAO {
 		// 결과 데이터를 리턴해준다.
 		return result;
 	} // end of changeGrade()
+	
 	// 4-3. 회원 상태 수정 처리
 	// MemberController - (Execute) - MemberChangeStatusService - [MemberDAO.changeStatus()]
 	public int changeStatus(MemberVO vo) throws Exception {
@@ -332,7 +334,7 @@ public class MemberDAO extends DAO {
 		return result;
 	} // end of changeGrade()
 
-	// 5 . 회원탈퇴 처리 : 상태 - 탈퇴로 변경
+	// 5. 회원탈퇴 처리 : 상태 - 탈퇴로 변경
 	// MemberController - (Execute) - MemberDeleteService - [MemberDAO.list()]
 	public int delete(MemberVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
@@ -376,7 +378,6 @@ public class MemberDAO extends DAO {
 	} // end of delete()
 
 	// 6. 로그인 처리
-	// 6 . 로그인 처리
 	// MemberController - (Execute) - MemberLoginService - [MemberDAO.login()]
 	public LoginVO login(LoginVO loginvo) throws Exception {
 
@@ -430,7 +431,6 @@ public class MemberDAO extends DAO {
 	}// end of login()
 	
 	// 7. 최근접속일 처리
-	// 7 . 접속일
 	// MemberController - (Execute) - MemberListService - [MemberDAO.list()]
 	public int condateupdate(String id) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
@@ -471,6 +471,42 @@ public class MemberDAO extends DAO {
 		return result;
 	} // end of increase()
 
+	// 8. 새로운 메세지 개수 가져오기 처리
+	// AjaxController - (Execute) - MemberGetNewMsgCntService - [MemberDAO.getNewMsgCnt()]
+	public Long getNewMsgCnt(String id) throws Exception {
+
+		Long newMsgCnt = 0L;
+
+		try {
+			// 1. 드라이버 확인
+			// 2. DB 연결
+			con = DB.getConnection();
+
+			// 3. sql 아래에 미리 써놓음
+			// 4. 실행 객체 & 데이터 세팅
+
+			pstmt = con.prepareStatement(NEWMSGCNT);
+			pstmt.setString(1, id);
+			// 5. 실행
+			rs = pstmt.executeQuery();
+			// 6. 표시 및 담기
+			if (rs != null && rs.next()) {
+				newMsgCnt = rs.getLong(1);
+			} // end of if
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+			
+		} finally {
+			DB.close(con, pstmt, rs);
+		} // end of try ~ catch ~ finally
+
+		return newMsgCnt;
+
+	}// end of view()
+
+	
 	// 실행항 쿼리를 정의해 놓은 변수 선언.
 	final String LIST = ""
 			+ " select id, name, birth, gender, tel , gradeNo, gradeName, status, photo "
@@ -507,4 +543,5 @@ public class MemberDAO extends DAO {
 			+ " and (g.gradeNo = m.gradeNo) ";
 
 	final String CONDATE_UPDATE = "update member set " + " conDate = sysdate where id = ? ";
+	final String NEWMSGCNT = " select newMsgCnt from member where id = ? ";
 }

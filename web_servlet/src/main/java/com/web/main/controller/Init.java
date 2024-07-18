@@ -30,9 +30,11 @@ import com.web.member.service.MemberCheckIdService;
 import com.web.member.service.MemberCondateUpdateService;
 import com.web.member.service.MemberListService;
 import com.web.member.service.MemberLoginService;
+import com.web.member.service.MemberNewMsgCntService;
 import com.web.member.service.MemberWriteService;
 import com.web.message.dao.MessageDAO;
 import com.web.message.service.MessageListService;
+import com.web.message.service.MessageViewService;
 import com.web.message.service.MessageWriteService;
 import com.web.notice.dao.NoticeDAO;
 import com.web.notice.service.NoticeDeleteService;
@@ -86,6 +88,7 @@ public class Init {
 		// service 생성
 		serviceMap.put("/member/login.do", new MemberLoginService()); 
 		serviceMap.put("/ajax/checkId.do", new MemberCheckIdService()); 
+		serviceMap.put("/ajax/getNewMsgCnt.do", new MemberNewMsgCntService()); 
 		serviceMap.put("/member/write.do", new MemberWriteService()); 
 		serviceMap.put("/member/list.do", new MemberListService()); 
 		serviceMap.put("/member/changeGrade.do", new MemberChangeGradeService()); 
@@ -95,6 +98,7 @@ public class Init {
 		// 조립 dao -> servive
 		serviceMap.get("/member/login.do").setDAO(daoMap.get("memberDAO"));
 		serviceMap.get("/ajax/checkId.do").setDAO(daoMap.get("memberDAO"));
+		serviceMap.get("/ajax/getNewMsgCnt.do").setDAO(daoMap.get("memberDAO"));
 		serviceMap.get("/member/write.do").setDAO(daoMap.get("memberDAO"));
 		serviceMap.get("/member/list.do").setDAO(daoMap.get("memberDAO"));
 		serviceMap.get("/member/changeGrade.do").setDAO(daoMap.get("memberDAO"));
@@ -160,15 +164,13 @@ public class Init {
 		daoMap.put("messageDAO", new MessageDAO());
 		// service 생성
 		serviceMap.put("/message/list.do", new MessageListService());
-		serviceMap.put("/qna/view.do", new QnaViewService());
+		serviceMap.put("/message/view.do", new MessageViewService());
 		serviceMap.put("/message/write.do", new MessageWriteService());
-		serviceMap.put("/notice/update.do", new NoticeUpdateService());
 		serviceMap.put("/notice/delete.do", new NoticeDeleteService());
 		// 조립 dao -> service
 		serviceMap.get("/message/list.do").setDAO(daoMap.get("messageDAO"));
-		serviceMap.get("/qna/view.do").setDAO(daoMap.get("qnaDAO"));
+		serviceMap.get("/message/view.do").setDAO(daoMap.get("messageDAO"));
 		serviceMap.get("/message/write.do").setDAO(daoMap.get("messageDAO"));
-		serviceMap.get("/notice/update.do").setDAO(daoMap.get("noticeDAO"));
 		serviceMap.get("/notice/delete.do").setDAO(daoMap.get("noticeDAO"));
 
 		System.out.println("Init.static 초기화 블록 ----- 객체 생성과 로딩-----");

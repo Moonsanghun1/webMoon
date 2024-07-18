@@ -7,6 +7,26 @@
 <head>
 <meta charset="UTF-8">
 <title>메세지 리스트</title>
+
+<style type="text/css">
+.dataRow:hover{
+	cursor: pointer;
+}
+</style>
+<script type="text/javascript">
+	// 이벤트 처리
+$(function() {
+	
+
+	$(".dataRow").click(function() {
+		let no = $(this).find(".no").text();
+		let acception = $(this).data("acception"); // data-accept=value
+		location = "view.do?no="+ no +"&mode=${pageObject.acceptMode}&${pageObject.pageQuery}&acception="+acception;
+	});
+});	
+
+</script>
+
 </head>
 <body>
 	<div class= "container">
@@ -23,14 +43,14 @@
 			<c:if test="${empty list }">메세지가 존재하지 않습니다.</c:if>
 			<c:if test="${!empty list }">
 					<c:forEach items="${list }" var="vo">
-						<div class="media border p-3 dataRow ">
+						<div class="media border p-3 dataRow" data-acception="${(vo.senderId == login.id)?0:1 }">
 							<c:if test="${vo.senderId == login.id }">
 							<!-- 내가 보낸 사람이다. 받는 사람의 정보만 표시한다. -->
-							<div class="media-body ${(empty vo.acceptDate)?'font-weight-bold':'' } text-right" >
+							<div class="media-body text-right ${(empty vo.acceptDate)?'font-weight-bold':'' }" >
 								${vo.accepterName }
 								<small><i>(${vo.accepterId	 })</i></small>
 								<p>
-									번호: ${vo.no }
+									번호: <span class= "no">${vo.no }</span> 
 								   /보낸 날짜: ${vo.sendDate }
 								   /받은 날짜: ${(empty vo.acceptDate)?"읽지 않음": (vo.acceptDate)}
 								
@@ -42,11 +62,11 @@
 							<c:if test="${vo.accepterId == login.id }">
 							<!-- 내가 받은 사람이다. 보낸 사람의 정보만 표시한다. -->
 							<img src="${vo.senderPhoto }" class="mr-3 mt-3 rounded-circle" style="width: 40px;">
-							<div class="media-body ${(empty vo.sendDate)?'font-weight-bold':'' }" >
+							<div class="media-body ${(empty vo.acceptDate)?'font-weight-bold':'' }" >
 								${vo.senderName }
 								<small><i>(${vo.senderId})</i></small>
 								<p>
-									번호: ${vo.no }
+									번호: <span class= "no">${vo.no }</span>
 								   /보낸 날짜: ${vo.sendDate }
 								   /받은 날짜: ${(empty vo.acceptDate)?"읽지 않음": (vo.acceptDate)}
 								</p>

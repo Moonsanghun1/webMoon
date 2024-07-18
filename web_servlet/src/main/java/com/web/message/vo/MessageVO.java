@@ -15,6 +15,7 @@ public class MessageVO {
 	private String accepterName;
 	private String acceptDate;
 	private String accepterPhoto;
+	
 	private int allUser; // 0 - 개인, 1 - 전체 메세지
 
 
