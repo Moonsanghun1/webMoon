@@ -137,10 +137,12 @@ public class AlbumDAO extends DAO {
 				vo.setAlbumNo(rs.getLong("albumNo"));
 				vo.setTitle(rs.getString("title"));
 				vo.setPrice(rs.getString("price"));
+				vo.setArtist(rs.getString("artist"));
 				vo.setGenre(rs.getString("genre"));
 				vo.setImage(rs.getString("image"));
 				vo.setRelease_date(rs.getString("release_date"));
 				vo.setInfo(rs.getString("info"));
+				vo.setStatus(rs.getString("status"));
 
 			} // end of if
 
@@ -176,6 +178,7 @@ public class AlbumDAO extends DAO {
 			pstmt.setString(5, vo.getGenre());
 			pstmt.setString(6, vo.getInfo());
 			pstmt.setString(7, vo.getImage());
+			pstmt.setString(8, vo.getStatus());
 
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
@@ -209,8 +212,16 @@ public class AlbumDAO extends DAO {
 			// 3. sql - 아래 LIST
 			// 4. 실행 객체 & 데이터 세팅
 			pstmt = con.prepareStatement(UPDATE);
+			//title, release_date, artist, price, genre, info, image
 			pstmt.setString(1, vo.getTitle());
-
+			pstmt.setString(2, vo.getRelease_date());
+			pstmt.setString(3, vo.getArtist());
+			pstmt.setString(4, vo.getPrice());
+			pstmt.setString(5, vo.getGenre());
+			pstmt.setString(6, vo.getInfo());
+			pstmt.setString(7, vo.getStatus());
+			pstmt.setLong(8, vo.getAlbumNo());
+			
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
@@ -267,7 +278,7 @@ public class AlbumDAO extends DAO {
 				throw e;
 			// 그외 처리 중 나타나는 오류에 대해서 사용자가 볼 수 있는 예외로 만들어 전달한다.
 			else
-				throw new Exception("예외 발생 : 게시판 글삭제 DB 처리 중 예외가 발생했습니다.");
+				throw new Exception("예외 발생 : 앨범 삭제 DB 처리 중 예외가 발생했습니다.");
 
 		} finally {
 			// 7. 닫기
@@ -278,9 +289,9 @@ public class AlbumDAO extends DAO {
 		return result;
 	} // end of delete()
 	
-	// 6. 이미지 수정 처리
-	// AlbumController - (Execute) - AlbumService - [AlbumDAO.list()]
-	public int changeAlbum(AlbumVO vo) throws Exception {
+	// 6. 앨범 커버 수정 처리
+	// AlbumController - (Execute) - AlbumService - [AlbumDAO.changeAlbumCover()]
+	public int changeAlbumCover(AlbumVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
 		int result = 0;
 		
@@ -290,9 +301,10 @@ public class AlbumDAO extends DAO {
 			con = DB.getConnection();
 			// 3. sql - 아래 LIST
 			// 4. 실행 객체 & 데이터 세팅
-			pstmt = con.prepareStatement(CHANGEAlbum);
+			pstmt = con.prepareStatement(CHANGEALBUMCOVER);
 			
-			pstmt.setString(1, vo.getArtist());
+			pstmt.setString(1, vo.getImage());
+			pstmt.setLong(2, vo.getAlbumNo());
 
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
@@ -391,15 +403,16 @@ public class AlbumDAO extends DAO {
 	
 	final String INCREASE = "update board set hit = hit + 1 " + " where no = ? ";
 
-	final String VIEW = "select a.albumNo, a.title, a.artist, a.price, a.genre, a.image, " 
+	final String VIEW = "select a.albumNo, a.title, a.artist, a.price, a.genre, a.image, a.status, " 
 			+ " to_char(a.writeDate, 'yyyy-mm-dd') release_date, a.info "
-			+ "from album a where albumNo = ? ";
+			+ " from album a where albumNo = ? ";
 			//+ " from Album a , member m " + " where (a.no = ?) and (m.id = a.id) ";
-	final String WRITE = " insert into Album( " + "albumNo, title, release_date, artist, price, genre, info, image) "
-			+ " values(Album_seq.nextval, ?,?,?,?,?,?,?)";
+	final String WRITE = " insert into Album( " + "albumNo, title, release_date, artist, price, genre, info, image, status) "
+			+ " values(Album_seq.nextval, ?,?,?,?,?,?,?,?)";
 
-	final String UPDATE = "update Album set " + " title = ?, content = ?  " + " where no = ? and id = ? ";
-	final String DELETE = "delete from Album " + " where no = ? and id = ? ";
-	final String CHANGEAlbum = "update Album set fileName = ? " + " where no = ? ";
+	final String UPDATE = "update Album set " + " title = ?, release_date = ?, artist = ?, price = ?, "
+				+ "genre = ?, info = ?, status = ?  " + " where albumNo = ? ";
+	final String DELETE = "delete from Album " + " where albumNo = ? ";
+	final String CHANGEALBUMCOVER = "update Album set image = ? " + " where albumNo = ? ";
 
 }

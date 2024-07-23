@@ -18,8 +18,8 @@ public class AlbumChangeService implements Service {
 	public Integer service(Object obj) throws Exception {
 		// DB Album에서 리스트 쿼리 실행해서 데이터 가져오기 - 리턴 
 		// DB 처리는 DAO에서 처리 - AlbumDAO.list()
-		// AlbumController - (Execute) - [AlbumListService] - [AlbumDAO.list()]
-		return dao.changeAlbum((AlbumVO)obj);
+		// AlbumController - (Execute) - [AlbumAlbumChangeService] - [AlbumDAO.list()]
+		return dao.changeAlbumCover((AlbumVO)obj);
 		
 		
 	}

@@ -56,7 +56,7 @@ $(function(){
 	<!-- a tag : 데이터를 클릭하면 href의 정보를 가져와서 페이지 이동시킨다. -->
 <%-- 	<c:if test="${!empty login && login.id == vo.id }"> --%>
 	<a href="updateForm.do?no=${param.no }&page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="이미지를 제외한 항목만 수정가능합니다">수정</a>
-	<a class="btn btn-danger" href = "delete.do?albumNo=${vo.albumNo }&deleteimage=${vo.image}&perPageNum=${param.perPageNum}" id = "deleteBtn">삭제 </a>
+	<a class="btn btn-danger" href = "delete.do?albumNo=${vo.albumNo }&deleteImageName=${vo.image}&perPageNum=${param.perPageNum}" id = "deleteBtn">삭제 </a>
 <%-- 	</c:if> --%>
 	<a href="list.do?page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}" class="btn btn-info">리스트</a>
 	
@@ -76,8 +76,8 @@ $(function(){
 	
 		<form action="changeImage.do" method="post" enctype="multipart/form-data">
 			<!-- 숨겨서 넘겨야할 데이터 - 이미지 번호, 현재 파일이름(삭제) -->
-			<input name="no" value="${vo.no }" type="hidden">
-			<input name="deleteImage" value="${vo.image }" type="hidden">
+			<input name="albumNo" value="${vo.albumNo }" type="hidden">
+			<input name="deleteImageName" value="${vo.image }" type="hidden">
 			 <!-- 페이지 정보도 넘긴다. -->
 			<input name="page" value="${param.page }" type="hidden">
 			<input name="perPageNum" value="${param.perPageNum }" type="hidden">

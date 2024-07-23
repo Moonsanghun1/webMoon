@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.musaic.album.dao.AlbumDAO;
+import com.musaic.album.service.AlbumChangeService;
+import com.musaic.album.service.AlbumDeleteService;
 import com.musaic.album.service.AlbumListService;
+import com.musaic.album.service.AlbumUpdateService;
 import com.musaic.album.service.AlbumViewService;
 import com.musaic.album.service.AlbumWriteService;
 import com.musaic.main.dao.DAO;
@@ -26,10 +29,16 @@ public class Init {
 		serviceMap.put("/album/list.do", new AlbumListService());
 		serviceMap.put("/album/view.do", new AlbumViewService());
 		serviceMap.put("/album/write.do", new AlbumWriteService());
+		serviceMap.put("/album/update.do", new AlbumUpdateService());
+		serviceMap.put("/album/delete.do", new AlbumDeleteService());
+		serviceMap.put("/album/changeImage.do", new AlbumChangeService());
 		 //조립 dao->service
 		serviceMap.get("/album/list.do").setDAO(daoMap.get("albumDAO"));
 		serviceMap.get("/album/view.do").setDAO(daoMap.get("albumDAO"));
 		serviceMap.get("/album/write.do").setDAO(daoMap.get("albumDAO"));
+		serviceMap.get("/album/update.do").setDAO(daoMap.get("albumDAO"));
+		serviceMap.get("/album/delete.do").setDAO(daoMap.get("albumDAO"));
+		serviceMap.get("/album/changeImage.do").setDAO(daoMap.get("albumDAO"));
 
 		System.out.println("Init.static 초기화 블록 ----- 객체 생성과 로딩 ------");
 	}

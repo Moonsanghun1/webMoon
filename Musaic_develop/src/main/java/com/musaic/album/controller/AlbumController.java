@@ -1,5 +1,7 @@
 package com.musaic.album.controller;
 
+import java.io.File;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import com.musaic.album.vo.AlbumVO;
@@ -89,7 +91,7 @@ public class AlbumController {
 					System.out.println("3. 앨범 게시판 글등록 처리");
 					MultipartRequest multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
-					//title, release_date, artist, price, genre, info, image
+					//title, release_date, artist, price, genre, info, image, status
 					String title = multi.getParameter("title");
 					String release_date = multi.getParameter("release_date");
 					String artist = multi.getParameter("artist");
@@ -97,6 +99,7 @@ public class AlbumController {
 					String genre = multi.getParameter("genre");
 					String info = multi.getParameter("info");
 					String image = multi.getFilesystemName("image");
+					String status = multi.getParameter("status");
 					String perPageNum = multi.getParameter("perPageNum");
 					
 					// 변수 - vo 저장하고 Service 
@@ -108,6 +111,7 @@ public class AlbumController {
 					vo.setGenre(genre);
 					vo.setInfo(info);
 					vo.setImage(savePath + "/" + image);
+					vo.setStatus(status);
 					// [AlbumController] - AlbumWriteService - AlbumDAO.write(vo)
 					Execute.execute(Init.get(uri), vo);
 					
@@ -123,7 +127,7 @@ public class AlbumController {
 					no = Long.parseLong(request.getParameter("no"));
 					// no 맞는 데이터 DB에서 가져온다. AlbumViewService
 					//전달 데이터 - 글번호, 조회수 증가 여부 (1:증가 0: 증가 안함) : 배열 또는 Map
-					result = Execute.execute(Init.get("/album/view.do"), new Long[]{no , 0L});
+					result = Execute.execute(Init.get("/album/view.do"), no);
 					// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
 					request.setAttribute("vo", result);
 					// jsp 정보
@@ -134,32 +138,47 @@ public class AlbumController {
 					
 					System.out.println("4-2. 앨범 게시판 글 수정 처리");
 				
+					multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
-					no = Long.parseLong(request.getParameter("no"));
-					title = request.getParameter("title");
-					
+					//title, release_date, artist, price, genre, info, image, status
+					Long albumNo = Long.parseLong(multi.getParameter("albumNo"));
+					title = multi.getParameter("title");
+					release_date = multi.getParameter("release_date");
+					artist = multi.getParameter("artist");
+					price = multi.getParameter("price");
+					genre = multi.getParameter("genre");
+					info = multi.getParameter("info");
+					status = multi.getParameter("status");
+					perPageNum = multi.getParameter("perPageNum");
 					
 					// 변수 - vo 저장하고 Service 
 					vo = new AlbumVO();
+					vo.setAlbumNo(albumNo);
 					vo.setTitle(title);
+					vo.setRelease_date(release_date);
+					vo.setArtist(artist);
+					vo.setPrice(price);
+					vo.setGenre(genre);
+					vo.setInfo(info);
+					vo.setStatus(status);
 					
 					// DB에 데이터 수정하기 - AlbumUpdateService
 					Execute.execute(Init.get(uri), vo);
 					//페이지 정보 받기 & uri에 붙이기
 					pageObject = PageObject.getInstance(request);					
 					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
-					jsp = "redirect:view.do?no=" + no + "&inc=0" + "&" + pageObject.getPageQuery();
+					jsp = "redirect:view.do?no=" + albumNo + "&" + pageObject.getPageQuery();
 					session.setAttribute("msg", "글 수정이 성곡적으로 되었습니다.");
 					break;
 					
 				case "/album/delete.do":
-					System.out.println("5. 앨범 게시판 글 삭제");
+					System.out.println("5. 앨범 삭제");
 					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - AlbumVO
-					long AlbumNo = Long.parseLong(request.getParameter("AlbumNo"));
+					albumNo = Long.parseLong(request.getParameter("albumNo"));
 					perPageNum = request.getParameter("perPageNum");
 				
 					vo = new AlbumVO();
-					vo.setAlbumNo(AlbumNo);
+					vo.setAlbumNo(albumNo);
 					
 					
 					// DB 처리
@@ -168,12 +187,49 @@ public class AlbumController {
 					System.out.println("***************************");
 					System.out.println("**"+ vo.getAlbumNo()+"번 게시글이 삭제되었습니다. "+"**");
 					System.out.println("***************************");
-
+					
+					// 파일 삭제 
+					// 삭제할 파일 이름
+					String deleteImageName = request.getParameter("deleteImageName");
+					File deleteImage = new File(request.getServletContext().getRealPath(deleteImageName));
+					if (deleteImage.exists()) deleteImage.delete();
+					
 					jsp = "redirect:list.do?" + "&" + "perPageNum="+ perPageNum;
 					session.setAttribute("msg", "글 삭제가 성곡적으로 되었습니다.");
 					break;
-				case "0":
-					System.out.println("0. 이전");
+				
+				case "/album/changeImage.do":
+					
+					System.out.println("6. 이미지 바꾸기 처리");
+				
+					// 파일 업로드 [cos 라이브러리] 사용  MultipartRequest
+					// new MultipartRequest(request, 실제저장위치, 사이즈 제한, encoding, 중복처리 객체)
+					// file 객체 업로드 시 input의 name이 같으면 한개만 처리 가능.
+					// name을 다르게 해서 올려야 한다. file1, file2 
+					multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
+					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					albumNo = Long.parseLong(multi.getParameter("albumNo"));
+					image = multi.getFilesystemName("image");
+					
+					deleteImageName =multi.getParameter("deleteImageName");
+					// 변수 - vo 저장하고 Service 
+					vo = new AlbumVO();
+					vo.setAlbumNo(albumNo);
+					vo.setImage(savePath+ "/" + image);
+					
+					
+					// DB에 데이터 수정하기 - ImageChangeService
+					Execute.execute(Init.get(uri), vo);
+					// 지난 이미지 파일이 존재하면 지운다.
+					deleteImage = new File(request.getServletContext().getRealPath(deleteImageName));
+					if (deleteImage.exists()) deleteImage.delete();
+					// 처리결과 메세지 전달
+					session.setAttribute("msg", "이미지가 바꾸기에 성공하셨습니다.");
+					//페이지 정보 받기 & uri에 붙이기
+					pageObject = PageObject.getInstance(request);					
+					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
+					jsp = "redirect:view.do?no=" + albumNo + "&" + pageObject.getPageQuery();
+					break;
 					
 	
 				default:

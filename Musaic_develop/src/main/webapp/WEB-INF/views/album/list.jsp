@@ -26,6 +26,20 @@ cursor: pointer;
 <script type="text/javascript">
 
 $(function() {
+	// 제목 해당 태그 중 제일 높은 것을 이용하여 모두 맞추기
+	// console.log($(".title"));
+	let titleHeights = [];
+	
+	$(".title").each(function(idx, title){
+		console.log($(title).height());
+		titleHeights.push($(title).height());
+	});
+	console.log(titleHeights.join(", "));
+	
+	let maxTitleHeight = Math.max.apply(null, titleHeights);
+	console.log(maxTitleHeight);
+	
+	$(".title").height(maxTitleHeight);
 	
 	// 이미지 사이즈 조정 5:4
 	let imgWidth = $(".imageDiv:first").width();
@@ -33,14 +47,14 @@ $(function() {
 	console.log("image width= " + imgWidth + ", image Height= " + imgHeight);
 	// 높이 계산 = 너비는 동일하다. : 이미지와 이미지를 감싸고 있는 div의 높이로 사용
 	let height= imgWidth / 5 * 4;
+	// 전체 ImageDiv의 높이를 조정한다.
+	$(".imageDiv").height(height);
 	// 이미지 배열로 처리하지 않는다. foreach를 사용한다. - jquery each()
 	$(".imageDiv > img").each(function(idx, image){		
-	// 전체 ImageDiv의 높이를 조정한다.
-		$(".imageDiv").height(height);
 	// 이미지가 계산된 높이보다 크면 줄인다.
 		if($(image).height() > height){
 			let image_width = $(image).width();
-		let image_height = $(image).height();
+			let image_height = $(image).height();
 			let width = height  / image_height * image_width;
 			
 			console.log("chaged image width = " + width);
@@ -58,7 +72,7 @@ $(function() {
 // 		글번호 필요 - 수집
 		let no = $(this).find(".no").text();
 		console.log("no = " + no );
-		location="view.do?no=" + no + "&inc=1&${pageObject.pageQuery}" ;
+		location="view.do?no=" + no + "&${pageObject.pageQuery}" ;
 	});
 	
 	
@@ -138,7 +152,7 @@ $(function() {
 	 			<!-- 데이터 표시 시작 -->
 	  			<div class="col-md-4 dataRow" >
 	  				<div class="card" style="width:100%">
-	  				<div class = "imageDiv text-center align-self-center" >
+	  				<div class = "imageDiv text-center align-content-center" >
 					  	<img class="card-img-top" src="${vo.image }" alt="image">
 					</div>  	
 					  	<div class="card-body">
@@ -162,10 +176,10 @@ $(function() {
 	<div> 
 	<pageNav:pageNav listURI="list.do" pageObject="${pageObject }"></pageNav:pageNav>
 	</div>
-	<c:if test="${!empty login }">
+<%-- 	<c:if test="${!empty login }"> --%>
 	<!-- 로그인이 되어있으면 보이게 하자. -->
 	<a href="writeForm.do?perPageNum=${pageObject.perPageNum }"><button class="btn btn-primary">등록</button></a>
-	</c:if>
+<%-- 	</c:if> --%>
 </div>
 </body>
 </html>
