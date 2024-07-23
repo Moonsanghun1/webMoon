@@ -401,7 +401,7 @@ public class AlbumDAO extends DAO {
 					return idx;
 	}
 	
-	final String INCREASE = "update board set hit = hit + 1 " + " where no = ? ";
+	final String INCREASE = "update album set hit = hit + 1 " + " where no = ? ";
 
 	final String VIEW = "select a.albumNo, a.title, a.artist, a.price, a.genre, a.image, a.status, " 
 			+ " to_char(a.writeDate, 'yyyy-mm-dd') release_date, a.info "

@@ -10,6 +10,11 @@ import com.musaic.album.service.AlbumListService;
 import com.musaic.album.service.AlbumUpdateService;
 import com.musaic.album.service.AlbumViewService;
 import com.musaic.album.service.AlbumWriteService;
+import com.musaic.albumreply.dao.AlbumReplyDAO;
+import com.musaic.albumreply.service.AlbumReplyDeleteService;
+import com.musaic.albumreply.service.AlbumReplyListService;
+import com.musaic.albumreply.service.AlbumReplyUpdateService;
+import com.musaic.albumreply.service.AlbumReplyWriteService;
 import com.musaic.main.dao.DAO;
 import com.musaic.main.service.Service;
 
@@ -39,7 +44,19 @@ public class Init {
 		serviceMap.get("/album/update.do").setDAO(daoMap.get("albumDAO"));
 		serviceMap.get("/album/delete.do").setDAO(daoMap.get("albumDAO"));
 		serviceMap.get("/album/changeImage.do").setDAO(daoMap.get("albumDAO"));
-
+		
+		// ----[앨범 댓글 객체 생성과 조립] ====
+		daoMap.put("albumreplyDAO", new AlbumReplyDAO());
+		// service 생성
+		serviceMap.put("/albumreply/list.do", new AlbumReplyListService()); 
+		serviceMap.put("/albumreply/write.do", new AlbumReplyWriteService()); 
+		serviceMap.put("/albumreply/update.do", new AlbumReplyUpdateService()); 
+		serviceMap.put("/albumreply/delete.do", new AlbumReplyDeleteService());		
+		// 조립 dao -> servive
+		serviceMap.get("/albumreply/list.do").setDAO(daoMap.get("albumreplyDAO"));
+		serviceMap.get("/albumreply/write.do").setDAO(daoMap.get("albumreplyDAO"));
+		serviceMap.get("/albumreply/update.do").setDAO(daoMap.get("albumreplyDAO"));
+		serviceMap.get("/albumreply/delete.do").setDAO(daoMap.get("albumreplyDAO"));
 		System.out.println("Init.static 초기화 블록 ----- 객체 생성과 로딩 ------");
 	}
 	

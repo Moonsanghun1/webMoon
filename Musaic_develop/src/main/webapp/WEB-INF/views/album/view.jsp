@@ -60,6 +60,10 @@ $(function(){
 <%-- 	</c:if> --%>
 	<a href="list.do?page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}" class="btn btn-info">리스트</a>
 	
+	<!-- 댓글 처리 시작 -->
+<jsp:include page="reply.jsp"/> 
+<!-- 댓글 처리 끝 -->
+	
 </div>
 <!-- container의 끝 -->
 

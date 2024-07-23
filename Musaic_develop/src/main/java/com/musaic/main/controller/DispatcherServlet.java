@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.musaic.album.controller.AlbumController;
+import com.musaic.albumreply.controller.AlbumReplyController;
 
 
 /**
@@ -23,6 +24,7 @@ public class DispatcherServlet extends HttpServlet {
 
 	// Controller 선언과 생성 - 1번만 된다.
 	AlbumController albumController = new AlbumController();
+	AlbumReplyController albumReplyController = new AlbumReplyController();
 	/**
 	 * @see Servlet#init(ServletConfig)
 	 */
@@ -84,6 +86,10 @@ public class DispatcherServlet extends HttpServlet {
 		case "/album":
 			System.out.println("앨범 관리");
 			jsp = albumController.execute(request);
+			break;
+		case "/albumreply":
+			System.out.println("앨범 댓글 관리");
+			jsp = albumReplyController.execute(request);
 			break;
 			
 	

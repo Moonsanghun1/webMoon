@@ -1,16 +1,17 @@
-package com.web.boardreply.controller;
+package com.musaic.albumreply.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import com.web.boardreply.vo.BoardReplyVO;
-import com.web.main.controller.Init;
-import com.web.util.exe.Execute;
+
+import com.musaic.albumreply.vo.AlbumReplyVO;
+import com.musaic.main.controller.Init;
+import com.musaic.util.exe.Execute;
 import com.webjjang.util.page.ReplyPageObject;
-// Board Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
-public class BoardReplyController {
+// Album Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
+public class AlbumReplyController {
 
 	public String execute(HttpServletRequest request) {
-		System.out.println("BoardController.execute() --------------------------");
+		System.out.println("AlbumReplyController.execute() --------------------------");
 			
 			// session을 request에서부터 꺼낸다.
 			HttpSession session = request.getSession();
@@ -27,29 +28,31 @@ public class BoardReplyController {
 				switch (uri) {
 				
 				
-				case "/boardreply/write.do":
-					System.out.println("1. 일반 게시판 댓글등록 처리");
+				case "/albumreply/write.do":
+					System.out.println("1. 앨범 댓글등록 처리");
 					
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
+					// albumNo, content, id, rating
+					Long albumNo = Long.parseLong(request.getParameter("writer"));
 					String content = request.getParameter("content");
-					String writer = request.getParameter("writer");
-					String pw = request.getParameter("pw");
+					String id = request.getParameter("id");
+					String rating = request.getParameter("rating");
 					
 					// 변수 - vo 저장하고 Service 
-					BoardReplyVO vo = new BoardReplyVO();
+					AlbumReplyVO vo = new AlbumReplyVO();
 					vo.setContent(content);
-					vo.setWriter(writer);
-					vo.setPw(pw);
-					vo.setNo(pageObject.getNo());
+					vo.setId(id);
+					vo.setAlbumNo(albumNo);
+					vo.setRating(rating);
 					
 					
-					// [BoardController] - BoardWriteService - BoardDAO.write(vo)
+					// [AlbumController] - AlbumWriteService - AlbumDAO.write(vo)
 					Execute.execute(Init.get(uri), vo);
 					
 					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
 					// 아니면 jsp로 forward를 시킨다.
 					// 
-					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
+					jsp = "redirect:/album/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
 					// 일반게시판의 페이지 & 검색 정보 붙이기
 					+pageObject.getPageObject().getPageQuery();
 					
@@ -57,57 +60,50 @@ public class BoardReplyController {
 					break;
 		
 					
-				case "/boardreply/update.do":
+				case "/albumreply/update.do":
 					
 					System.out.println("2. 일반 게시판 댓글 수정 처리");
 				
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
 					Long rno = Long.parseLong(request.getParameter("rno"));
 					content = request.getParameter("content");
-					writer = request.getParameter("writer");
-					pw = request.getParameter("pw");
-					
+//					writer = request.getParameter("writer");
 				
 					
 					// 변수 - vo 저장하고 Service 
-					vo = new BoardReplyVO();
+					vo = new AlbumReplyVO();
 					vo.setRno(rno);
 					vo.setContent(content);
-					vo.setWriter(writer);
-					vo.setPw(pw);
+					//vo.setId(id);
 					
 					System.out.println("vo =" + vo);
-					// DB에 데이터 수정하기 - BoardUpdateService
+					// DB에 데이터 수정하기 - AlbumUpdateService
 					Execute.execute(Init.get(uri), vo);
 					//페이지 정보 받기 & uri에 붙이기
 						
 					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
-					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
+					jsp = "redirect:/album/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
 							// 일반게시판의 페이지 & 검색 정보 붙이기
 							+pageObject.getPageObject().getPageQuery();
 					session.setAttribute("msg", "댓글 수정이 성곡적으로 되었습니다.");
 					break;
 					
-				case "/boardreply/delete.do":
+				case "/albumreply/delete.do":
 					System.out.println("3. 일반 게시판 댓글 삭제");
-					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - BoardVO
+					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - AlbumVO
 					rno = Long.parseLong(request.getParameter("rno"));
-					pw = request.getParameter("pw");
-					
 				
-					vo = new BoardReplyVO();
+					vo = new AlbumReplyVO();
 					vo.setRno(rno);
-					vo.setPw(pw);
-					
 					
 					// DB 처리
 					Execute.execute(Init.get(uri), vo);
 					System.out.println();
 					System.out.println("***************************");
-					System.out.println("**"+ vo.getNo()+"번 게시글이 삭제되었습니다. "+"**");
+					System.out.println("**"+ vo.getRno()+"번 게시글이 삭제되었습니다. "+"**");
 					System.out.println("***************************");
 
-					jsp = "redirect:/board/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
+					jsp = "redirect:/album/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
 							// 일반게시판의 페이지 & 검색 정보 붙이기
 							+pageObject.getPageObject().getPageQuery();
 					

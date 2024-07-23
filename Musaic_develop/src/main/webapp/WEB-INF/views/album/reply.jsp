@@ -17,7 +17,7 @@
 			<div class="card replyDataRow" data-rno= "${replyVO.rno }" style="margin: 5px 0;">
 				<div class="card-header">
 					<span class="float-right">${replyVO.writeDate }</span>
-					<b class="replyWriter">${replyVO.writer }</b>
+					<b class="replyId">${replyVO.id }(${replyVO.name })</b>
 				</div>
 				<div class="card-body">
 				<pre class="replyContent">${replyVO.content }</pre>
@@ -39,7 +39,7 @@
 <!-- 댓글 등록 / 수정 / 삭제를 위한 모달창 -->
 <!-- The Modal -->
 <!-- 댓글 등록처리 모달 -->
-<div class="modal" id="boardReplyModal">
+<div class="modal" id="albumReplyModal">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -52,11 +52,11 @@
 
 	  <!-- 데이터를 넘기는 form -->	
       <!-- Modal body -->
-      <form id="boardReplyForm" method="post">
+      <form id="albumReplyForm" method="post" >
     	
     	
     	<input type="hidden" name = "rno" id = "rno">
-    	<input type="hidden" name = "no" value = "${param.no }">
+    	<input type="hidden" name = "no" value = "${param.albumNo }">
     	<!-- 페이지 정보 보내기 -->
     	<input type="hidden" name = "page" value = "${param.page }">
     	<input type="hidden" name = "perPageNum" value = "${param.perPageNum }">
@@ -69,13 +69,9 @@
 						<label for="content">내용</label>
 						<textarea class="form-control" rows="3" id="content" name="content"></textarea>
 					</div>
-					<div class="form-group" id = "writerDiv">
-						<label for="writer">작성자</label> 
-						<input type="text" class="form-control" id="writer" name = "writer">
-					</div>
-					<div class="form-group" id = "pwDiv">
-						<label for="pw">비밀번호</label> 
-						<input type="password" class="form-control" id="pw" name = "pw">
+					<div class="form-group" id = "ratingDiv">
+						<label for="rating">별점</label> 
+						<input type="text" class="form-control" id="rating" name = "rating">
 					</div>
 				</div>
 
@@ -100,29 +96,29 @@
 		// 댓글 등록 이벤트
 		$('#replyWriteBtn').click(function() {
 			// 제목을 댓글 등록
-			$("#boardReplyModal").find(".modal-title").text("댓글 등록");
+			$("#albumReplyModal").find(".modal-title").text("댓글 등록");
 			// input / text를 선택한다.
-			$("#boardReplyForm").find(".form-group").show();
+			$("#albumReplyForm").find(".form-group").show();
 			//data 지우기
-			$("#boardReplyForm").find(".form-group>input, .form-group>textarea").val("");
+			$("#albumReplyForm").find(".form-group>input, .form-group>textarea").val("");
 			
 			// 버튼을 선택한다.
 			// 먼저 버튼이 다보이게 하고
-			$("#boardReplyForm button").show();
+			$("#albumReplyForm button").show();
 			// 필요없는 버튼은 안보이게 한다.
 			$("#replyModalUpdateBtn, #replyModalDeleteBtn").hide();
 			// 모달 창 보이게
-			$("#boardReplyModal").modal("show");
+			$("#albumReplyModal").modal("show");
 
 		});
 		// 댓글 수정 이벤트
 		$('.replyUpdateBtn').click(function() {
 			// 제목을 댓글 수정
-			$("#boardReplyModal").find(".modal-title").text("댓글 수정");
+			$("#albumReplyModal").find(".modal-title").text("댓글 수정");
 			// input / text를 선택한다. - 내용 / 작성자 / 비밀번호
-			$("#boardReplyForm").find(".form-group").show();
+			$("#albumReplyForm").find(".form-group").show();
 			//data 지우기
-			$("#boardReplyForm").find(".form-group>input, .form-group>textarea").val("");
+			$("#albumReplyForm").find(".form-group>input, .form-group>textarea").val("");
 			// 댓글 번호, 내용, 작성자를 데이터를 수집해서  value값으로 세팅해야 한다.
 			let replyDataRow= $(this).closest(".replyDataRow"); 
 			// data("rno") -> tag 안에 data-rno = '값'
@@ -135,54 +131,54 @@
 			$("#content").val(content);
 			$("#writer").val(writer);
 			
-			$("#boardReplyForm").find("input, textarea").show();
+			$("#albumReplyForm").find("input, textarea").show();
 			// 버튼을 선택한다.
 			// 먼저 버튼이 다보이게 하고
-			$("#boardReplyForm button").show();
+			$("#albumReplyForm button").show();
 			// 필요없는 버튼은 안보이게 한다.
 			$("#replyModalWriteBtn, #replyModalDeleteBtn").hide();
 			// 모달 창 보이게
-			$("#boardReplyModal").modal("show");
+			$("#albumReplyModal").modal("show");
 		});
 
 		$('.replyDeleteBtn').click(function() {
 			// 제목을 댓글 삭제로 만든다.
-			$("#boardReplyModal").find(".modal-title").text("댓글 삭제");
+			$("#albumReplyModal").find(".modal-title").text("댓글 삭제");
 			// 
-			$("#boardReplyForm").find(".form-group").hide();
+			$("#albumReplyForm").find(".form-group").hide();
 			$("#pwDiv").show();
 			//data 지우기
-			$("#boardReplyForm").find(".form-group>input, .form-group>textarea").val("");		
+			$("#albumReplyForm").find(".form-group>input, .form-group>textarea").val("");		
 			// data("rno") -> tag 안에 data-rno = "값"
 			$("#rno").val($(this).closest(".replyDataRow").data("rno"))
 			
 			// 버튼을 선택한다.
 			// 먼저 버튼이 다보이게 하고
-			$("#boardReplyForm button").show();
+			$("#albumReplyForm button").show();
 			// 필요없는 버튼은 안보이게 한다.
 			$("#replyModalWriteBtn, #replyModalUpdateBtn").hide();
 			// 모달 창 보이게
-			$("#boardReplyModal").modal("show");
+			$("#albumReplyModal").modal("show");
 
 		});
 		// ------------ Modal 화면안의 처리 버튼 이벤트 처리 긑--------------
 		
 		$("#replyModalWriteBtn").click(function(){
-			$("#boardReplyForm").attr("action", "/boardreply/write.do");
+			$("#albumReplyForm").attr("action", "/albumreply/write.do");
 			// 데이터를 전송하면서 페이지 이동을 시킨다.
-			$("#boardReplyForm").submit();
+			$("#albumReplyForm").submit();
 		});
 		
 		$("#replyModalUpdateBtn").click(function(){
-			$("#boardReplyForm").attr("action", "/boardreply/update.do");
+			$("#albumReplyForm").attr("action", "/albumreply/update.do");
 			// 데이터를 전송하면서 페이지 이동을 시킨다.
-			$("#boardReplyForm").submit();
+			$("#albumReplyForm").submit();
 		});
 		
 		$("#replyModalDeleteBtn").click(function(){
-			$("#boardReplyForm").attr("action", "/boardreply/delete.do");
+			$("#albumReplyForm").attr("action", "/albumreply/delete.do");
 			// 데이터를 전송하면서 페이지 이동을 시킨다.
-			$("#boardReplyForm").submit();
+			$("#albumReplyForm").submit();
 		});
 		
 	});
