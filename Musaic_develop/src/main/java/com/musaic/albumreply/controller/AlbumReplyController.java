@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 
 import com.musaic.albumreply.vo.AlbumReplyVO;
 import com.musaic.main.controller.Init;
+import com.musaic.member.db.LoginVO;
 import com.musaic.util.exe.Execute;
 import com.webjjang.util.page.ReplyPageObject;
 // Album Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
@@ -15,9 +16,15 @@ public class AlbumReplyController {
 			
 			// session을 request에서부터 꺼낸다.
 			HttpSession session = request.getSession();
-		
+			
+			
 			String uri = request.getRequestURI();
-
+			// login된 정보 중에서 id를 많이 사용한다.
+			String id = null;
+			LoginVO login = (LoginVO) session.getAttribute("login");
+			// login이 되어 있는 경우만 id를 꺼내온다.
+			if(login != null) id = login.getId();
+			System.out.println("@@@@@@@@@id=" + id);
 			String jsp = null;
 			
 			try { //정상처리
@@ -33,9 +40,10 @@ public class AlbumReplyController {
 					
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
 					// albumNo, content, id, rating
-					Long albumNo = Long.parseLong(request.getParameter("writer"));
+					System.out.println("@@@@@@@@@@"+request.getParameter("no"));
+					Long albumNo = Long.parseLong(request.getParameter("no"));
+					id = "test";
 					String content = request.getParameter("content");
-					String id = request.getParameter("id");
 					String rating = request.getParameter("rating");
 					
 					// 변수 - vo 저장하고 Service 
@@ -52,7 +60,7 @@ public class AlbumReplyController {
 					// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를 
 					// 아니면 jsp로 forward를 시킨다.
 					// 
-					jsp = "redirect:/album/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
+					jsp = "redirect:/album/view.do?no=" + pageObject.getNo() + "&" 
 					// 일반게시판의 페이지 & 검색 정보 붙이기
 					+pageObject.getPageObject().getPageQuery();
 					
@@ -66,23 +74,23 @@ public class AlbumReplyController {
 				
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
 					Long rno = Long.parseLong(request.getParameter("rno"));
+					
 					content = request.getParameter("content");
-//					writer = request.getParameter("writer");
+					rating = request.getParameter("rating");
 				
 					
 					// 변수 - vo 저장하고 Service 
 					vo = new AlbumReplyVO();
 					vo.setRno(rno);
 					vo.setContent(content);
-					//vo.setId(id);
+					vo.setRating(rating);
 					
-					System.out.println("vo =" + vo);
 					// DB에 데이터 수정하기 - AlbumUpdateService
 					Execute.execute(Init.get(uri), vo);
 					//페이지 정보 받기 & uri에 붙이기
 						
 					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
-					jsp = "redirect:/album/view.do?no=" + pageObject.getNo() + "&inc=0" + "&" 
+					jsp = "redirect:/album/view.do?no=" + pageObject.getNo() + "&" 
 							// 일반게시판의 페이지 & 검색 정보 붙이기
 							+pageObject.getPageObject().getPageQuery();
 					session.setAttribute("msg", "댓글 수정이 성곡적으로 되었습니다.");
@@ -92,6 +100,7 @@ public class AlbumReplyController {
 					System.out.println("3. 일반 게시판 댓글 삭제");
 					// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, pw - AlbumVO
 					rno = Long.parseLong(request.getParameter("rno"));
+					
 				
 					vo = new AlbumReplyVO();
 					vo.setRno(rno);

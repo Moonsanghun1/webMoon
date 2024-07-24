@@ -158,9 +158,8 @@ public class AlbumReplyDAO extends DAO {
 			// 4. 실행 객체 & 데이터 세팅
 			pstmt = con.prepareStatement(UPDATE);
 			pstmt.setString(1, vo.getContent());
-			pstmt.setString(2, vo.getId());
+			pstmt.setString(2, vo.getRating());
 			pstmt.setLong(3, vo.getRno());
-			pstmt.setString(4, vo.getRating());
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
@@ -239,7 +238,7 @@ public class AlbumReplyDAO extends DAO {
 						+ " select  a.rno, a.albumNo, a.content, a.id, m.name, a.rating, " 
 						+ " to_char(a.writeDate, 'yyyy-mm-dd HH24:MM:SS') writeDate"
 						+ " from album_reply a, member m " 
-						+ " where albumNo = ? and (a.id=m.id) "
+						+ " where albumNo = ? and (a.id = m.id) "
 						+ " order by rno desc " 
 					+ " ) "
 				+ " ) where rnum between ? and ?";
@@ -250,7 +249,7 @@ public class AlbumReplyDAO extends DAO {
 	final String WRITE = " insert into album_reply( " + " rno, albumNo, content, id, rating) "
 			+ " values(album_reply_seq.nextval, ?,?,?,?)";
 
-	final String UPDATE = "update album_reply set " + "  content = ? ,writer = ? " + " where rno = ? and  ";
+	final String UPDATE = "update album_reply set " + "  content = ? , rating = ? " + " where rno = ?  ";
 	final String DELETE = "delete from album_reply " + " where rno = ? ";
 
 }
