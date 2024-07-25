@@ -75,7 +75,7 @@ public class MemberController {
 				//execute
 				Execute.execute(Init.get(uri), vo);
 				
-				jsp="redirect:list.do";
+				jsp="redirect:/main/main.do";
 				break;
 			case "/member/loginform.do":
 				System.out.println("======== Member Controller login form ========");
@@ -106,14 +106,89 @@ public class MemberController {
 			case "/member/view.do":
 				System.out.println("======== Member Controller view ========");
 				
-				login=(LoginVO) session.getAttribute("login");
-				id=login.getId();
-				
 				vo=(MemberVO) Execute.execute(Init.get(uri),id);
 				
 				request.setAttribute("vo", vo);
 				
 				jsp="member/view";
+				break;
+			case "/member/updateform.do":
+				System.out.println("======== Member Controller update form ========");
+				
+				vo=new MemberVO();
+				vo=(MemberVO) Execute.execute(Init.get("/member/view.do"), id);
+				
+				request.setAttribute("vo", vo);
+				
+				jsp="member/updateform";
+				break;			
+			case "/member/update.do":
+				System.out.println("======== Member Controller update ========");
+				//데이터 수집
+				id=request.getParameter("id");
+				name=request.getParameter("name");
+				gender=request.getParameter("gender");
+				birth=request.getParameter("birth");
+				address=request.getParameter("address");
+				
+				emails=request.getParameterValues("email");
+				email="";
+				if(emails!=null) {
+					for(String e:emails)
+						email+=e;
+				}
+				System.out.println("email: "+email);
+				
+				tels=request.getParameterValues("tel");
+				tel="";
+				if(tels!=null) {
+					for(String t:tels)
+						tel+=t;
+				}
+				System.out.println("tel: "+tel);
+				//vo 데이터 세팅
+				vo=new MemberVO();
+				vo.setId(id);
+				vo.setName(name);
+				vo.setGender(gender);
+				vo.setBirth(birth);
+				vo.setTel(tel);
+				vo.setEmail(email);
+				vo.setAddress(address);
+				
+				//execute
+				Execute.execute(Init.get(uri), vo);
+				
+				jsp="redirect:view.do?id="+id;
+				break;
+			case "/member/pwform.do":
+				System.out.println("======== Member Controller pw form ========");
+				//입력한 정보가 적절한지 판단해야 함. 적절하면 pwform, 적절하지 않으면 
+				if(id!=null) request.setAttribute("id", id);
+				jsp="member/pwform";
+				break;
+			case "/member/changepw.do":
+				System.out.println("======== Member Controller change pw ========");
+				
+				if(id==null)
+					id=request.getParameter("id");
+				pw=request.getParameter("pw");
+				
+				vo=new MemberVO();
+				vo.setId(id);
+				vo.setPw(pw);
+				
+				Execute.execute(Init.get(uri), vo);
+				
+				if(login==null) {
+					jsp="member/loginform";
+				}else {
+					jsp="redirect:/member/updateform.do?id="+id;					
+				}
+				break;
+			case "/member/idform.do":
+				System.out.println("======== Member Controller id form ========");
+				jsp="member/idform";
 				break;
 			}//end of switch
 		}catch(Exception e) {

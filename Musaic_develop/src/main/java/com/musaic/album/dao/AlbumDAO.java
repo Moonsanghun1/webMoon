@@ -130,9 +130,9 @@ public class AlbumDAO extends DAO {
 			// 5. 실행
 			rs = pstmt.executeQuery();
 			// 6. 표시 및 담기
+			vo = new AlbumVO();
 			if (rs != null && rs.next()) {
 				// rs -> rs
-				vo = new AlbumVO();
 				//albumNo, title, artist, price, genre, image, release_date, info "
 				vo.setAlbumNo(rs.getLong("albumNo"));
 				vo.setTitle(rs.getString("title"));
@@ -143,8 +143,39 @@ public class AlbumDAO extends DAO {
 				vo.setRelease_date(rs.getString("release_date"));
 				vo.setInfo(rs.getString("info"));
 				vo.setStatus(rs.getString("status"));
+			}
+			DB.close(con, pstmt, rs);
+						Long result = 0L;
+						Long replyCnt = 0L;
+						double avg = 0;
+						// 1. 드라이버 확인 - DB
+						// 2. 연결
+						con = DB.getConnection();
+						// 3. sql - 아래 LIST
+						// 4. 실행 객체 & 데이터 세팅
+						pstmt = con.prepareStatement(RATING);
 
-			} // end of if
+						pstmt.setLong(1, no);
+						// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
+						rs = pstmt.executeQuery();
+						// 6. 표시 또는 담기
+						double sum = 0;
+						double count = 0;
+
+				            while (rs != null && rs.next()) {
+				                sum += rs.getLong("rating");
+				                count++;
+				            }
+				            if (count > 0) {
+				                avg = sum / count;
+				            }
+				          result = (Long) Math.round(avg);
+				          replyCnt = (Long) Math.round(count);
+				          
+				         
+				          vo.setRating(result);
+				          vo.setReplyCnt(replyCnt);
+				          
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -157,6 +188,54 @@ public class AlbumDAO extends DAO {
 
 	}// end of view()
 
+	// 2-1. 리스트
+	// AlbumController - (Execute) - AlbumListService - [AlbumDAO.list()]
+	public List<AlbumVO> musicList(Long no) throws Exception {
+
+		List<AlbumVO> list = null;
+
+		try {
+			// 1. 드라이버 확인 - DB
+			// 2. 연결
+			con = DB.getConnection();
+			// 3. sql - 아래 LIST - 콘솔 확인하고 여기에 쿼리에 해당되는 
+			// 4. 실행 객체 & 데이터 세팅
+			pstmt = con.prepareStatement(MUSICLIST);
+			pstmt.setLong(1, no);
+			// 5. 실행
+			rs = pstmt.executeQuery();
+			// 6. 표시 또는 담기
+			if (rs != null) {
+				while (rs.next()) {
+					// rs - > vo -> list
+					// list가 null이면 생성해서 저장할 수 있게 해줘야 한다.
+					if (list == null)
+						list = new ArrayList<AlbumVO>();
+					// rs -> vo
+					AlbumVO vo = new AlbumVO();
+					vo.setMusicNo(rs.getLong("musicNo"));
+					vo.setMusicTitle(rs.getString("musicTitle"));
+					vo.setSinger(rs.getString("singer"));
+					vo.setMusicStatus(rs.getString("musicStatus"));
+					vo.setImage(rs.getString("image"));
+					// vo -> list
+					list.add(vo);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+
+		} finally {
+			// 7. 닫기
+			DB.close(con, pstmt, rs);
+		}
+
+		// 결과 데이터를 리턴해준다.
+		return list;
+	}	
+	
 	// 3 . 글등록 처리
 	// AlbumController - (Execute) - AlbumwriteService - [AlbumDAO.write(vo)]
 	public int write(AlbumVO vo) throws Exception {
@@ -331,7 +410,9 @@ public class AlbumDAO extends DAO {
 		// 결과 데이터를 리턴해준다.
 		return result;
 	} // end of delete()
-
+	
+	
+	
 	// 실행항 쿼리를 정의해 놓은 변수 선언.
 	
 	// 리스트의 페이지 처리 절차 - 원본 -> 순서 번호 -> 해당 페이지 데이터만 가져온다.
@@ -414,5 +495,11 @@ public class AlbumDAO extends DAO {
 				+ "genre = ?, info = ?, status = ?  " + " where albumNo = ? ";
 	final String DELETE = "delete from Album " + " where albumNo = ? ";
 	final String CHANGEALBUMCOVER = "update Album set image = ? " + " where albumNo = ? ";
-
+	final String RATING = "select rating from album_reply where albumno = ?";
+	final String MUSICLIST = " SELECT musicNo, musicTitle, musicStatus, singer, image FROM "
+			+ " (  SELECT rownum AS rnum, musicNo, musicTitle, singer, musicStatus, image FROM "
+			+ " (  SELECT m.musicNo, m.musicTitle, m.musicStatus,  m.singer ,a.image"
+			+ " FROM music m, album a "
+			+ " where a.albumNo = ? and m.albumNo = a.albumNo ORDER BY musicNo DESC  ) ) "
+			+ " WHERE rnum BETWEEN 1 AND 100 ";
 }

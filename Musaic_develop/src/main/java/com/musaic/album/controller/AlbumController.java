@@ -61,7 +61,7 @@ public class AlbumController {
 					break;
 				case "/album/view.do":
 					System.out.println("2. 앨범 상세 보기");
-					
+					pageObject =  new PageObject();
 					// 1. 조회수 1증가(글보기)
 					String strNo = request.getParameter("no");
 					no = Long.parseLong(strNo);
@@ -71,6 +71,9 @@ public class AlbumController {
 					
 					request.setAttribute("vo", result);
 					
+					result = Execute.execute(Init.get("/album/musicList.do"), no);
+						
+					request.setAttribute("musicList", result);
 					// 댓글 페이지 객체
 					// 데이터 전달 - page / perPageNum / no / replyPage / replyPerPageNum
 					ReplyPageObject replyPageObject = ReplyPageObject.getInstance(request);

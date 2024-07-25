@@ -5,10 +5,22 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>이미지 글보기</title>
+<title>앨범 상세 보기</title>
+<style type="text/css">
 
+
+.musicImg{
+	width: 40px;
+	height: 40px;
+	margin-right: 10px;
+}
+</style>
 <script>
 $(function(){
+	
+	// 로그인 상태를 나타내는 전역 변수
+	var isLoggedIn = ${login != null ? "true" : "false"};
+	
   $('[data-toggle="tooltip"]').tooltip();  
   
   //이벤트 처리
@@ -17,42 +29,135 @@ $(function(){
 	 // 확인 창이 나타나는데 취소를 누르면 삭제페이지 이동을 취소(return false) 시킨다.
 	 if(!confirm("정말 삭제 하시겠습니까?")) return false;
   });
+  
+	$(".btn-add")
+	.click(function(event) {
+				// 이벤트 전파 막기
+				event.stopPropagation();
+
+				if (!isLoggedIn) {
+					// 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시
+					$("#modalMessage").text("로그인 후 이용하실 수 있습니다.");
+					$("#resultModal").modal('show');
+					return;
+				}
+
+				let musicNo = $(this).data("music-no");
+				if (typeof musicNo === 'undefined') {
+					console.error("musicNo is undefined");
+					return;
+				}
+
+				$.ajax({url : "increaseHit.do",
+						type : "POST",
+						data : {musicNo : musicNo},success : function(response) {
+								let modalMessage = response === "success" ? "플레이 리스트 목록에 추가되었습니다."
+										: "플레이 리스트 목록에 담기지 않았습니다.";
+								$("#modalMessage").text(
+										modalMessage);
+								$("#resultModal").modal('show');
+							},
+							error : function() {
+								$("#modalMessage").text(
+										"서버와의 통신에 실패했습니다.");
+								$("#resultModal").modal('show');
+							}
+						});
+			});
+
+// 데이터 행 클릭 시 view.do로 이동
+$(".dataRow").click(function() {
+if ($(this).hasClass("disabled")) {
+	return; // 비활성화된 행의 클릭 이벤트 무시
+}
+let musicNo = $(this).data("music-no");
+if (typeof musicNo === 'undefined') {
+	console.error("musicNo is undefined");
+	return;
+}
+console.log("Redirecting to view.do?musicNo=" + musicNo); // 로그 확인
+location.href = "view.do?musicNo=" + musicNo; // location.href를 사용하여 페이지 이동
+
+});
 });
 </script>
 
 </head>
 <body>
 <div class="container">
-	<h1>이미지 글보기</h1>
-	<div class="card">
-	  <div class="card-header">
-	  	<b>${vo.albumNo }. ${vo.title }
-	  	</b>
-	  </div>
-	  <div class="card-body">
-	  	<div class="card">
-		  <div class="card-header">
-		  	<!-- card 아래의 card-img-overlay 위쪽의 이미지(또는 class = card-img-top - card 클래스 밖에도 적용) - width의 기본이 100% -->
-			<img src="${vo.image }" alt="image">
-		    <div class="card-img-overlay">
-<%-- 		    	<c:if test="${login.id == vo.id }"> --%>
-			    	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeImageModal">
-					  이미지 변경
-					</button>
-<%-- 			    </c:if> --%>
-			    <a href="${vo.image }" class="btn btn-success" download >다운로드</a>
-			</div>
+	<h1>앨범 상세 보기</h1>
+	
+	
+	
+  <div class="media border p-3">
+    <img src="${vo.image }" alt="앨범 커버" class="mr-3 mt-3" style="width:350px;" id = "">
+    <div class="media-body">
+     <h2>${vo.title }</h2>
+     <h4>${vo.artist }</h4>
+     <p>발매일 : ${vo.release_date }</p>
+     <p>장르 : ${vo.genre }</p>
+     댓글<span class="replyCnt">${vo.replyCnt}</span>개
+     <br>
+     <span class="replyRating">${vo.rating}</span> 
+    <br>
+    <button class="btn btn-info">앨범 듣기</button>
+    <button class="btn btn-secondary">장바구니 담기</button>
+    <%-- <c:if test="${login.id == vo.id }"> --%>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeImageModal">
+			이미지 변경
+		</button>
+<%-- 	</c:if> --%>
+    </div>
+  </div>
+	
+<!-- 	앨범 정보  -->
+		 <div>
+		    <p><pre>${vo.info }</pre></p>
 		  </div>
-		  <div class="card-body">
-		    <p class="card-text"><pre>${vo.info }</pre></p>
-		  </div>
-		</div>
-	  </div>
-	  <div class="card-footer">
-	  	<span class="float-right">${vo.release_date }</span>
-	  	${vo.artist }
-	  </div>
-	</div>
+	
+	
+			<table class="table">
+				<!-- 게시판 데이터의 제목 -->
+				<tr>
+					<th>번호</th>
+					<th>제목</th>
+					<th>가수명</th>
+					<c:if test="${!empty login && login.gradeNo == 9}">
+						<th>상태</th>
+					</c:if>
+					<th>담기</th>
+				</tr>
+				<!-- 실제 데이터 표시 -->
+				<c:forEach items="${musicList}" var="vo">
+					<c:choose>
+						<c:when
+							test="${vo.musicStatus == '공개' || (!empty login && login.gradeNo == 9)}">
+							<tr class="dataRow ${vo.musicStatus == '비공개' ? 'disabled' : ''}"
+								data-music-no="${vo.musicNo}">
+								<td class="no">&nbsp;&nbsp;${vo.musicNo}</td>
+								<td><img src="${vo.image}" alt="${vo.musicTitle}" class="musicImg"/>
+									${vo.musicTitle}</td>
+								<td>${vo.singer}</td>
+								<c:if test="${!empty login && login.gradeNo == 9}">
+									<td>${vo.musicStatus}</td>
+								</c:if>
+								<td>
+									<!-- 담기 버튼 --> <span class="btn-add"
+									data-music-no="${vo.musicNo}">&nbsp;&nbsp;<i
+										class="fa fa-plus"></i></span>
+								</td>
+							</tr>
+						</c:when>
+						<c:otherwise>
+							<!-- 비공식 음원은 표시되지 않음 -->
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+
+				
+			</table>		
+	
+
 	<!-- a tag : 데이터를 클릭하면 href의 정보를 가져와서 페이지 이동시킨다. -->
 <%-- 	<c:if test="${!empty login && login.id == vo.id }"> --%>
 	<a href="updateForm.do?no=${param.no }&page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="이미지를 제외한 항목만 수정가능합니다">수정</a>

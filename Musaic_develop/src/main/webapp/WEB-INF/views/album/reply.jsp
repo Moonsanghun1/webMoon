@@ -66,6 +66,33 @@ h1 {
 <script type="text/javascript">
 
 $(function() {
+    function renderStars(rating) {
+        const totalStars = 5;
+        const fullStars = Math.floor(rating/2);
+        const halfStar = rating % 2 === 1;
+        let starHTML = '';
+
+        for (let i = 0; i < fullStars; i++) {
+            starHTML += '<label class="rating__label rating__label--half"> <span class="star-icon filled style="opacity: 1;""></span></label><label class="rating__label rating__label--full"> <span class="star-icon filled style="opacity: 0.5;""></span></label>';
+        }
+
+        if (halfStar) {
+            starHTML += '<label class="rating__label rating__label--half"> <span class="star-icon filled"></span></label><label class="rating__label rating__label--full"> <span class="star-icon"></span></label>';
+        }
+
+        for (let i = fullStars + halfStar; i < totalStars; i++) {
+            starHTML += '<label class="rating__label rating__label--half"><span class="star-icon"></span></label><label class="rating__label rating__label--full"><span class="star-icon"></span></label>';
+        }
+
+        return starHTML;
+    }
+
+    // .replyRating 스팬에 별점 적용
+    $('.replyRating').each(function() {
+        const rating = parseInt($(this).text().trim(), 10);
+        $(this).html(renderStars(rating));
+    });
+	
     // 이벤트 처리
     // ------------ Modal 화면안의 처리 버튼 이벤트 처리 --------------
     // 댓글 등록 이벤트
@@ -178,7 +205,8 @@ $(function() {
                     <div class="card replyDataRow" data-rno="${replyVO.rno}" style="margin: 5px 0;">
                         <div class="card-header">
                            <span class="float-right">${replyVO.writeDate}</span>
-                            <b class="replyId">${replyVO.id} (${replyVO.name})</b> <span class="replyRating">${replyVO.rating}</span>
+                        	<span class="replyRating float-right">${replyVO.rating}</span>
+                            <b class="replyId">${replyVO.id} (${replyVO.name})</b> 
                         </div>
                         <div class="card-body">
                         	
@@ -208,7 +236,7 @@ $(function() {
                 </div>
 
                 <!-- Modal body -->
-                <form id="albumReplyForm" method="post">
+             <form id="albumReplyForm" method="post">
                     <input type="hidden" name="rno" id="rno">
                     <input type="hidden" name="no" value="${param.no}">
                     <input type="hidden" name="page" value="${param.page}">
@@ -216,12 +244,10 @@ $(function() {
                     <input type="hidden" name="key" value="${param.key}">
                     <input type="hidden" name="word" value="${param.word}">
                     <div class="modal-body">
-                        <div class="form-group" id="contentDiv">
-                            <label for="content">내용</label>
-                            <textarea class="form-control" rows="3" id="content" name="content"></textarea>
-                    	</div>
+                        
                    <div class="wrap">
-     <div class="form-group" id="ratingDiv">               
+                   
+     <div class="form-group " id="ratingDiv"> 
     <div class="rating">
         <label class="rating__label rating__label--half" for="starhalf">
             <input type="radio" id="starhalf" class="rating__input" name="rating" value="1">
@@ -263,9 +289,13 @@ $(function() {
             <input type="radio" id="star5" class="rating__input" name="rating" value="10">
             <span class="star-icon"></span>
         </label>
-    </div>
-</div>
+   	 </div>
+	</div>
 </div>                        
+  		  <div class="form-group" id="contentDiv">
+                <label for="content">내용</label>
+                <textarea class="form-control" rows="2" id="content" name="content"></textarea>
+          </div>
                     </div>
 
                     <!-- Modal footer -->
