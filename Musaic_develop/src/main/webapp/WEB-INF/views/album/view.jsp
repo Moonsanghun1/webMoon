@@ -76,7 +76,7 @@ if (typeof musicNo === 'undefined') {
 	return;
 }
 console.log("Redirecting to view.do?musicNo=" + musicNo); // 로그 확인
-location.href = "view.do?musicNo=" + musicNo; // location.href를 사용하여 페이지 이동
+location.href = "/music/view.do?musicNo=" + musicNo; // location.href를 사용하여 페이지 이동
 
 });
 });
@@ -96,6 +96,7 @@ location.href = "view.do?musicNo=" + musicNo; // location.href를 사용하여 �
      <h4>${vo.artist }</h4>
      <p>발매일 : ${vo.release_date }</p>
      <p>장르 : ${vo.genre }</p>
+     <p>가격 : ${vo.price }원</p>
      댓글<span class="replyCnt">${vo.replyCnt}</span>개
      <br>
      <span class="replyRating">${vo.rating}</span> 
@@ -115,7 +116,7 @@ location.href = "view.do?musicNo=" + musicNo; // location.href를 사용하여 �
 		    <p><pre>${vo.info }</pre></p>
 		  </div>
 	
-	
+			<a class="btn btn-info" href="includeForm.do?no=${param.no }&page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}">수록곡 등록</a>
 			<table class="table">
 				<!-- 게시판 데이터의 제목 -->
 				<tr>

@@ -1,11 +1,14 @@
 package com.musaic.album.controller;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import com.musaic.album.vo.AlbumVO;
 import com.musaic.main.controller.Init;
+import com.musaic.music.vo.MusicVO;
 import com.musaic.util.exe.Execute;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
@@ -84,6 +87,57 @@ public class AlbumController {
 					jsp = "/album/view";				
 					
 					break;
+				case "/album/includeForm.do":
+					System.out.println("2-1. 앨범 수록곡 등록 폼");
+					
+				    // PageObject 인스턴스 가져오기
+				    pageObject = PageObject.getInstance(request);
+
+				    // perPageNum 파라미터 가져오기
+				    String strPerPageNum = request.getParameter("perPageNum");
+
+				    // 페이지 그룹 내 항목 수 설정 (이 설정은 페이지당 항목 수와 관련이 없음)
+				    pageObject.setPerGroupPageNum(6L);
+
+				    System.out.println("perPageNum parameter: " + strPerPageNum);
+
+				    // 음악 리스트 가져오기
+				    List<MusicVO> newList = (List<MusicVO>) Execute.execute(Init.get("/music/newList.do"), pageObject);
+				    System.out.println("MusicController.execute().pageObject = " + pageObject);
+
+				    // 요청 속성에 새 리스트와 PageObject 설정
+				    request.setAttribute("newList", newList);
+				    request.setAttribute("pageObject", pageObject);
+					
+					jsp = "/album/includeForm";
+					break;
+					
+				case "/album/include.do":
+					System.out.println("2-1. 앨범 수록곡 등록 처리");
+					
+					String passMusic = "";
+					
+					Long albumNo = Long.parseLong(request.getParameter("albumNo"));
+					String [] musicNo = request.getParameterValues("musicNo");
+					String perPageNum = request.getParameter("perPageNum");
+					for (String mNo : musicNo) {
+						passMusic += "," + mNo;
+					}
+					String passNO = passMusic.substring(1, passMusic.length());
+					
+					// 변수 - vo 저장하고 Service 
+					AlbumVO vo = new AlbumVO();
+					vo.setAlbumNo(albumNo);
+					vo.setPassNo(passNO);
+					
+					// [AlbumController] - AlbumIncludeService - AlbumDAO.include(vo)
+					Execute.execute(Init.get(uri), vo);
+					//페이지 정보 받기 & uri에 붙이기
+					pageObject = PageObject.getInstance(request);					
+					// 글보기로 자동 이동 -> jsp정보를 작성해서 넘긴다.
+					jsp = "redirect:view.do?no=" + albumNo + "&" + pageObject.getPageQuery();
+					break;
+					
 					
 				case "/album/writeForm.do":
 					System.out.println("3-1. 앨범 게시판 글 등록 폼");
@@ -103,10 +157,10 @@ public class AlbumController {
 					String info = multi.getParameter("info");
 					String image = multi.getFilesystemName("image");
 					String status = multi.getParameter("status");
-					String perPageNum = multi.getParameter("perPageNum");
+					perPageNum = multi.getParameter("perPageNum");
 					
 					// 변수 - vo 저장하고 Service 
-					AlbumVO vo = new AlbumVO();
+					vo = new AlbumVO();
 					vo.setTitle(title);
 					vo.setRelease_date(release_date);
 					vo.setArtist(artist);
@@ -144,7 +198,7 @@ public class AlbumController {
 					multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
 					//title, release_date, artist, price, genre, info, image, status
-					Long albumNo = Long.parseLong(multi.getParameter("albumNo"));
+					albumNo = Long.parseLong(multi.getParameter("albumNo"));
 					title = multi.getParameter("title");
 					release_date = multi.getParameter("release_date");
 					artist = multi.getParameter("artist");

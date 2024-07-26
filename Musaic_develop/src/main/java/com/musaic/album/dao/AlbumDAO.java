@@ -3,7 +3,9 @@ package com.musaic.album.dao;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.musaic.album.vo.AlbumVO;
 import com.musaic.main.dao.DAO;
@@ -51,6 +53,7 @@ public class AlbumDAO extends DAO {
 					vo.setRelease_date(rs.getString("release_date"));
 					vo.setImage(rs.getString("image"));
 					vo.setArtist(rs.getString("artist"));
+					vo.setPrice(rs.getString("price"));
 
 					// vo -> list
 					list.add(vo);
@@ -236,12 +239,67 @@ public class AlbumDAO extends DAO {
 		return list;
 	}	
 	
+	// 3 . 수록곡 등록 처리
+	// AlbumController - (Execute) - AlbumIncludeService - [AlbumDAO.include(vo)]
+	public int include(AlbumVO vo) throws Exception {
+		// 결과를 저장할 수 있는 변수 선언.
+		int result = 0;
+		
+		try {
+			// 1. 드라이버 확인 - DB
+			// 2. 연결
+			con = DB.getConnection();
+//			String[] musicNosArray = vo.getPassNo().split(",");
+//			System.out.println("@@@@@@@@@ musicNosArray = "+musicNosArray);
+//			// musicNos 배열을 플레이스홀더로 변환
+//            String placeholders = Arrays.stream(musicNosArray)
+//                                        .map(no -> "?")
+//                                        .collect(Collectors.joining(","));
+//            System.out.println("@@@@@@@@@ placeholders = "+placeholders);
+//            // SQL 쿼리 생성
+//            String sql = String.format(INCLUDE, placeholders);
+//            System.out.println("@@@@@@@@@ sql = "+sql);
+            pstmt = con.prepareStatement(INCLUDE);
+            pstmt.setLong(1, vo.getAlbumNo());
+            pstmt.setString(2, vo.getPassNo());
+
+//            // 각 음악 번호를 PreparedStatement에 설정
+//            for (int i = 0; i < musicNosArray.length; i++) {
+//                pstmt.setLong(i + 2, Long.parseLong(musicNosArray[i].trim())); // 인덱스는 2부터 시작
+//                System.out.println("@@@@@@@@@ musicNosArray[i].trim() = "+ musicNosArray[i].trim());
+//            }
+			// 3. sql - 아래 LIST
+			// 4. 실행 객체 & 데이터 세팅
+			System.out.println(vo.getPassNo());
+			//INCLUDE ="UPDATE music SET albumNo = ? WHERE musicNo in ( ? ) "
+//			pstmt = con.prepareStatement(INCLUDE);
+//			//title, release_date, artist, price, genre, info, image
+//			pstmt.setLong(1, vo.getAlbumNo());
+//			pstmt.setString(2, "(37)");
+			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
+			result = pstmt.executeUpdate();
+			// 6. 표시 또는 담기
+			System.out.println();
+			System.out.println("*** 앨범 수록곡 등록이 완료 되었습니다. ***");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(" 예외 발생: 앨범 등록 DB처리 중 예외가 발생했습니다. ");
+			
+		} finally {
+			// 7. 닫기
+			DB.close(con, pstmt, rs);
+		}
+		
+		// 결과 데이터를 리턴해준다.
+		return result;
+	} // end of increase()
 	// 3 . 글등록 처리
 	// AlbumController - (Execute) - AlbumwriteService - [AlbumDAO.write(vo)]
 	public int write(AlbumVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
 		int result = 0;
-
+		
 		try {
 			// 1. 드라이버 확인 - DB
 			// 2. 연결
@@ -258,22 +316,22 @@ public class AlbumDAO extends DAO {
 			pstmt.setString(6, vo.getInfo());
 			pstmt.setString(7, vo.getImage());
 			pstmt.setString(8, vo.getStatus());
-
+			
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
 			System.out.println();
 			System.out.println("*** 앨범 등록이 완료 되었습니다. ***");
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(" 예외 발생: 앨범 등록 DB처리 중 예외가 발생했습니다. ");
-
+			
 		} finally {
 			// 7. 닫기
 			DB.close(con, pstmt, rs);
 		}
-
+		
 		// 결과 데이터를 리턴해준다.
 		return result;
 	} // end of increase()
@@ -417,12 +475,12 @@ public class AlbumDAO extends DAO {
 	
 	// 리스트의 페이지 처리 절차 - 원본 -> 순서 번호 -> 해당 페이지 데이터만 가져온다.
 	final String LIST = 
-		""  + "select albumNo, title, artist, release_date, image "
+		""  + "select albumNo, title, artist, release_date, image , price"
 			+ " from ( "
-				+ " select rownum rnum, albumNo, title, artist, release_date, image "
+				+ " select rownum rnum, albumNo, title, artist, release_date, image, price "
 					+ " from ( "
 						+ " select a.albumNo, a.title, a.artist, " 
-						+ " to_char(a.release_date, 'yyyy-mm-dd') release_date, a.image "
+						+ " to_char(a.release_date, 'yyyy-mm-dd') release_date, a.image, a.price "
 						+ " from Album a " // 여기에 검색이 있어야 한다.
 						// where 1=1 and (일반조건) and (조인조건) 
 						+ " where 1 = 1 ";
@@ -502,4 +560,5 @@ public class AlbumDAO extends DAO {
 			+ " FROM music m, album a "
 			+ " where a.albumNo = ? and m.albumNo = a.albumNo ORDER BY musicNo DESC  ) ) "
 			+ " WHERE rnum BETWEEN 1 AND 100 ";
+	final String INCLUDE =" UPDATE music SET albumNo = ? WHERE musicNo in ( ? ) ";
 }

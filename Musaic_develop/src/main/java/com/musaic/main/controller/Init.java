@@ -27,6 +27,7 @@ import com.musaic.music.service.MusicWriteService;
 import com.musaic.album.dao.AlbumDAO;
 import com.musaic.album.service.AlbumChangeService;
 import com.musaic.album.service.AlbumDeleteService;
+import com.musaic.album.service.AlbumIncludeService;
 import com.musaic.album.service.AlbumListService;
 import com.musaic.album.service.AlbumMusicListService;
 import com.musaic.album.service.AlbumUpdateService;
@@ -190,6 +191,7 @@ public class Init {
 				serviceMap.put("/album/delete.do", new AlbumDeleteService());
 				serviceMap.put("/album/changeImage.do", new AlbumChangeService());
 				serviceMap.put("/album/musicList.do", new AlbumMusicListService());
+				serviceMap.put("/album/include.do", new AlbumIncludeService());
 				 //조립 dao->service
 				serviceMap.get("/album/list.do").setDAO(daoMap.get("albumDAO"));
 				serviceMap.get("/album/view.do").setDAO(daoMap.get("albumDAO"));
@@ -198,6 +200,7 @@ public class Init {
 				serviceMap.get("/album/delete.do").setDAO(daoMap.get("albumDAO"));
 				serviceMap.get("/album/changeImage.do").setDAO(daoMap.get("albumDAO"));
 				serviceMap.get("/album/musicList.do").setDAO(daoMap.get("albumDAO"));
+				serviceMap.get("/album/include.do").setDAO(daoMap.get("albumDAO"));
 				
 				//---------[앨범 댓글 객체 생성과 조립]---------------------------------
 				daoMap.put("albumreplyDAO", new AlbumReplyDAO());
