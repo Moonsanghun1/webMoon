@@ -11,5 +11,6 @@ public class AlbumReplyVO {
 	private String name;
 	private String writeDate;
 	private String rating;
+	private String photo;
 
 }

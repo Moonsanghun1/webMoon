@@ -50,6 +50,7 @@ public class AlbumReplyDAO extends DAO {
 					vo.setName(rs.getString("name"));
 					vo.setWriteDate(rs.getString("writeDate"));
 					vo.setRating(rs.getString("rating"));
+					vo.setPhoto(rs.getString("photo"));
 					
 
 					// vo -> list
@@ -231,12 +232,12 @@ public class AlbumReplyDAO extends DAO {
 	
 	// 리스트의 페이지 처리 절차 - 원본 -> 순서 번호 -> 해당 페이지 데이터만 가져온다.
 	final String LIST = 
-		""  + "select rno, albumNo, content, id, name, writeDate, rating "
+		""  + "select rno, albumNo, content, id, name, writeDate, rating, photo "
 			+ " from ( "
-				+ " select rownum rnum, rno, albumNo, content, id, name, writeDate, rating "
+				+ " select rownum rnum, rno, albumNo, content, id, name, writeDate, rating, photo "
 					+ " from ( "
 						+ " select  a.rno, a.albumNo, a.content, a.id, m.name, a.rating, " 
-						+ " to_char(a.writeDate, 'yyyy-mm-dd HH24:MM:SS') writeDate"
+						+ " to_char(a.writeDate, 'yyyy-mm-dd HH24:MM:SS') writeDate, m.photo "
 						+ " from album_reply a, member m " 
 						+ " where albumNo = ? and (a.id = m.id) "
 						+ " order by rno desc " 

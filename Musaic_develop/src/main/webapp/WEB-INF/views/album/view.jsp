@@ -90,7 +90,7 @@ location.href = "/music/view.do?musicNo=" + musicNo; // location.href를 사용�
 	
 	
   <div class="media border p-3">
-    <img src="${vo.image }" alt="앨범 커버" class="mr-3 mt-3" style="width:350px;" id = "">
+    <img src="${vo.image }" alt="앨범 커버" class="mr-3" style="width:350px;" id = "">
     <div class="media-body">
      <h2>${vo.title }</h2>
      <h4>${vo.artist }</h4>

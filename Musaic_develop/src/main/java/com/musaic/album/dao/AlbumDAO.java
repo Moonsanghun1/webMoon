@@ -251,23 +251,22 @@ public class AlbumDAO extends DAO {
 			con = DB.getConnection();
 //			String[] musicNosArray = vo.getPassNo().split(",");
 //			System.out.println("@@@@@@@@@ musicNosArray = "+musicNosArray);
-//			// musicNos 배열을 플레이스홀더로 변환
-//            String placeholders = Arrays.stream(musicNosArray)
-//                                        .map(no -> "?")
-//                                        .collect(Collectors.joining(","));
-//            System.out.println("@@@@@@@@@ placeholders = "+placeholders);
-//            // SQL 쿼리 생성
-//            String sql = String.format(INCLUDE, placeholders);
-//            System.out.println("@@@@@@@@@ sql = "+sql);
-            pstmt = con.prepareStatement(INCLUDE);
+			// vo.getMusicArray() 배열을 플레이스홀더로 변환
+            String placeholders = Arrays.stream(vo.getMusicArray())
+                                        .map(no -> "?")
+                                        .collect(Collectors.joining(","));
+            System.out.println("@@@@@@@@@ placeholders = "+placeholders);
+            // SQL 쿼리 생성
+            String sql = String.format(INCLUDE, placeholders);
+            System.out.println("sql = "+sql);
+            pstmt = con.prepareStatement(sql);
             pstmt.setLong(1, vo.getAlbumNo());
-            pstmt.setString(2, vo.getPassNo());
-
-//            // 각 음악 번호를 PreparedStatement에 설정
-//            for (int i = 0; i < musicNosArray.length; i++) {
-//                pstmt.setLong(i + 2, Long.parseLong(musicNosArray[i].trim())); // 인덱스는 2부터 시작
-//                System.out.println("@@@@@@@@@ musicNosArray[i].trim() = "+ musicNosArray[i].trim());
-//            }
+            
+            // 각 음악 번호를 PreparedStatement에 설정
+            for (int i = 0; i < vo.getMusicArray().length; i++) {
+                pstmt.setLong(i + 2, Long.parseLong(vo.getMusicArray()[i].trim())); // 인덱스는 2부터 시작
+                System.out.println("vo.getMusicArray()[i].trim() = "+ vo.getMusicArray()[i].trim());
+            }
 			// 3. sql - 아래 LIST
 			// 4. 실행 객체 & 데이터 세팅
 			System.out.println(vo.getPassNo());
@@ -279,7 +278,6 @@ public class AlbumDAO extends DAO {
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
-			System.out.println();
 			System.out.println("*** 앨범 수록곡 등록이 완료 되었습니다. ***");
 			
 		} catch (Exception e) {
@@ -560,5 +558,5 @@ public class AlbumDAO extends DAO {
 			+ " FROM music m, album a "
 			+ " where a.albumNo = ? and m.albumNo = a.albumNo ORDER BY musicNo DESC  ) ) "
 			+ " WHERE rnum BETWEEN 1 AND 100 ";
-	final String INCLUDE =" UPDATE music SET albumNo = ? WHERE musicNo in ( ? ) ";
+	final String INCLUDE =" UPDATE music SET albumNo = ? WHERE musicNo in ( %s ) ";
 }

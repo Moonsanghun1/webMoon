@@ -1,6 +1,7 @@
 package com.musaic.album.controller;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -115,20 +116,22 @@ public class AlbumController {
 				case "/album/include.do":
 					System.out.println("2-1. 앨범 수록곡 등록 처리");
 					
-					String passMusic = "";
 					
 					Long albumNo = Long.parseLong(request.getParameter("albumNo"));
 					String [] musicNo = request.getParameterValues("musicNo");
 					String perPageNum = request.getParameter("perPageNum");
-					for (String mNo : musicNo) {
-						passMusic += "," + mNo;
-					}
-					String passNO = passMusic.substring(1, passMusic.length());
-					
+					// 배열을 문자열로 변환
+//					String passMusic = "";
+//					for (String mNo : musicNo) {
+//						passMusic += "," + mNo;
+//					}
+//					String passNO = passMusic.substring(1, passMusic.length());
+//					System.out.println(Arrays.toString(musicNo));
 					// 변수 - vo 저장하고 Service 
 					AlbumVO vo = new AlbumVO();
 					vo.setAlbumNo(albumNo);
-					vo.setPassNo(passNO);
+//					vo.setPassNo(passNO);
+					vo.setMusicArray(musicNo);
 					
 					// [AlbumController] - AlbumIncludeService - AlbumDAO.include(vo)
 					Execute.execute(Init.get(uri), vo);
