@@ -174,10 +174,11 @@ public class AlbumDAO extends DAO {
 				            }
 				          result = (Long) Math.round(avg);
 				          replyCnt = (Long) Math.round(count);
-				          
+				          String decimalAvg = String.format("%.1f", avg);
 				         
 				          vo.setRating(result);
 				          vo.setReplyCnt(replyCnt);
+				          vo.setDecimalRating(decimalAvg);
 				          
 
 		} catch (Exception e) {

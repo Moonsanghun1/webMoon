@@ -37,7 +37,7 @@ h1 {
 }
 label {
     display: inline-block;
-    margin-top: .5rem;
+    margin-bottom: 0rem;
 }
 .rating__label .star-icon {
     width: 20px;
@@ -293,6 +293,7 @@ $(function() {
                     </div>
                     <div class="card-footer">
                         <span class="replyRating float-left">${replyVO.rating}</span>
+                        <span class="float-left">${replyVO.rating}</span>
                         
                         <span>${replyVO.writeDate}</span>
                     </div>
@@ -389,94 +390,94 @@ $(function() {
 </div>
 
 <script>
-const rateWrap = document.querySelectorAll('.rating'),
-      label = document.querySelectorAll('.rating .rating__label'),
-      input = document.querySelectorAll('.rating .rating__input'),
-      labelLength = label.length,
-      opacityHover = '0.5';
-
-let stars = document.querySelectorAll('.rating .star-icon');
-
-// 초기 체크된 별점 표시
-checkedRate();
-
-// 별점 컨테이너에 마우스 엔터 이벤트 추가
-rateWrap.forEach(wrap => {
-    wrap.addEventListener('mouseenter', () => {
-        stars = wrap.querySelectorAll('.star-icon');
-
-        stars.forEach((starIcon, idx) => {
-            // 각 별에 마우스 엔터 이벤트 추가
-            starIcon.addEventListener('mouseenter', () => {
-                initStars(); // 모든 별의 "filled" 클래스 제거
-                filledRate(idx, labelLength); // 현재 인덱스까지 별을 채움
-
-                // "filled" 클래스가 있는 별의 투명도 설정
-                for (let i = 0; i < stars.length; i++) {
-                    if (stars[i].classList.contains('filled')) {
-                        stars[i].style.opacity = opacityHover;
-                    }
-                }
-            });
-
-            // 각 별에 마우스 리브 이벤트 추가
-            starIcon.addEventListener('mouseleave', () => {
-                starIcon.style.opacity = '1';
-                checkedRate(); // 현재 체크된 별점을 다시 표시
-            });
-
-            // 별점 컨테이너에 마우스 리브 이벤트 추가
-            wrap.addEventListener('mouseleave', () => {
-                starIcon.style.opacity = '1';
-            });
-        });
-    });
-});
-
-// 특정 인덱스까지 별을 채우는 함수
-function filledRate(index, length) {
-    if (index <= length) {
-        for (let i = 0; i <= index; i++) {
-            stars[i].classList.add('filled');
-        }
-    }
-}
-
-// 현재 체크된 별점을 표시하는 함수
-function checkedRate() {
-    let checkedRadio = document.querySelectorAll('.rating input[type="radio"]:checked');
-
-    initStars(); // 모든 별의 "filled" 클래스 제거
-    checkedRadio.forEach(radio => {
-        let previousSiblings = prevAll(radio);
-
-        // 체크된 라디오 버튼의 이전 형제 요소들까지 별을 채움
-        for (let i = 0; previousSiblings && i < previousSiblings.length; i++) {
-            previousSiblings[i].querySelector('.star-icon').classList.add('filled');
-        }
-
-        if (radio.nextElementSibling) {
-            radio.nextElementSibling.classList.add('filled'); // 현재 체크된 라디오 버튼에 해당하는 별을 채움
-        }
-
-        // 이전 형제 요소를 모두 반환하는 함수
-        function prevAll() {
-            let radioSiblings = [],
-                prevSibling = radio.parentElement.previousElementSibling;
-
-            while (prevSibling) {
-                radioSiblings.push(prevSibling);
-                prevSibling = prevSibling.previousElementSibling;
-            }
-            return radioSiblings;
-        }
-    });
-}
-
-// 모든 별의 "filled" 클래스를 제거하는 함수
-function initStars() {
-    for (let i = 0; i < stars.length; i++) {
-        stars[i].classList.remove('filled');
-    }
-}
+	const rateWrap = document.querySelectorAll('.rating'),
+	      label = document.querySelectorAll('.rating .rating__label'),
+	      input = document.querySelectorAll('.rating .rating__input'),
+	      labelLength = label.length,
+	      opacityHover = '0.5';
+	
+	let stars = document.querySelectorAll('.rating .star-icon');
+	
+	// 초기 체크된 별점 표시
+	checkedRate();
+	
+	// 별점 컨테이너에 마우스 엔터 이벤트 추가
+	rateWrap.forEach(wrap => {
+	    wrap.addEventListener('mouseenter', () => {
+	        stars = wrap.querySelectorAll('.star-icon');
+	
+	        stars.forEach((starIcon, idx) => {
+	            // 각 별에 마우스 엔터 이벤트 추가
+	            starIcon.addEventListener('mouseenter', () => {
+	                initStars(); // 모든 별의 "filled" 클래스 제거
+	                filledRate(idx, labelLength); // 현재 인덱스까지 별을 채움
+	
+	                // "filled" 클래스가 있는 별의 투명도 설정
+	                for (let i = 0; i < stars.length; i++) {
+	                    if (stars[i].classList.contains('filled')) {
+	                        stars[i].style.opacity = opacityHover;
+	                    }
+	                }
+	            });
+	
+	            // 각 별에 마우스 리브 이벤트 추가
+	            starIcon.addEventListener('mouseleave', () => {
+	                starIcon.style.opacity = '1';
+	                checkedRate(); // 현재 체크된 별점을 다시 표시
+	            });
+	
+	            // 별점 컨테이너에 마우스 리브 이벤트 추가
+	            wrap.addEventListener('mouseleave', () => {
+	                starIcon.style.opacity = '1';
+	            });
+	        });
+	    });
+	});
+	
+	// 특정 인덱스까지 별을 채우는 함수
+	function filledRate(index, length) {
+	    if (index <= length) {
+	        for (let i = 0; i <= index; i++) {
+	            stars[i].classList.add('filled');
+	        }
+	    }
+	}
+	
+	// 현재 체크된 별점을 표시하는 함수
+	function checkedRate() {
+	    let checkedRadio = document.querySelectorAll('.rating input[type="radio"]:checked');
+	
+	    initStars(); // 모든 별의 "filled" 클래스 제거
+	    checkedRadio.forEach(radio => {
+	        let previousSiblings = prevAll(radio);
+	
+	        // 체크된 라디오 버튼의 이전 형제 요소들까지 별을 채움
+	        for (let i = 0; previousSiblings && i < previousSiblings.length; i++) {
+	            previousSiblings[i].querySelector('.star-icon').classList.add('filled');
+	        }
+	
+	        if (radio.nextElementSibling) {
+	            radio.nextElementSibling.classList.add('filled'); // 현재 체크된 라디오 버튼에 해당하는 별을 채움
+	        }
+	
+	        // 이전 형제 요소를 모두 반환하는 함수
+	        function prevAll() {
+	            let radioSiblings = [],
+	                prevSibling = radio.parentElement.previousElementSibling;
+	
+	            while (prevSibling) {
+	                radioSiblings.push(prevSibling);
+	                prevSibling = prevSibling.previousElementSibling;
+	            }
+	            return radioSiblings;
+	        }
+	    });
+	}
+	
+	// 모든 별의 "filled" 클래스를 제거하는 함수
+	function initStars() {
+	    for (let i = 0; i < stars.length; i++) {
+	        stars[i].classList.remove('filled');
+	    }
+	}
 </script>

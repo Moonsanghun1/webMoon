@@ -15,11 +15,15 @@
     opacity: 0.8;
     cursor: pointer;
 }
-
-.imageDiv {
-   
-    width: 40%;
+.cardTitle:hover {
+    text-decoration: underline; // 언더라인(아래줄) 스타일 부여
+    cursor: pointer;
 }
+
+/* .imageDiv { */
+   
+/*     width: 50%; */
+/* } */
 
 .title {
     height: 60px;
@@ -60,6 +64,31 @@
 .float-right {
     float: right !important;
 }
+/* 장바구니 수량 입력  */
+.quantity-input button {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    line-height: 1;
+    margin: 0 5px;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+}
+.quantity-input button#decreaseQuantity {
+    color: red;
+}
+.quantity-input button#increaseQuantity {
+    color: blue;
+}
+.quantity-input input {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 18px;
+    text-align: center;
+    height: 40px;
+    margin: 0 5px;
+}
 </style>
 <script type="text/javascript">
 $(function() {
@@ -89,19 +118,53 @@ $(function() {
         }
     });
 
-    // 이벤트 처리
-    $(".dataRow").click(function() {
-        let no = $(this).find(".no").text();
-        location = "view.do?no=" + no + "&${pageObject.pageQuery}";
-    });
+    // 사진 누르면 상세보기로 이동하는 이벤트 처리
+	$(".imageDiv").click(function() {
+	    let no = $(this).find('.test').data('albumno'); // 이벤트가 발생한 요소 내에서 찾기
+	    location = "view.do?no=" + no + "&${pageObject.pageQuery}";
+	});
+    
+	// 제목 누르면 상세보기로 이동하는 이벤트 처리
+	$(".cardTitle").click(function() {
+	    let no = $(this).data('albumno'); // 이벤트가 발생한 요소 내에서 찾기
+	    location = "view.do?no=" + no + "&${pageObject.pageQuery}";
+	});
 
     $("#perPageNum").change(function() {
         $("#searchForm").submit();
     });
-
+	
+    
+    
     // 검색 데이터 세팅
     $("#key").val("${(empty pageObject.key)?'t':pageObject.key}");
     $("#perPageNum").val("${(empty pageObject.perPageNum)?'10':pageObject.perPageNum}");
+    $("#quantity").on("input", function() {
+        updateTotalPrice();
+    });
+	
+    
+    
+    $("#increaseQuantity").click(function() {
+        let quantity = parseInt($("#quantity").val());
+        $("#quantity").val(quantity + 1);
+        updateTotalPrice();
+    });
+
+    $("#decreaseQuantity").click(function() {
+        let quantity = parseInt($("#quantity").val());
+        if (quantity > 1) {
+            $("#quantity").val(quantity - 1);
+            updateTotalPrice();
+        }
+    });
+
+    function updateTotalPrice() {
+        let quantity = parseInt($("#quantity").val());
+        let price = parseInt("${vo.price}");
+        let totalPrice = quantity * price;
+        $("#totalPrice").text(totalPrice + "원");
+    }
 });
 </script>
 </head>
@@ -158,16 +221,18 @@ $(function() {
                 <div class="col-md-6 dataRow">
                     <div class="card">
                         <div class="imageDiv text-center align-content-center">
-                            <img class="card-img-top  float-left" src="${vo.image}" alt="image">
+                            <img class="card-img-top float-left test" src="${vo.image}" alt="image" data-albumNo="${vo.albumNo }" >
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">
                             </h5>
-                                <span class="float-left">${vo.title}</span> <br>
-                                <span class="float-left">${vo.artist}</span><br>
-                                <span class="float-left">${vo.release_date}</span><br>
+                                <span class="float-left cardTitle"  style="color: #333; font-size: 25px;" data-albumNo="${vo.albumNo }">${vo.title}</span><br>
+                                <div class="float-left"  style="color: #333; height: 5px;"> </div><br>
+                                <span class="float-left"  style="color: #333; font-size: 15px;">${vo.artist}</span><br>
+                                <span class="float-left" style="color: #767676; font-size: 13px;">${vo.release_date}</span><br>
                             <p class="card-text text-truncate title">
-                                <span class="no">${vo.albumNo}</span>. 
+                                <button class="btn btn-info btn-sm"><i class='fa fa-play'></i> 앨범 듣기</button>
+   								<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#cartModal"><i class='fa fa-shopping-cart'></i> 장바구니 담기</button>
                             </p>
                         </div>
                     </div>
@@ -184,5 +249,35 @@ $(function() {
         </a>
     </c:if>
 </div>
+
+			<div class="modal fade" id="cartModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+
+						<!-- Modal Header -->
+						<div class="modal-header">
+							<h4 class="modal-title">수량을 입력해주세요.</h4>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+
+						<!-- Modal body -->
+						<div class="modal-body">
+						<form action="cart.do">
+							<input name="albumNo" value = "${vo.albumNo }" type="hidden">
+							<!-- 수량 입력 -->
+							<div class="quantity-input">
+								<button style="color: red;" type="button" id="decreaseQuantity">-</button>
+								<input  style="width:70px;" type="number" id="quantity" value="1" min="1">
+								<button style="color: blue;" type="button" id="increaseQuantity">+</button>
+							</div>
+							<p align="center">
+								총 가격: <span id="totalPrice">${vo.price}</span>원
+							</p>
+							<button class="btn btn-success float-right" >장바구니에 담기</button>
+						</form>	
+						</div>
+					</div>
+				</div>
+	      </div>
 </body>
 </html>

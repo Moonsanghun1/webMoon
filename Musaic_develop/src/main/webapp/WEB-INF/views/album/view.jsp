@@ -8,13 +8,94 @@
 <title>앨범 상세 보기</title>
 <style type="text/css">
 
-
 .musicImg{
 	width: 40px;
 	height: 40px;
 	margin-right: 10px;
 }
+.quantity-input {
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    align-items: center;
+    margin-top: 10px;
+}
+
+.quantity-input input {
+    width: 60px;
+    text-align: center;
+}
+.quantity-input button {
+    width: 30px;
+    height: 30px;
+}
+.modal-header {
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+}
+.modal-header .close {
+    color: #333;
+}
+
+.modal-body {
+    background-color: #fff;
+    padding: 20px;
+}
+.quantity-input button {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    line-height: 1;
+    margin: 0 5px;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+}
+.quantity-input button#decreaseQuantity {
+    color: red;
+}
+.quantity-input button#increaseQuantity {
+    color: blue;
+}
+.quantity-input input {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 18px;
+    text-align: center;
+    height: 40px;
+    margin: 0 5px;
+}
+.modal-footer {
+    background-color: #f2f2f2;
+    border-top: 1px solid #ccc;
+    padding: 15px;
+}
+.btn-success {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+.info-content {
+    max-height: 4em;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+.info-content.expanded {
+    max-height: none;
+}
+#toggleInfo {
+    display: block;
+    margin: 10px auto;
+    text-align: center;
+}
+.replyRating {
+    margin-top: 5px;
+    
+}
 </style>
+
 <script>
 $(function(){
 	
@@ -79,30 +160,63 @@ console.log("Redirecting to view.do?musicNo=" + musicNo); // 로그 확인
 location.href = "/music/view.do?musicNo=" + musicNo; // location.href를 사용하여 페이지 이동
 
 });
+
+$("#quantity").on("input", function() {
+    updateTotalPrice();
+});
+
+$("#increaseQuantity").click(function() {
+    let quantity = parseInt($("#quantity").val());
+    $("#quantity").val(quantity + 1);
+    updateTotalPrice();
+});
+
+$("#decreaseQuantity").click(function() {
+    let quantity = parseInt($("#quantity").val());
+    if (quantity > 1) {
+        $("#quantity").val(quantity - 1);
+        updateTotalPrice();
+    }
+});
+
+function updateTotalPrice() {
+    let quantity = parseInt($("#quantity").val());
+    let price = parseInt("${vo.price}");
+    let totalPrice = quantity * price;
+    $("#totalPrice").text(totalPrice + "원");
+}
+
+$("#toggleInfo").click(function() {
+    var content = $("#infoContent");
+    if (content.hasClass("expanded")) {
+        content.removeClass("expanded");
+        $(this).text("펼치기");
+    } else {
+        content.addClass("expanded");
+        $(this).text("접기");
+    }
+});
 });
 </script>
 
 </head>
 <body>
 <div class="container">
-	<h1>앨범 상세 보기</h1>
-	
-	
+	<h1>앨범 정보</h1>
 	
   <div class="media border p-3">
-    <img src="${vo.image }" alt="앨범 커버" class="mr-3" style="width:350px;" id = "">
+    <img src="${vo.image }" alt="앨범 커버" class="mr-3" style="width:300px;" id = "">
     <div class="media-body">
      <h2>${vo.title }</h2>
      <h4>${vo.artist }</h4>
-     <p>발매일 : ${vo.release_date }</p>
-     <p>장르 : ${vo.genre }</p>
-     <p>가격 : ${vo.price }원</p>
-     댓글<span class="replyCnt">${vo.replyCnt}</span>개
-     <br>
-     <span class="replyRating">${vo.rating}</span> 
+     <p style="margin-bottom: 0px;">발매일 : ${vo.release_date }</p>
+     <p style="margin-bottom: 0px;">장르 : ${vo.genre }</p>
+     <p style="margin-bottom: 0px;">가격 : ${vo.price }원</p>
+     <p style="margin-bottom: 0px;">댓글<span style="margin-bottom: 0px;" class="replyCnt">${vo.replyCnt}</span>개</p>
+     <span class="replyRating">${vo.rating}</span>
     <br>
-    <button class="btn btn-info">앨범 듣기</button>
-    <button class="btn btn-secondary">장바구니 담기</button>
+    <button class="btn btn-info"><i class='fa fa-play'></i> 앨범 듣기</button>
+    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#cartModal"><i class='fa fa-shopping-cart'></i> 장바구니 담기</button>
     <%-- <c:if test="${login.id == vo.id }"> --%>
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeImageModal">
 			이미지 변경
@@ -112,9 +226,13 @@ location.href = "/music/view.do?musicNo=" + musicNo; // location.href를 사용�
   </div>
 	
 <!-- 	앨범 정보  -->
-		 <div>
-		    <p><pre>${vo.info }</pre></p>
-		  </div>
+	<h5>앨범 설명</h5>
+	<div>
+    	<div id="infoContent" class="info-content">
+       		 <div style="color: #767676; font-size: 14px;">${vo.info}</div>
+  		 </div>
+   		 <button id="toggleInfo" class="btn btn-link btn-sm">펼치기<i class="fa fa-angle-down"></i></button>
+	</div>
 	
 			<a class="btn btn-info" href="includeForm.do?no=${param.no }&page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}">수록곡 등록</a>
 			<table class="table">
@@ -212,6 +330,37 @@ location.href = "/music/view.do?musicNo=" + musicNo; // location.href를 사용�
     </div>
   </div>
 </div>
+
+  			<div class="modal fade" id="cartModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+
+						<!-- Modal Header -->
+						<div class="modal-header">
+							<h4 class="modal-title">수량을 입력해주세요.</h4>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+
+						<!-- Modal body -->
+						<div class="modal-body">
+						<form action="cart.do">
+							<input name="albumNo" value = "${vo.albumNo }" type="hidden">
+							<!-- 수량 입력 -->
+							<div class="quantity-input">
+								<button style="color: red;" type="button" id="decreaseQuantity">-</button>
+								<input  style="width:70px;" type="number" id="quantity" value="1" min="1">
+								<button style="color: blue;" type="button" id="increaseQuantity">+</button>
+							</div>
+							<p align="center">
+								총 가격: <span id="totalPrice">${vo.price}원</span>
+							</p>
+							<button class="btn btn-success float-right" >장바구니에 담기</button>
+						</form>	
+						</div>
+					</div>
+				</div>
+
+	      </div>
 
 </body>
 </html>

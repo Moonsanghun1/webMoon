@@ -15,6 +15,7 @@ public class AlbumVO {
 	private String image; // 앨범 커버
 	private String status; // 앨범 상태
 	private Long rating; // 앨범 평점
+	private String decimalRating; // 앨범 평점
 	private Long replyCnt; // 앨범 댓글 개수
 	// 수록곡
 	private Long musicNo; // 수록곡 음원 번호
