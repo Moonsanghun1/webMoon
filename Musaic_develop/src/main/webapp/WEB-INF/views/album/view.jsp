@@ -213,7 +213,7 @@ $("#toggleInfo").click(function() {
      <p style="margin-bottom: 0px;">장르 : ${vo.genre }</p>
      <p style="margin-bottom: 0px;">가격 : ${vo.price }원</p>
      <p style="margin-bottom: 0px;">댓글<span style="margin-bottom: 0px;" class="replyCnt">${vo.replyCnt}</span>개</p>
-     <span class="replyRating">${vo.rating}</span>
+     <div style="margin-top: 5px;"><span class="replyRating" >${vo.rating}</span><span class= "mb-2" style="font-size: 30px;" >${vo.decimalRating }/10</span></div>
     <br>
     <button class="btn btn-info"><i class='fa fa-play'></i> 앨범 듣기</button>
     <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#cartModal"><i class='fa fa-shopping-cart'></i> 장바구니 담기</button>
@@ -348,7 +348,7 @@ $("#toggleInfo").click(function() {
 							<!-- 수량 입력 -->
 							<div class="quantity-input">
 								<button style="color: red;" type="button" id="decreaseQuantity">-</button>
-								<input  style="width:70px;" type="number" id="quantity" value="1" min="1">
+								<input name= "albumCnt" style="width:70px;" type="number" id="quantity" value="1" min="1">
 								<button style="color: blue;" type="button" id="increaseQuantity">+</button>
 							</div>
 							<p align="center">

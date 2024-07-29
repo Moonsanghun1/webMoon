@@ -115,6 +115,7 @@ img {
 		<br> <br>
 		<form action="includeForm.do" id="searchForm">
 			<!-- 검색을 하면 무조건 1페이지로 처음에 나오게 설정 -->
+			<input name="no" value="${albumNo }" type="hidden">
 			<input name="page" value="1" type="hidden">
 			<div class="row">
 				<div class="col-md-5">
@@ -155,7 +156,7 @@ img {
 			</div>
 		</form>
 		<form action="include.do" method="post">
-			<input type="hidden" name="albumNo" value="${param.no }">
+			<input type="hidden" name="albumNo" value="${albumNo }">
 			<table class="table">
 			<thead>
 				<!-- 게시판 데이터의 제목 -->
@@ -200,7 +201,7 @@ img {
 		</form>
 		
 		<div class="pageNav">
-			<pageNav:pageNav listURI="includeForm.do" pageObject="${pageObject }" />
+			<pageNav:pageNav listURI="includeForm.do" pageObject="${pageObject }" query="&no=${albumNo }"/>
 		</div>
 	</div>
 	<!-- 페이지 네이션 처리 -->

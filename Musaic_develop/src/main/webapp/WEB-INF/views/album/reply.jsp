@@ -292,9 +292,10 @@ $(function() {
                         <pre class="replyContent">${replyVO.content}</pre>
                     </div>
                     <div class="card-footer">
+                    <div>
                         <span class="replyRating float-left">${replyVO.rating}</span>
-                        <span class="float-left">${replyVO.rating}</span>
-                        
+                        <span class="float-left" style="margin-top: 6px; font-size: 25px;" >${replyVO.rating}</span>
+                    </div>
                         <span>${replyVO.writeDate}</span>
                     </div>
                 </div>

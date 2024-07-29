@@ -96,6 +96,7 @@ public class AlbumController {
 
 				    // perPageNum 파라미터 가져오기
 				    String strPerPageNum = request.getParameter("perPageNum");
+				    String albumNo1 = request.getParameter("no");
 
 				    // 페이지 그룹 내 항목 수 설정 (이 설정은 페이지당 항목 수와 관련이 없음)
 				    pageObject.setPerGroupPageNum(6L);
@@ -109,6 +110,7 @@ public class AlbumController {
 				    // 요청 속성에 새 리스트와 PageObject 설정
 				    request.setAttribute("newList", newList);
 				    request.setAttribute("pageObject", pageObject);
+				    request.setAttribute("albumNo", albumNo1);
 					
 					jsp = "/album/includeForm";
 					break;
@@ -143,12 +145,12 @@ public class AlbumController {
 					
 					
 				case "/album/writeForm.do":
-					System.out.println("3-1. 앨범 게시판 글 등록 폼");
+					System.out.println("3-1. 앨범 등록 폼");
 					jsp = "/album/writeForm";
 					break;
 				
 				case "/album/write.do":
-					System.out.println("3. 앨범 게시판 글등록 처리");
+					System.out.println("3. 앨범 등록 처리");
 					MultipartRequest multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 					// 데이터 수집 - 사용자 -> 서버 : form - input - name 
 					//title, release_date, artist, price, genre, info, image, status

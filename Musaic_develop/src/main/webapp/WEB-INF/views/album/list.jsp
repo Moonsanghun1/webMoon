@@ -92,6 +92,31 @@
 </style>
 <script type="text/javascript">
 $(function() {
+	// 수록곡 개수 불러오기 
+	let albumNo = $(".cardTitle").data("albumNo");
+    console.log(albumNo);
+	    
+	$.ajax({
+		url: "gettotalmusic.do",
+		type: "POST",
+		data: {
+			albumNo: albumNo
+		},
+		success: function(response) {
+			let modalMessage = response === "success" ? "플레이 리스트 목록에 추가되었습니다."
+				: "플레이 리스트 목록에 담기지 않았습니다.";
+			$("#modalMessage").text(modalMessage);
+			$("#resultModal").modal('show');
+		},
+		error: function() {
+			$("#modalMessage").text("서버와의 통신에 실패했습니다.");
+			$("#resultModal").modal('show');
+		}
+	});
+	
+	
+	
+	
     // 제목 해당 태그 중 제일 높은 것을 이용하여 모두 맞추기
     let titleHeights = [];
 
@@ -144,27 +169,6 @@ $(function() {
     });
 	
     
-    
-    $("#increaseQuantity").click(function() {
-        let quantity = parseInt($("#quantity").val());
-        $("#quantity").val(quantity + 1);
-        updateTotalPrice();
-    });
-
-    $("#decreaseQuantity").click(function() {
-        let quantity = parseInt($("#quantity").val());
-        if (quantity > 1) {
-            $("#quantity").val(quantity - 1);
-            updateTotalPrice();
-        }
-    });
-
-    function updateTotalPrice() {
-        let quantity = parseInt($("#quantity").val());
-        let price = parseInt("${vo.price}");
-        let totalPrice = quantity * price;
-        $("#totalPrice").text(totalPrice + "원");
-    }
 });
 </script>
 </head>
@@ -232,7 +236,6 @@ $(function() {
                                 <span class="float-left" style="color: #767676; font-size: 13px;">${vo.release_date}</span><br>
                             <p class="card-text text-truncate title">
                                 <button class="btn btn-info btn-sm"><i class='fa fa-play'></i> 앨범 듣기</button>
-   								<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#cartModal"><i class='fa fa-shopping-cart'></i> 장바구니 담기</button>
                             </p>
                         </div>
                     </div>
@@ -249,35 +252,5 @@ $(function() {
         </a>
     </c:if>
 </div>
-
-			<div class="modal fade" id="cartModal">
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content">
-
-						<!-- Modal Header -->
-						<div class="modal-header">
-							<h4 class="modal-title">수량을 입력해주세요.</h4>
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
-						</div>
-
-						<!-- Modal body -->
-						<div class="modal-body">
-						<form action="cart.do">
-							<input name="albumNo" value = "${vo.albumNo }" type="hidden">
-							<!-- 수량 입력 -->
-							<div class="quantity-input">
-								<button style="color: red;" type="button" id="decreaseQuantity">-</button>
-								<input  style="width:70px;" type="number" id="quantity" value="1" min="1">
-								<button style="color: blue;" type="button" id="increaseQuantity">+</button>
-							</div>
-							<p align="center">
-								총 가격: <span id="totalPrice">${vo.price}</span>원
-							</p>
-							<button class="btn btn-success float-right" >장바구니에 담기</button>
-						</form>	
-						</div>
-					</div>
-				</div>
-	      </div>
 </body>
 </html>
