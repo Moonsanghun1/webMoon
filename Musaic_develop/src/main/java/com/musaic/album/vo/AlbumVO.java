@@ -26,4 +26,5 @@ public class AlbumVO {
 	private String passNo; // 음원번호 배열
 	// 회원
 	private String photo; // 음원번호 배열
+	private Long totalMusic;
 }

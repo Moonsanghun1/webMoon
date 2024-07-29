@@ -16,7 +16,8 @@
     cursor: pointer;
 }
 .cardTitle:hover {
-    text-decoration: underline; // 언더라인(아래줄) 스타일 부여
+/*     // 언더라인(아래줄) 스타일 부여 */
+    text-decoration: underline; 
     cursor: pointer;
 }
 
@@ -93,28 +94,39 @@
 <script type="text/javascript">
 $(function() {
 	// 수록곡 개수 불러오기 
-	let albumNo = $(".cardTitle").data("albumNo");
-    console.log(albumNo);
-	    
-	$.ajax({
-		url: "gettotalmusic.do",
-		type: "POST",
-		data: {
-			albumNo: albumNo
-		},
-		success: function(response) {
-			let modalMessage = response === "success" ? "플레이 리스트 목록에 추가되었습니다."
-				: "플레이 리스트 목록에 담기지 않았습니다.";
-			$("#modalMessage").text(modalMessage);
-			$("#resultModal").modal('show');
-		},
-		error: function() {
-			$("#modalMessage").text("서버와의 통신에 실패했습니다.");
-			$("#resultModal").modal('show');
-		}
-	});
-	
-	
+	// 페이지 로드 시 특정 요소에서 albumNo를 가져오는 예제
+    $(".cardTitle").each(function() {
+        let albumNo = $(this).data("albumno");
+        let musicCntElement = $(this).siblings(".musicCnt");
+
+        $.ajax({
+            url: "/ajax/getTotalMusic.do",
+            type: "GET",
+            data: {
+                albumNo: albumNo
+            },
+            success: function(response) {
+                musicCntElement.text(response);
+            },
+            error: function() {
+                musicCntElement.text("Error loading data");
+            }
+        });
+        
+        $.ajax({
+            url: "/ajax/getTotalMusic.do",
+            type: "GET",
+            data: {
+                albumNo: albumNo
+            },
+            success: function(response) {
+                musicCntElement.text(response);
+            },
+            error: function() {
+                musicCntElement.text("Error loading data");
+            }
+        });
+    });
 	
 	
     // 제목 해당 태그 중 제일 높은 것을 이용하여 모두 맞추기
@@ -230,10 +242,11 @@ $(function() {
                         <div class="card-body">
                             <h5 class="card-title">
                             </h5>
-                                <span class="float-left cardTitle"  style="color: #333; font-size: 25px;" data-albumNo="${vo.albumNo }">${vo.title}</span><br>
+                                <span class="float-left cardTitle"  style="color: #333; font-size: 25px;" data-albumNo="${vo.albumNo }" id="cardTitle">${vo.title}</span><br>
                                 <div class="float-left"  style="color: #333; height: 5px;"> </div><br>
                                 <span class="float-left"  style="color: #333; font-size: 15px;">${vo.artist}</span><br>
                                 <span class="float-left" style="color: #767676; font-size: 13px;">${vo.release_date}</span><br>
+                                <span class="float-left musicCnt" style="color: #767676; font-size: 13px;"></span><br>
                             <p class="card-text text-truncate title">
                                 <button class="btn btn-info btn-sm"><i class='fa fa-play'></i> 앨범 듣기</button>
                             </p>

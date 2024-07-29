@@ -114,6 +114,48 @@ public class AlbumDAO extends DAO {
 
 	}// end of view()
 
+	// 1-3. 수록곡 개수 처리
+	// AlbumController - (Execute) - AlbumListService - [AlbumDAO.getTotalRow()]
+	public AlbumVO getTotalMusic(Long no) throws Exception {
+		
+		AlbumVO vo = null;
+		
+		try {
+			// 1. 드라이버 확인
+			// 2. DB 연결
+			con = DB.getConnection();
+			
+			// 3. sql 아래에 미리 써놓음
+			System.out.println("AlbumDAO.getTotalRow().sql = "+ TOTALMUSIC);
+			// 4. 실행 객체 & 데이터 세팅
+			
+			// 전체 데이터 개수 쿼리인 경우 조건이 있으면 where를 붙여라 : true
+			pstmt = con.prepareStatement(TOTALMUSIC);
+			pstmt.setLong(1, no);
+			// 5. 실행
+			rs = pstmt.executeQuery();
+			// 6. 표시 및 담기
+			vo = new AlbumVO();
+			if (rs != null && rs.next()) {
+				// rs -> rs
+				
+				vo.setTotalMusic(rs.getLong(1));
+				
+			} // end of if
+			System.out.println("getTotalMusic().tatalMusic=" + rs.getLong(1));
+			vo.setAlbumNo(no);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+			
+		} finally {
+			DB.close(con, pstmt, rs);
+		} // end of try ~ catch ~ finally
+		
+		return vo;
+		
+	}// end of view()
+	
 	// 2 . 앨범 상세보기 보기 처리
 	// AlbumController - (Execute) - AlbumViewService - [AlbumDAO.list()]
 	public AlbumVO view(Long no) throws Exception {
@@ -560,4 +602,5 @@ public class AlbumDAO extends DAO {
 			+ " where a.albumNo = ? and m.albumNo = a.albumNo ORDER BY musicNo DESC  ) ) "
 			+ " WHERE rnum BETWEEN 1 AND 100 ";
 	final String INCLUDE =" UPDATE music SET albumNo = ? WHERE musicNo in ( %s ) ";
+	final String TOTALMUSIC =" select count(*) from music where albumNo = ? ";
 }
