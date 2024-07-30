@@ -94,6 +94,10 @@
     margin-top: 5px;
     
 }
+.btn-add {
+    display: inline-block; /* 인라인 블록으로 설정하여 클릭 영역 확대 */
+    padding: 10px 15px; /* 버튼의 내외부 여백을 조정하여 클릭 가능한 영역 확대 */
+}
 </style>
 
 <script>
@@ -111,10 +115,9 @@ $(function(){
 	 if(!confirm("정말 삭제 하시겠습니까?")) return false;
   });
   
-	$(".btn-add")
-	.click(function(event) {
-				// 이벤트 전파 막기
-				event.stopPropagation();
+	//앨범 듣기 클릭시 플레이 리스트에 다중 등록
+	$("#albumTotalBtn").click(function() {
+				
 
 				if (!isLoggedIn) {
 					// 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시
@@ -122,17 +125,20 @@ $(function(){
 					$("#resultModal").modal('show');
 					return;
 				}
-
-				let musicNo = $(this).data("music-no");
-				if (typeof musicNo === 'undefined') {
-					console.error("musicNo is undefined");
+				
+				let albumNo = $(this).data("album-no");
+				let id = $(this).data("id");
+				if (typeof albumNo === 'undefined') {
+					console.error("albumNo is undefined");
 					return;
 				}
 
-				$.ajax({url : "increaseHit.do",
+				$.ajax({url : "/ajax/playlistMultiWrite.do",
 						type : "POST",
-						data : {musicNo : musicNo},success : function(response) {
-								let modalMessage = response === "success" ? "플레이 리스트 목록에 추가되었습니다."
+						data : {albumNo : albumNo,
+								id : id
+							},success : function(response) {
+								let modalMessage = response !== "0" ? "플레이 리스트 목록에 추가되었습니다."
 										: "플레이 리스트 목록에 담기지 않았습니다.";
 								$("#modalMessage").text(
 										modalMessage);
@@ -143,9 +149,69 @@ $(function(){
 										"서버와의 통신에 실패했습니다.");
 								$("#resultModal").modal('show');
 							}
-						});
+				});
 			});
+	
+  
+	$(".btn-add").click(function(event) {
+      // 이벤트 전파 막기
+      event.stopPropagation();
 
+      if (!isLoggedIn) {
+          // 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시
+          $("#modalMessage").text("로그인 후 이용하실 수 있습니다.");
+          $("#resultModal").modal('show');
+          return;
+      }
+
+      let musicNo = $(this).data("music-no");
+      let albumNo = $(this).data("album-no"); // albumNo가 필요한 경우
+      
+      console.log("Music No: " + musicNo); // 콘솔에서 확인
+      console.log("Album No: " + albumNo); // 콘솔에서 확인
+      if (typeof musicNo === 'undefined') {
+          console.error("musicNo is undefined");
+          return;
+      }
+
+      $.ajax({
+          url: "/music/increaseHit.do",
+          type: "POST",
+          data: {
+              musicNo: musicNo
+          },
+          success: function(response) {
+              let modalMessage = response !== "0" ? "플레이 리스트 목록에 추가되었습니다."
+                  : "플레이 리스트 목록에 담기지 않았습니다.";
+              $("#modalMessage").text(modalMessage);
+              $("#resultModal").modal('show');
+          },
+          error: function() {
+              $("#modalMessage").text("서버와의 통신에 실패했습니다.");
+              $("#resultModal").modal('show');
+          }
+      });
+
+      $.ajax({
+          url: "/ajax/playlistWrite.do",
+          type: "POST",
+          data: {
+              musicNo: musicNo,
+              albumNo: albumNo
+          },
+          success: function(response) {
+              let modalMessage = response === "success" ? "플레이 리스트 목록에 추가되었습니다."
+                  : "플레이 리스트 목록에 담기지 않았습니다.";
+              $("#modalMessage").text(modalMessage);
+              $("#resultModal").modal('show');
+          },
+          error: function() {
+              $("#modalMessage").text("서버와의 통신에 실패했습니다.");
+              $("#resultModal").modal('show');
+          }
+      });
+  });
+  
 // 데이터 행 클릭 시 view.do로 이동
 $(".dataRow").click(function() {
 if ($(this).hasClass("disabled")) {
@@ -215,7 +281,7 @@ $("#toggleInfo").click(function() {
      <p style="margin-bottom: 0px;">댓글<span style="margin-bottom: 0px;" class="replyCnt">${vo.replyCnt}</span>개</p>
      <div style="margin-top: 5px;"><span class="replyRating" >${vo.rating}</span><span class= "mb-2" style="font-size: 30px;" >${vo.decimalRating }/10</span></div>
     <br>
-    <button class="btn btn-info"><i class='fa fa-play'></i> 앨범 듣기</button>
+    <button class="btn btn-info" id="albumTotalBtn" data-album-no="${vo.albumNo}" data-id="${login.id}"><i class='fa fa-play'></i> 앨범 듣기</button>
     <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#cartModal"><i class='fa fa-shopping-cart'></i> 장바구니 담기</button>
     <%-- <c:if test="${login.id == vo.id }"> --%>
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeImageModal">
@@ -261,9 +327,10 @@ $("#toggleInfo").click(function() {
 									<td>${vo.musicStatus}</td>
 								</c:if>
 								<td>
-									<!-- 담기 버튼 --> <span class="btn-add"
-									data-music-no="${vo.musicNo}">&nbsp;&nbsp;<i
-										class="fa fa-plus"></i></span>
+									<!-- 담기 버튼 -->
+									<span class="btn-add" data-music-no="${vo.musicNo}" data-album-no="${vo.albumNo}">&nbsp;&nbsp;
+									<i class="fa fa-plus"></i>
+									</span>
 								</td>
 							</tr>
 						</c:when>
@@ -343,7 +410,7 @@ $("#toggleInfo").click(function() {
 
 						<!-- Modal body -->
 						<div class="modal-body">
-						<form action="cart.do">
+						<form action="/cartalbum/write.do">
 							<input name="albumNo" value = "${vo.albumNo }" type="hidden">
 							<!-- 수량 입력 -->
 							<div class="quantity-input">
@@ -362,5 +429,24 @@ $("#toggleInfo").click(function() {
 
 	      </div>
 
+	<!-- 결과 모달 -->
+	<!-- Result Modal -->
+	<div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="resultModalLabel">알림</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="modalMessage"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
+
 </html>

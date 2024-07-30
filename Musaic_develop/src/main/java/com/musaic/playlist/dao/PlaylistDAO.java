@@ -99,7 +99,7 @@ public class PlaylistDAO extends DAO {
 				// 4. 실행 객체 & 데이터 세팅
 				pstmt = con.prepareStatement(WRITE);
 				pstmt.setLong(1, vo.getMusicNo());
-				pstmt.setString(2, vo.getImage());
+				pstmt.setLong(2, vo.getAlbumNo());
 				pstmt.setString(3, vo.getId());
 				// 5. 실행
 				result = pstmt.executeUpdate();

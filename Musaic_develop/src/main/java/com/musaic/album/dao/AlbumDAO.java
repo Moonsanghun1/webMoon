@@ -54,6 +54,7 @@ public class AlbumDAO extends DAO {
 					vo.setImage(rs.getString("image"));
 					vo.setArtist(rs.getString("artist"));
 					vo.setPrice(rs.getString("price"));
+					vo.setStatus(rs.getString("status"));
 
 					// vo -> list
 					list.add(vo);
@@ -516,12 +517,12 @@ public class AlbumDAO extends DAO {
 	
 	// 리스트의 페이지 처리 절차 - 원본 -> 순서 번호 -> 해당 페이지 데이터만 가져온다.
 	final String LIST = 
-		""  + "select albumNo, title, artist, release_date, image , price"
+		""  + "select albumNo, title, artist, release_date, image , price, status "
 			+ " from ( "
-				+ " select rownum rnum, albumNo, title, artist, release_date, image, price "
+				+ " select rownum rnum, albumNo, title, artist, release_date, image, price, status  "
 					+ " from ( "
 						+ " select a.albumNo, a.title, a.artist, " 
-						+ " to_char(a.release_date, 'yyyy-mm-dd') release_date, a.image, a.price "
+						+ " to_char(a.release_date, 'yyyy-mm-dd') release_date, a.image, a.price, a.status "
 						+ " from Album a " // 여기에 검색이 있어야 한다.
 						// where 1=1 and (일반조건) and (조인조건) 
 						+ " where 1 = 1 ";

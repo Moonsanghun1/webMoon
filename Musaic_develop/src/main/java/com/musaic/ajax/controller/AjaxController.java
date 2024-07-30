@@ -94,7 +94,10 @@ public class AjaxController {
 					playlistVO.setId(id);
 					System.out.println(id);
 					result=Execute.execute(Init.get(uri), playlistVO);
+					System.out.println(result);
+					request.setAttribute("vo", result);
 					System.out.println("플레이리스트에 등록이 완료 되었습니다.");
+					jsp = "album/playlistWrite";
 					break;
 				case "/ajax/playlistMultiWrite.do":
 					System.out.println("---------- 플레이 리스트 다중 등록-----------");
@@ -103,7 +106,10 @@ public class AjaxController {
 					playlistVO.setAlbumNo(Long.parseLong(request.getParameter("albumNo")));
 					playlistVO.setId(id);
 					result=Execute.execute(Init.get(uri), playlistVO);
+					request.setAttribute("vo", result);
 					System.out.println("플레이리스트에 다중 등록이 완료 되었습니다.");
+					System.out.println(result);
+					jsp = "album/playlistMultiWrite";
 					break;
 					
 				case "/ajax/getTotalMusic.do":

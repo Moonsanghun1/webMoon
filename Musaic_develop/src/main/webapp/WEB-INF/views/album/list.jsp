@@ -90,6 +90,10 @@
     height: 40px;
     margin: 0 5px;
 }
+.card-img-top{
+	width:308px;
+	height: 308px;
+}
 </style>
 <script type="text/javascript">
 $(function() {
@@ -116,10 +120,9 @@ $(function() {
     });
 	var isLoggedIn = ${login != null ? "true" : "false"};
 	//앨범 듣기 클릭시 플레이 리스트에 다중 등록
-	$(".btn-add")
-	.click(function(event) {
+	$(".albumBtn")
+	.click(function() {
 				// 이벤트 전파 막기
-				event.stopPropagation();
 
 				if (!isLoggedIn) {
 					// 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시
@@ -140,7 +143,7 @@ $(function() {
 						data : {albumNo : albumNo,
 								id : id
 							},success : function(response) {
-								let modalMessage = response === "success" ? "플레이 리스트 목록에 추가되었습니다."
+								let modalMessage = response !== "0" ? "플레이 리스트 목록에 추가되었습니다."
 										: "플레이 리스트 목록에 담기지 않았습니다.";
 								$("#modalMessage").text(
 										modalMessage);
@@ -256,6 +259,7 @@ $(function() {
     <c:if test="${!empty list}">
         <div class="row">
             <c:forEach items="${list}" var="vo" varStatus="vs">
+                <c:if test="${vo.status=='발매'}">
                 <c:if test="${(vs.index != 0) && (vs.index % 2 == 0)}">
                     ${"</div><div class='row'>"}
                 </c:if>
@@ -273,11 +277,12 @@ $(function() {
                                 <span class="float-left" style="color: #767676; font-size: 13px;">${vo.release_date}</span><br>
                                 <span class="float-left musicCnt" style="color: #767676; font-size: 13px;"></span><br>
                             <p class="card-text text-truncate title">
-                                <button class="btn btn-info btn-sm" data-album-No="${vo.albumNo }" data-id="${login.id }"><i class='fa fa-play'></i> 앨범 듣기</button>
+                                <button class="btn btn-info btn-sm albumBtn" data-album-No="${vo.albumNo }" data-id="${login.id }"><i class='fa fa-play'></i> 앨범 듣기</button>
                             </p>
                         </div>
                     </div>
                 </div>
+                </c:if>
             </c:forEach>
         </div>
     </c:if>
@@ -290,5 +295,23 @@ $(function() {
         </a>
     </c:if>
 </div>
+<!-- 결과 모달 -->
+	<!-- Result Modal -->
+	<div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="resultModalLabel">알림</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="modalMessage"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
