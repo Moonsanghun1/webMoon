@@ -1,13 +1,15 @@
 package com.musaic.pay.controller;
 
 
+import java.net.URLEncoder;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.musaic.main.controller.Init;
+import com.musaic.member.db.LoginVO;
 import com.musaic.pay.vo.PayVO;
 import com.musaic.util.exe.Execute;
-import com.webjjang.util.page.PageObject;
-import com.webjjang.util.page.ReplyPageObject;
 
 // Pay Module 에 맞는 메뉴 선택 , 데이터 수집(기능별), 예외 처리
 public class PayController {
@@ -18,153 +20,158 @@ public class PayController {
 		String uri = request.getRequestURI();
 		
 		Object result = null;
+		Object result2 = null;
 		
 		String jsp = null;
 		
-		// 입력 받는 데이터 선언
-		Long no = 0L;
+		HttpSession session = request.getSession();
+		LoginVO login = (LoginVO) session.getAttribute("login");
+		String id =login.getId();
 		
 		try { // 정상 처리
 		
 			// 메뉴 처리 : CRUD DB 처리 - Controller - Service - DAO
 			switch (uri) {
-			case "/pay/payList.do":
-				// [BoardController] - (Execute) - BoardListService - BoardDAO.list()
-				System.out.println("1.일반게시판 리스트");
-				// 페이지 처리를 위한 객체
-				// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
-				PageObject pageObject = PageObject.getInstance(request);
-				// DB에서 데이터 가져오기 - 가져온 데이터는 List<BoardVO>
-				result = Execute.execute(Init.get(uri), pageObject);
-				
-				// pageObject 데이터 확인
-				System.out.println("BoardController.execute().pageObject = " + pageObject);
-				// 가져온 데이터 request에 저장 -> jsp까지 전달된다.
-				request.setAttribute("list", result);
-				// pageObject 담기
-				request.setAttribute("pageObject", pageObject);
-				// /WEB-INF/views/ + board/list + .jsp
-				jsp = "pay/payList";
-				break;
-			case "/pay/payView.do":
-				System.out.println("2.일반게시판 글보기");
-				// 1. 조회수 1증가(글보기), 2. 일반게시판 글보기 데이터 가져오기 : 글보기, 글수정
-				// 넘어오는 글번호와 조회수 1증가를 수집한다.(request에 들어 있다.)
-				String strNo = request.getParameter("no");
-				no = Long.parseLong(strNo);
-				String strInc = request.getParameter("inc");
-				Long inc = Long.parseLong(strInc);
-				// 전달 데이터 - 글번호, 조회수 증가 여부(1:증가, 0:증가 안함) : 배열 또는 Map
-				result = Execute.execute(Init.get(uri),
-						new Long[]{no, inc});
-				// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
-				request.setAttribute("vo", result);
-				
-				// 댓글 페이지 객체
-				// 데이터 전달 - page / perPageNum / no / replyPage / replyPerPageNum 
-				ReplyPageObject replyPageObject 
-					= ReplyPageObject.getInstance(request);
-				request.setAttribute("replyList",
-						Execute.execute(Init.get("/payreply/list.do"),replyPageObject));
-				
-				request.setAttribute("replyPageObject", replyPageObject);
-				jsp = "pay/payView";
-				break;
 			case "/pay/payWriteForm.do":
-				System.out.println("3-1.일반게시판 글등록 폼");
+				//아직 데이터가 없음
+				System.out.println("1.결제 처리 폼");
+				result = Execute.execute(Init.get(uri),id);
+				request.setAttribute("list", result);
 				jsp="pay/payWriteForm";
 				break;
-			case "/pay/write.do":
-				System.out.println("3.일반게시판 글등록 처리");
+			case "/pay/payWrite.do":
+				System.out.println("1-2. 결제 등록 처리");
 				
 				// 데이터 수집(사용자->서버 : form - input - name)
-				String title = request.getParameter("title");
-				String content = request.getParameter("content");
-				String writer = request.getParameter("writer");
-				String pw = request.getParameter("pw");
-				
+				//Long price = Long.parseLong(request.getParameter("payPrice"));
+				//String image = request.getParameter("payImage");
+				String address = request.getParameter("address");
+				String name = request.getParameter("name");
+				String phone = request.getParameter("phone");
+				String cardType = request.getParameter("cardType");
+				String cardBank = request.getParameter("cardBank");
+				String cardNum = request.getParameter("cardNum");
+				String phonePay = request.getParameter("phonePay");
+				String payTel = request.getParameter("payTel");
+				String bankType = request.getParameter("bankType");
+				String bankNum = request.getParameter("bankNum");
 				// 변수 - vo 저장하고 Service
 				PayVO vo = new PayVO();
-//				vo.setTitle(title);
-//				vo.setContent(content);
-//				vo.setWriter(writer);
-//				vo.setPw(pw);
-//				
-				// [BoardController] - BoardWriteService - BoardDAO.write(vo)
+				vo.setMemberId(id);
+				vo.setAddress(address);
+				vo.setName(name);
+				vo.setPhone(phone);
+				vo.setMemberId(id);
+				
+				if(cardType != null) {
+				vo.setCardType(cardType);
+				vo.setCardBank(cardBank);
+				vo.setCardNum(cardNum);
+				}
+				if(phonePay !=null) {
+					vo.setPhonePay(phonePay);
+					vo.setPayTel(payTel);
+				}
+				if(bankNum !=null && equals("")) {
+					vo.setBankType(bankType);
+					vo.setBankNum(bankNum);
+				}
+	
+				
+				// [PayController] - PayWriteService - PayDAO.write(vo)
 				Execute.execute(Init.get(uri), vo);
+	            // URL 인코딩
+	            String encodedAddress = URLEncoder.encode(address, "UTF-8");
+	            String encodedName = URLEncoder.encode(name, "UTF-8");
+	            String encodedPhone = URLEncoder.encode(phone, "UTF-8");
+
 				
 				// jsp 정보 앞에 "redirect:"가 붙어 있어 redirect를
 				// 아니면 jsp로 forward로 시킨다.
-				jsp = "redirect:list.do?perPageNum=" 
-						+ request.getParameter("perPageNum");
-				
+				jsp = "redirect:payList.do?address="+encodedAddress+"&name="+encodedName+""
+						+ "&phone="+encodedPhone;
+				System.out.println(jsp);
 				break;
-			case "/pay/updateForm.do":
-				System.out.println("4-1.일반게시판 글수정 폼");
+			case "/pay/payList.do":
+				// [PayController] - (Execute) - PayListService - PayDAO.list()
+				System.out.println("2.결제 리스트");
 				
-				// 사 -> 서버 : 글번호
-				no = Long.parseLong(request.getParameter("no"));
+				result = Execute.execute(Init.get(uri),null);
+				result2 = Execute.execute(Init.get("/pay/payWriteForm.do"),id);
 				
-				// no맞는 데이터 DB에서 가져온다. BoardViewService
-				result = Execute.execute(Init.get("/pay/view.do"),
-						new Long[]{no, 0L});
+				request.setAttribute("list", result);
+				request.setAttribute("cart", result2);
+				
+				jsp = "pay/payList";
+				break;
+			case "/pay/payView.do":
+				System.out.println("3.결제 상세 보기");
+				// 넘어오는 글번호 수집한다.(request에 들어 있다.)
+				result = Execute.execute(Init.get(uri),id);
+				result2 = Execute.execute(Init.get("/pay/payWriteForm.do"),id);
 				// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
 				request.setAttribute("vo", result);
-				
-				// jsp 정보
-				jsp = "board/updateForm";
-				
+				request.setAttribute("cart", result2);
+				jsp = "pay/payView";
 				break;
-			case "/pay/update.do":
-				System.out.println("4-2.일반게시판 글수정 처리");
+			case "/pay/payUpdate.do":
+				System.out.println("4.결제 배송지 수정 처리");
 				
 				// 데이터 수집(사용자->서버 : form - input - name)
-				no = Long.parseLong(request.getParameter("no"));
-				title = request.getParameter("title");
-				content = request.getParameter("content");
-				writer = request.getParameter("writer");
-				pw = request.getParameter("pw");
-				
-				// 변수 - vo 저장하고 Service
-				vo = new PayVO();
-//				vo.setNo(no);
-//				vo.setTitle(title);
-//				vo.setContent(content);
-//				vo.setWriter(writer);
-//				vo.setPw(pw);
-//				
+				 address = request.getParameter("address");
+				 name = request.getParameter("name");
+				Long payNo = Long.parseLong(request.getParameter("payNo"));
+				 vo = new PayVO();
+				vo.setAddress(address);
+				vo.setName(name);
+				vo.setPayNo(payNo);
+
+				 
 				// DB 적용하는 처리문 작성. BoardUpdateservice
 				Execute.execute(Init.get(uri), vo);
-				
-				// 페이지 정보 받기 & uri에 붙이기
-				pageObject = PageObject.getInstance(request);
-				// 글보기로 자동 이동 -> jsp 정보를 작성해서 넘긴다.
-				jsp = "redirect:view.do?no=" + no + "&inc=0"
-						+ "&" + pageObject.getPageQuery();
+
+	             encodedAddress = URLEncoder.encode(address, "UTF-8");
+	             encodedName = URLEncoder.encode(name, "UTF-8");
+
+	             
+	             //image나 price가 null 아니면 넣고 null이면 넣지 않고 view감 
+//	             	if(image != null && price != null) {
+					jsp = "redirect:payList.do?address="+encodedAddress+"&name="+encodedName;
+//	             	}else {
+//	             		jsp = "redirect:payView.do?payNo="+payNo+"&address="+encodedAddress+"&name="+encodedName+"&phone="+encodedPhone;
+//	             	}
 				break;
-			case "/pay/delete.do":
-				System.out.println("5.일반게시판 글삭제");
+			case "/pay/payDelete.do":
+				System.out.println("5.취소 사유 등록");
 				// 데이터 수집 - DB에서 실행에 필요한 데이터 - 글번호, 비밀번호 - BoardVO
-				
-				no = Long.parseLong(request.getParameter("no"));
-				pw = request.getParameter("pw");
-				
+				String cencel = request.getParameter("cencel");
+				String status = request.getParameter("status");
+				payNo = Long.parseLong(request.getParameter("payNo"));
 				PayVO deleteVO = new PayVO();
-//				deleteVO.setNo(no);
-//				deleteVO.setPw(pw);
-//				
+				deleteVO.setCancel(cencel);
+				deleteVO.setStatus(status);
+				deleteVO.setPayNo(payNo);
 				// DB 처리
 				Execute.execute(Init.get(uri), deleteVO);
-				System.out.println();
-				System.out.println("***************************");
-//				System.out.println("**  " + deleteVO.getNo()+ "글이 삭제되었습니다.  **");
-				System.out.println("***************************");
-				
-				jsp ="redirect:list.do?perPageNum="
-						+request.getParameter("perPageNum");
+				jsp ="redirect:payView.do?payNo="+payNo;
 				
 				break;
-				
+			case "/pay/adminList.do":
+				System.out.println("6.관리자 리스트");	
+				result = Execute.execute(Init.get(uri),null);
+				request.setAttribute("list", result);
+				jsp ="pay/adminList";
+				break;
+			case "/pay/changeStatus.do":
+				System.out.println("6-2.관리자 상태 변경");	
+				status =request.getParameter("status");
+				payNo = Long.parseLong(request.getParameter("payNo"));				
+				 vo = new PayVO();
+				 vo.setStatus(status);
+				 vo.setPayNo(payNo);
+				 result = Execute.execute(Init.get(uri),vo);
+				 jsp = "redirect:adminList.do";
+				break;
 			default:
 				jsp = "error/404";
 				break;

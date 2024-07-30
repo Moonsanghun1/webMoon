@@ -4,19 +4,26 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>No Access</title>
+<style>
+.row{
+padding:10px;
+}
+.col-md-3{
+font-weight: bold;
+}
+</style>
 </head>
 <body>
 <div class="container">
 		<div class="card">
 			<div class="card-header">
-				<h4>
-					요청 자원 오류(404)
-					</h4>
+				<h4>요청 자원 오류(404)</h4>
 			</div>
 			<div class="card-body" id="errorDiv">
 			<div class="text-center">
-			<i class="material-icons" style="font-size:48px;color:red">error</i>
+			<i class="material-icons" style="font-size:60px;color:red">error_outline</i>
+			<hr>
 			</div>
 				<div class="row">
 					<div class="col-md-3">요청 URI</div>
@@ -35,9 +42,10 @@
 						</div>
 					</div>
 				</div>
-				<div class="card-footer">
-					<a href="/board/list.do" class="btn btn-dark">일반 게시판으로 가기</a>
-				</div>
+				<br>
+			</div>
+			<div class="card-footer">
+				<a href="/main/main.do" class="btn btn-secondary float-right">돌아가기</a>
 			</div>
 		</div>
 		</div>	

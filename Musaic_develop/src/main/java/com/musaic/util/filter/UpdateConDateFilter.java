@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.musaic.main.controller.Init;
+import com.musaic.member.db.LoginVO;
 import com.musaic.util.exe.Execute;
 
 /**
@@ -52,17 +53,20 @@ public class UpdateConDateFilter extends HttpFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		//로그인을 한 경우 최근 접속을 수정한다.
 		HttpSession session = req.getSession();
-//		LoginVO login = (LoginVO) session.getAttribute("login");
+		
+		LoginVO login = (LoginVO) session.getAttribute("login");
 		String id =null;
-//		if(login != null) {
-//			id = login.getId();
-//			try {
-//				Execute.execute(Init.get("/member/updateConDate.do"), id);
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+		
+		if(login != null) {
+			id = login.getId();
+			try {
+				Execute.execute(Init.get("/member/updateCondate.do"), id);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		// pass the request along the filter chain
 		chain.doFilter(request, response);
 	}

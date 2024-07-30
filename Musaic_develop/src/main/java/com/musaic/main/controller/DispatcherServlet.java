@@ -1,6 +1,8 @@
 package com.musaic.main.controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 //import javax.servlet.annotation.WebServlet;
@@ -11,6 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.musaic.ajax.controller.AjaxController;
 import com.musaic.album.controller.AlbumController;
 import com.musaic.albumreply.controller.AlbumReplyController;
+import com.musaic.cartalbum.controller.CartAlbumController;
+import com.musaic.event.controller.EventController;
+import com.musaic.eventreply.controller.EventReplyController;
+import com.musaic.member.controller.MemberController;
+import com.musaic.music.controller.MusicController;
+import com.musaic.notice.controller.NoticeController;
+import com.musaic.pay.controller.PayController;
+import com.musaic.playlist.controller.PlaylistAjaxController;
+import com.musaic.playlist.controller.PlaylistController;
 
 
 /**
@@ -22,11 +33,21 @@ import com.musaic.albumreply.controller.AlbumReplyController;
 // Servlet을 상속 - 기능 : URL 연결 - 서버에서 동작 프로그램 - 한번만 생성(싱글톤 프로그램)
 public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	
+	private PayController payController = new PayController();
+	private Maincontroller maincontroller = new Maincontroller();
+	private MemberController memberController = new MemberController();
+	private PlaylistController playlistController = new PlaylistController();
+	private PlaylistAjaxController playlistAjaxController = new PlaylistAjaxController();
+	private MusicController musicController = new MusicController();
+	private NoticeController noticeController = new NoticeController();
+	private EventController eventController = new EventController();
+	private CartAlbumController cartAlbumController = new CartAlbumController();
+	private AjaxController ajaxController = new AjaxController();
+	private AlbumController albumController = new AlbumController();
+	private AlbumReplyController albumReplyController =new AlbumReplyController();
+	private EventReplyController eventReplyController = new EventReplyController();
 	// Controller 선언과 생성 - 1번만 된다.
-	AlbumController albumController = new AlbumController();
-	AlbumReplyController albumReplyController = new AlbumReplyController();
-	AjaxController ajaxController = new AjaxController();
 	/**
 	 * @see Servlet#init(ServletConfig)
 	 */
@@ -57,7 +78,8 @@ public class DispatcherServlet extends HttpServlet {
 		
 		String uri = request.getRequestURI();
 		System.out.println("uri = " + uri);
-		
+		// --- 음원 에서 담기 버튼 이용시 생성한 코드
+	    boolean isAjaxRequest = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 		
 		//main 처리 - localhost -> localhost / main.do ->/main/main.do
 		
@@ -85,20 +107,73 @@ public class DispatcherServlet extends HttpServlet {
 		request.setAttribute("module", module);
 		
 		switch (module) {
-		case "/album":
-			System.out.println("앨범 관리");
-			jsp = albumController.execute(request);
+		case "/pay":
+			System.out.println("결제");
+			jsp = payController.execute(request);
 			break;
-		case "/albumreply":
-			System.out.println("앨범 댓글 관리");
-			jsp = albumReplyController.execute(request);
+		case "/main":
+			System.out.println("메인 처리");
+			jsp = maincontroller.execute(request);
 			break;
-		case "/ajax":
-			System.out.println("ajax 관리");
-			jsp = ajaxController.execute(request);
+		case "/member":
+			System.out.println("회원 처리");
+			jsp = memberController.execute(request);
 			break;
-			
+
+		case "/playlist":
+			System.out.println("플레이 리스트");
+			jsp = playlistController.execute(request);
+			break;
+		case "/notice":
+			System.out.println("공지사항 처리");
+			jsp = noticeController.execute(request);
+			break;
+		case "/event":
+			System.out.println("이벤트 처리");
+			jsp = eventController.execute(request);
+			break;
 	
+		case "/ajax":
+			System.out.println("아작스 처리");
+			jsp = ajaxController.execute(request);
+			request.getRequestDispatcher("/WEB-INF/views/" + jsp + ".jsp").forward(request, response);
+			return;
+		case "/playlistAjax":
+			System.out.println("아작스 처리");
+			jsp = playlistAjaxController.execute(request);
+			request.getRequestDispatcher("/WEB-INF/views/" + jsp + ".jsp").forward(request, response);
+			return;
+			
+
+		  case "/music":
+              if (isAjaxRequest && uri.equals("/music/increaseHit.do")) {
+                  try {
+					musicController.increaseHit(request, response);
+				} catch (IOException | SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                  return;
+              } else {
+                  jsp = musicController.execute(request, response);
+              }
+              break;
+		  case "/cartalbum":
+				System.out.println("앨범 장바구니 처리");
+				jsp = cartAlbumController.execute(request);
+				break;
+	      case "/album":
+	          System.out.println("앨범 관리");
+	          jsp = albumController.execute(request);
+	          break;
+	       case "/albumreply":
+	          System.out.println("앨범 댓글 관리");
+	          jsp = albumReplyController.execute(request);
+	          break;			
+	       case "/eventreply":
+	           System.out.println("이벤트 댓글");
+	           jsp = eventReplyController.execute(request);
+	           break;	
 		default:
 			request.setAttribute("uri", request.getRequestURI());
 			request.getRequestDispatcher("/WEB-INF/views/error/noModule_404.jsp")
@@ -108,13 +183,14 @@ public class DispatcherServlet extends HttpServlet {
 		
 		// jsp 정보 앞에 "redirect:"이 붙어 있으면 redirect 시킨다.(페이지 자동 이동)
 		// jsp 정보 앞에 "redirect:"이 붙어 있지 않으면 jsp로 forward 시킨다.
-		if(jsp.indexOf("redirect:") == 0) {
-			// redirect:list.do -> uri로 사용하기 위해 redirect:은 잘라 버린다.
-			response.sendRedirect(jsp.substring("redirect:".length()));
-		} else {
-			request.getRequestDispatcher("/WEB-INF/views/" + jsp + ".jsp")
-			.forward(request, response);
-		}
+        if (jsp != null && isAjaxRequest) {
+            response.setContentType("text/plain");
+            response.getWriter().print(jsp);
+        } else if (jsp.startsWith("redirect:")) {
+            response.sendRedirect(jsp.substring("redirect:".length()));
+        } else if (jsp != null) {
+            request.getRequestDispatcher("/WEB-INF/views/" + jsp + ".jsp").forward(request, response);
+        }
 		
 	}
 

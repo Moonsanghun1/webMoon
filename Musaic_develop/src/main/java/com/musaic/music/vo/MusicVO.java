@@ -1,7 +1,6 @@
 package com.musaic.music.vo;
 
-import java.util.Date; // Date 타입을 사용하기 위해 추가
-
+import java.util.Date;
 import lombok.Data;
 
 @Data
@@ -20,4 +19,16 @@ public class MusicVO {
     private String genre; // 앨범 장르 추가
     private String image; // 앨범 이미지 추가
     private String id;
+    private Long includedNo;
+
+    /**
+     * Returns the lyrics with new lines converted to HTML <br> tags.
+     */
+    public String getFormattedLyric() {
+        if (lyric == null) {
+            return "";
+        }
+        // Replace new line characters with <br> tags
+        return lyric.replaceAll("\r\n", "<br/>").replaceAll("\n", "<br/>");
+    }
 }

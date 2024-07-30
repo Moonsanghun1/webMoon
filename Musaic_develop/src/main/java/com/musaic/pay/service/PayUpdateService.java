@@ -17,7 +17,7 @@ public class PayUpdateService implements Service {
 	@Override
 	public Integer service(Object obj) throws Exception {
 		// DB board에서 수정 쿼리 실행해서 데이터 처리
-		// BoardController - (Execute) - [BoardListService] - BoardDAO.update()
+		// PayController - (Execute) - [PayListService] - PayDAO.update()
 		return dao.update((PayVO)obj);
 	}
 

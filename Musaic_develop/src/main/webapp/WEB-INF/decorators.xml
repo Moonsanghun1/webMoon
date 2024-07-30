@@ -9,7 +9,13 @@
 		<pattern>/main/*</pattern>
 		<pattern>/pay/*</pattern>
 		<pattern>/member/*</pattern>
+		<pattern>/music/*</pattern>
+		<pattern>/notice/*</pattern>
+		<pattern>/event/*</pattern>
 		<pattern>/album/*</pattern>
+		<pattern>/playlist/*</pattern>
+		<pattern>/cartalbum/*</pattern>
+		
 	</decorator>
 	
 <!-- 	<decorator name="admin" page="admin_decorator.jsp"> -->

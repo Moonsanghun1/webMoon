@@ -112,22 +112,47 @@ $(function() {
                 musicCntElement.text("Error loading data");
             }
         });
-        
-        $.ajax({
-            url: "/ajax/getTotalMusic.do",
-            type: "GET",
-            data: {
-                albumNo: albumNo
-            },
-            success: function(response) {
-                musicCntElement.text(response);
-            },
-            error: function() {
-                musicCntElement.text("Error loading data");
-            }
-        });
+
     });
-	
+	var isLoggedIn = ${login != null ? "true" : "false"};
+	//앨범 듣기 클릭시 플레이 리스트에 다중 등록
+	$(".btn-add")
+	.click(function(event) {
+				// 이벤트 전파 막기
+				event.stopPropagation();
+
+				if (!isLoggedIn) {
+					// 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시
+					$("#modalMessage").text("로그인 후 이용하실 수 있습니다.");
+					$("#resultModal").modal('show');
+					return;
+				}
+				
+				let albumNo = $(this).data("album-no");
+				let id = $(this).data("id");
+				if (typeof albumNo === 'undefined') {
+					console.error("musicNo is undefined");
+					return;
+				}
+
+				$.ajax({url : "/ajax/playlistMultiWrite.do",
+						type : "POST",
+						data : {albumNo : albumNo,
+								id : id
+							},success : function(response) {
+								let modalMessage = response === "success" ? "플레이 리스트 목록에 추가되었습니다."
+										: "플레이 리스트 목록에 담기지 않았습니다.";
+								$("#modalMessage").text(
+										modalMessage);
+								$("#resultModal").modal('show');
+							},
+							error : function() {
+								$("#modalMessage").text(
+										"서버와의 통신에 실패했습니다.");
+								$("#resultModal").modal('show');
+							}
+						});
+			});
 	
     // 제목 해당 태그 중 제일 높은 것을 이용하여 모두 맞추기
     let titleHeights = [];
@@ -248,7 +273,7 @@ $(function() {
                                 <span class="float-left" style="color: #767676; font-size: 13px;">${vo.release_date}</span><br>
                                 <span class="float-left musicCnt" style="color: #767676; font-size: 13px;"></span><br>
                             <p class="card-text text-truncate title">
-                                <button class="btn btn-info btn-sm"><i class='fa fa-play'></i> 앨범 듣기</button>
+                                <button class="btn btn-info btn-sm" data-album-No="${vo.albumNo }" data-id="${login.id }"><i class='fa fa-play'></i> 앨범 듣기</button>
                             </p>
                         </div>
                     </div>

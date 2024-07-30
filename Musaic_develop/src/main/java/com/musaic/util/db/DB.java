@@ -10,7 +10,7 @@ public class DB {
 
 	// DB 접속 관련 -> DB 클래스에만 존재 : con을 만들어서 전달
 	private static final String DRIVER = "oracle.jdbc.driver.OracleDriver";
-	private static final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
+	private static final String URL = "jdbc:oracle:thin:@192.168.0.20:1521:xe";
 	private static final String ID = "musaic";
 	private static final String PW = "musaic";
 	

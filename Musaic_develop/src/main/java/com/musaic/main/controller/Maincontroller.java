@@ -4,6 +4,7 @@ package com.musaic.main.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.musaic.member.db.LoginVO;
 import com.musaic.util.exe.Execute;
 import com.webjjang.util.page.PageObject;
 
@@ -20,11 +21,11 @@ public class Maincontroller {
 		String jsp = null;
 		
 		HttpSession session =request.getSession();
-		int gradeNo =0;
-//		LoginVO login = (LoginVO) session.getAttribute("login");
-//		if (login != null) {
-//			gradeNo = login.getGradeNo();
-//		}
+		Long gradeNo = 0L;
+		LoginVO login = (LoginVO) session.getAttribute("login");
+		if (login != null) {
+			gradeNo = login.getGradeNo();
+		}
 //		
 		try { // 정상 처리
 		
@@ -43,26 +44,26 @@ public class Maincontroller {
 					pageObject.setPeriod("pre");
 					
 				}
-				// 메인에 표시할 데이터 - 공지사항 / 일반 게시판 / 이미지
+				// 메인에 표시할 데이터 - 최신음악 / top10 / 이미지
 				// DB에서 데이터 가져오기
-				// 공지사항
-				pageObject.setPerPageNum(7);
-				// [MainController] - (Execute) - NoticeListService - NoticeDAO.list()
-				result = Execute.execute(Init.get("/notice/list.do"), pageObject);
-				request.setAttribute("noticeList", result);
-				
-				// DB에서 데이터 가져오기
-				// 일반 게시판
-				pageObject.setPerPageNum(7);
-				// [MainController] - (Execute) - BoardListService - BoardDAO.list()
-				result = Execute.execute(Init.get("/board/list.do"), pageObject);
-				request.setAttribute("boardList", result);
-				
-				// 이미지 게시판
-				pageObject.setPerPageNum(6);
-				// [MainController] - (Execute) - ImageListService - ImageDAO.list()
-				result = Execute.execute(Init.get("/image/list.do"), pageObject);
-				request.setAttribute("imageList", result);
+	            // newMusic
+	            pageObject.setPerPageNum(10);
+	            // [MainController] - (Execute) - MusicNewListService - MusicDAO.list()
+	            result = Execute.execute(Init.get("/music/newList.do"), pageObject);
+	            request.setAttribute("newList", result);
+	            
+	            // DB에서 데이터 가져오기
+	            // top10
+	            pageObject.setPerPageNum(10);
+	            // [MainController] - (Execute) - MusicNewListService - MusicDAO.getMusicSortedByHit()
+	            result = Execute.execute(Init.get("/music/topList.do"), pageObject);
+	            request.setAttribute("topList", result);
+	            
+	            // Album
+	            pageObject.setPerPageNum(6);
+	            // [MainController] - (Execute) - ImageListService - ImageDAO.list()
+	            result = Execute.execute(Init.get("/album/list.do"), pageObject);
+	            request.setAttribute("albumList", result);
 				
 				// /WEB-INF/views/ + board/list + .jsp
 				jsp = "main/main";
@@ -74,7 +75,7 @@ public class Maincontroller {
 			} // end of switch
 		} catch (Exception e) {
 			// TODO: handle exception
-			// e.printStackTrace();
+			 e.printStackTrace();
 			
 			// 예외객체를 jsp에서 사용하기 위해 request에 담는다.
 			request.setAttribute("e", e);

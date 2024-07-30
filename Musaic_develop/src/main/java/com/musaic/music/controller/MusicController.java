@@ -13,7 +13,6 @@ import com.musaic.music.dao.MusicDAO;
 import com.musaic.music.vo.MusicVO;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
-//import com.musaic.login.vo.LoginVO;
 import com.musaic.main.controller.Init;
 import com.musaic.member.db.LoginVO;
 import com.musaic.util.exe.Execute;
@@ -50,6 +49,7 @@ public class MusicController {
 		int sizeLimit = 100 * 1024 * 1024;
 		// 입력 받는 데이터 선언
 		Long no = 0L;
+		Long albumNo = 0L;
 
 		try { // 정상 처리 
 
@@ -131,6 +131,10 @@ public class MusicController {
 
 			case "/music/writeForm.do":
 				System.out.println("3-1.음원 등록 폼");
+				request.setAttribute("list", result);
+				pageObject = PageObject.getInstance(request);
+				result = Execute.execute(Init.get("/album/list.do"), pageObject);
+				request.setAttribute("albumList", result);
 				jsp = "music/writeForm";
 				break;
 
@@ -146,6 +150,8 @@ public class MusicController {
 				String lyricist = multi.getParameter("lyricist");
 				String lyric = multi.getParameter("lyric");
 				String fileName = multi.getFilesystemName("musicFile");
+				albumNo = Long.parseLong(multi.getParameter("albumNo"));
+				Long includedNo = Long.parseLong(multi.getParameter("includedNo"));
 				
 				// id 는 session에서 받아와야 한다. <수정, 삭제할때도 받아와야해서 로그인이 되어있을때 꺼내 사용하자>
 				// 변수 - vo 저장하고 Service
@@ -157,10 +163,12 @@ public class MusicController {
 				vo.setLyricist(lyricist);
 				vo.setLyric(lyric);
 				vo.setMusicFile(savePath + "/" + fileName);
-				vo.setId(id);
+				vo.setAlbumNo(albumNo);
+				vo.setIncludedNo(includedNo);
 				// 페이지 정보 받기 & uri에 붙이기
 				// [ImageController] - ImageWriteService - ImageDAO.write(vo)
 				Execute.execute(Init.get(uri), vo);
+				
 				// jsp 정보 앞에 redirect가 있으면 redirect(자동페이지이동)를 아니면 jsp로 forward 시킨다.
 				jsp = "redirect:newList.do?perPageNum=" + multi.getParameter("perPageNum");
 				// 메세지
@@ -170,11 +178,17 @@ public class MusicController {
 				System.out.println("4-1.음원 수정 폼");
 				// 사용자 -> 서버 : 글번호 수집
 				no = Long.parseLong(request.getParameter("musicNo"));
+				
+				// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
+				pageObject = PageObject.getInstance(request);
 				// no에 맞는 데이터 가져오기 DB(execute service dao) BoardViewService
 				// 전달 데이터 - 글번호, 조회수 증가 여부(1:증가, 0:증가 안함) : 배열 또는 Map
 				result = Execute.execute(Init.get("/music/view.do"), no);
-				// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
 				request.setAttribute("vo", result);
+				result = Execute.execute(Init.get("/album/list.do"), pageObject);
+				request.setAttribute("albumList", result);
+				
+				// 가져온 데이터를 JSP로 보내기 위해서 request에 담는다.
 				// jsp 정보
 				jsp = "music/updateForm";
 				break;
@@ -182,6 +196,7 @@ public class MusicController {
 				System.out.println("4-2. 음원 수정");
 				// 수정할 글번호를 받는다. - 데이터 수집
 				// 데이터 수집(사용자->서버 : form - input - name)
+				
 				multi = new MultipartRequest(request, realSavePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 				no = Long.parseLong(multi.getParameter("musicNo"));
 				musicTitle = multi.getParameter("musicTitle");
@@ -190,7 +205,10 @@ public class MusicController {
 				lyricist = multi.getParameter("lyricist");
 				lyric = multi.getParameter("lyric");
 				fileName = multi.getFilesystemName("musicFile");
+				albumNo = Long.parseLong(multi.getParameter("albumNo"));
+				includedNo = Long.parseLong(multi.getParameter("includedNo"));
 				System.out.println(no);
+				
 				// 변수 - vo 저장하고 Service
 				// 위에 있는걸 vo에 다 저장함 데이터는 각각 다르니까 new해서 따로 생성
 				vo = new MusicVO();
@@ -201,6 +219,8 @@ public class MusicController {
 				vo.setLyricist(lyricist);
 				vo.setLyric(lyric);
 				vo.setMusicFile(savePath + "/" + fileName);
+				vo.setAlbumNo(albumNo);
+				vo.setIncludedNo(includedNo);
 				Execute.execute(Init.get(uri), vo);
 				// 페이지 정보 받기 & uri에 붙이기
 				pageObject = PageObject.getInstance(request);

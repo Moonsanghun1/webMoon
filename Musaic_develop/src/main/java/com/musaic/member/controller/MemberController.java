@@ -1,5 +1,7 @@
 package com.musaic.member.controller;
 
+import java.awt.Point;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -53,14 +55,29 @@ public class MemberController {
 						email+=e;
 				}
 				System.out.println("email: "+email);
-				String address=request.getParameter("address");
+				
+				String[] adrs=request.getParameterValues("address");
+				String address="";
+				if(adrs!=null) {
+					for(String a:adrs) {
+						address+=a;
+						address+=" ";
+					}
+				}
+				
 				String[] tels=request.getParameterValues("tel");
 				String tel="";
 				if(tels!=null) {
-					for(String t:tels)
-						tel+=t;
+					for(String t:tels) {
+						if(t.equals("")) {
+							tel="";
+							break;
+						}else
+							tel+=t;
+					}
 				}
 				System.out.println("tel: "+tel);
+				
 				//vo 데이터 세팅
 				MemberVO vo=new MemberVO();
 				vo.setId(id);
@@ -106,8 +123,12 @@ public class MemberController {
 			case "/member/view.do":
 				System.out.println("======== Member Controller view ========");
 				
+				id=request.getParameter("id");
+				
+				//일반회원은 id로 접속하고, admin은 no로 접속해야 하는데 미친ㅠ
 				vo=(MemberVO) Execute.execute(Init.get(uri),id);
 				
+				request.setAttribute("login", login);
 				request.setAttribute("vo", vo);
 				
 				jsp="member/view";
@@ -121,7 +142,7 @@ public class MemberController {
 				request.setAttribute("vo", vo);
 				
 				jsp="member/updateform";
-				break;			
+				break;
 			case "/member/update.do":
 				System.out.println("======== Member Controller update ========");
 				//데이터 수집
@@ -185,11 +206,51 @@ public class MemberController {
 				}else {
 					jsp="redirect:/member/updateform.do?id="+id;					
 				}
-				break;
+				break;			
 			case "/member/idform.do":
 				System.out.println("======== Member Controller id form ========");
 				jsp="member/idform";
 				break;
+			case "/member/delete.do":
+				System.out.println("======== Member Controller delete ========");
+				id=request.getParameter("id");
+				Execute.execute(Init.get(uri), id);
+				
+				session.removeAttribute("login");
+				jsp="redirect:/main/main.do";
+				break;
+			case "/member/changeGrade.do":
+				System.out.println("======== Member Controller change grade ========");
+				
+				id=request.getParameter("id");
+				Long gradeNo=Long.parseLong(request.getParameter("gradeno"));
+				
+				po=PageObject.getInstance(request);
+				
+				vo=new MemberVO();
+				vo.setId(id);
+				vo.setGradeNo(gradeNo);
+				
+				Execute.execute(Init.get(uri), vo);
+				
+				jsp="redirect:/member/list.do?"+po.getPageQuery();
+				break;			
+			case "/member/changeStatus.do":
+				System.out.println("======== Member Controller change status ========");
+				
+				id=request.getParameter("id");
+				String status=request.getParameter("status");
+				
+				po=PageObject.getInstance(request);
+				
+				vo=new MemberVO();
+				vo.setId(id);
+				vo.setStatus(status);
+				
+				Execute.execute(Init.get(uri), vo);
+				
+				jsp="redirect:/member/list.do?"+po.getPageQuery();
+				break;			
 			}//end of switch
 		}catch(Exception e) {
 			e.printStackTrace();

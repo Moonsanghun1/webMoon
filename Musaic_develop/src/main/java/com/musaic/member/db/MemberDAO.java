@@ -267,6 +267,10 @@ public class MemberDAO extends DAO {
 				result.setAddress(rs.getString("address"));
 				result.setGradeNo(rs.getLong("gradeno"));
 				result.setGradeName(rs.getString("gradename"));
+				//m.status, m.regdate, m.condate -> 관리자용
+				result.setStatus(rs.getString("status"));
+				result.setRegDate(rs.getString("regdate"));
+				result.setConDate(rs.getString("condate"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -299,6 +303,83 @@ public class MemberDAO extends DAO {
 		return result;
 	}//end of findid()
 	
+	public int delete(String id) throws SQLException {
+		int result=0;
+		try {
+			//1. 연결객체 생성 및 연결
+			con=DB.getConnection();
+			//2. 실행객체 생성 및 연결
+			pstmt=con.prepareStatement(DELETE);
+			pstmt.setString(1, id);
+			//3. 결과객체 생성 및 결과 데이터 전달
+			result=pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DB.close(con, pstmt);
+		}
+		return result;
+	}//end of delete()
+	
+	public int changeGrade(MemberVO vo) throws SQLException {
+		int result=0;
+		try {
+			//1. 연결객체 생성 및 연결
+			con=DB.getConnection();
+			//2. 실행객체 생성 및 연결
+			pstmt=con.prepareStatement(CHANGEGRADE);
+			pstmt.setLong(1, vo.getGradeNo());
+			pstmt.setString(2, vo.getId());
+			//3. 결과객체 생성 및 결과 데이터 전달
+			result=pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DB.close(con, pstmt);
+		}
+		return result;
+	}//end of changeGrade()
+	
+	public int changeStatus(MemberVO vo) throws SQLException {
+		int result=0;
+		try {
+			//1. 연결객체 생성 및 연결
+			con=DB.getConnection();
+			//2. 실행객체 생성 및 연결
+			pstmt=con.prepareStatement(CHANGESTATUS);
+			pstmt.setString(1, vo.getStatus());
+			pstmt.setString(2, vo.getId());
+			//3. 결과객체 생성 및 결과 데이터 전달
+			result=pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DB.close(con, pstmt);
+		}
+		return result;
+	}//end of changeStatus()
+	
+	public int updateCondate(String id) throws SQLException {
+		int result=0;
+		try {
+			//1. 연결객체 생성 및 연결
+			con=DB.getConnection();
+			//2. 실행객체 생성 및 연결
+			pstmt=con.prepareStatement(UPDATECONDATE);
+			pstmt.setString(1, id);
+			//3. 결과객체 생성 및 결과 데이터 전달
+			result=pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DB.close(con, pstmt);
+		}
+		return result;
+	}//end of delete()
 	
 	
 	private final String LIST=" select no, id, name, email, gradeno, gradename, status"
@@ -355,10 +436,16 @@ public class MemberDAO extends DAO {
 			+ " from member m, grade g where (m.gradeno=g.gradeno) and (id=? and pw=?)";
 	
 	
+	private final String UPDATECONDATE="update member set condate=sysdate where id=? ";
+	
 	private final String UPDATE="update member set name=?, birth=?, gender=?, tel=?, "
 			+ " email=?, address=? where id=? ";
 	
+	private final String DELETE="update member set status='탈퇴' where id=? ";
+
 	private final String CHANGEPW="update member set pw=? where id=? ";
+	private final String CHANGEGRADE="update member set gradeno=? where id=? ";
+	private final String CHANGESTATUS="update member set status=? where id=? ";
 
 	
 	private final String IDCHECK="select id from member where id=?";
@@ -366,7 +453,9 @@ public class MemberDAO extends DAO {
 	private final String FINDID="select id from member where name=? and email=?";
 	private final String EMAILCHECK="select email from member where email=?";
 
+	
 	private final String VIEW="select m.id, m.name, m.gender, m.tel, m.email, m.address,"
-			+ " m.gradeno, g.gradename, m.photo, to_char(m.birth, 'yyyy-mm-dd') birth from member m, grade g"
+			+ " m.gradeno, g.gradename, m.photo, to_char(m.birth, 'yyyy-mm-dd') birth, "
+			+ " m.status, to_char(m.regdate, 'yyyy-mm-dd') regdate, m.condate from member m, grade g"
 			+ " where m.gradeno=g.gradeno and id=?";
 }

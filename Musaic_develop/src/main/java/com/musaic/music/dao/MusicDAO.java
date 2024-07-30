@@ -37,12 +37,12 @@ public class MusicDAO extends DAO {
                         list = new ArrayList<>();
                     MusicVO vo = new MusicVO();
                     vo.setMusicNo(rs.getLong("musicNo"));
+                    vo.setAlbumNo(rs.getLong("albumNo"));
                     vo.setMusicTitle(rs.getString("musicTitle"));
                     vo.setMusicFile(rs.getString("musicFile"));
                     vo.setSongWriter(rs.getString("songWriter"));
                     vo.setLyricist(rs.getString("lyricist"));
                     vo.setSinger(rs.getString("singer"));
-                    vo.setLyric(rs.getString("lyric"));
                     vo.setMusicStatus(rs.getString("musicStatus"));
                     vo.setHit(rs.getLong("hit"));
                     vo.setImage(rs.getString("image"));
@@ -164,6 +164,8 @@ public class MusicDAO extends DAO {
             pstmt.setString(4, vo.getLyricist());
             pstmt.setString(5, vo.getLyric());
             pstmt.setString(6, vo.getMusicFile());
+            pstmt.setLong(7, vo.getAlbumNo());
+            pstmt.setLong(8, vo.getIncludedNo());
             result = pstmt.executeUpdate();
             System.out.println("음원 등록이 완료 되었습니다.");
         } catch (SQLException e) {
@@ -188,7 +190,9 @@ public class MusicDAO extends DAO {
             pstmt.setString(4, vo.getLyricist());
             pstmt.setString(5, vo.getLyric());
             pstmt.setString(6, vo.getMusicFile());
-            pstmt.setLong(7, vo.getMusicNo());
+            pstmt.setLong(7, vo.getAlbumNo());
+            pstmt.setLong(8, vo.getIncludedNo());
+            pstmt.setLong(9, vo.getMusicNo());
             result = pstmt.executeUpdate();
             if (result == 0) {
                 throw new Exception("예외 발생 : 음원 번호나 정보가 맞지 않습니다.");
@@ -245,11 +249,11 @@ public class MusicDAO extends DAO {
     }
 
     // 쿼리 문자열 선언
-    final String LIST = " SELECT musicNo, musicTitle, musicFile, songWriter, lyricist, singer, lyric, musicStatus, hit, image "
+    final String LIST = " SELECT musicNo, albumNo, musicTitle, musicFile, songWriter, lyricist, singer,  musicStatus, hit, image "
     		+ " FROM "
-    		+ " (  SELECT rownum AS rnum, musicNo, musicTitle, musicFile, songWriter, lyricist, singer, lyric, musicStatus, hit, image  "
+    		+ " (  SELECT rownum AS rnum, musicNo, albumNo, musicTitle, musicFile, songWriter, lyricist, singer,  musicStatus, hit, image  "
     		+ " FROM "
-    		+ " (  SELECT m.musicNo, m.musicTitle, m.musicFile, m.songWriter, m.lyricist, m.singer, m.lyric, m.musicStatus, m.hit, a.image  "
+    		+ " (  SELECT m.musicNo, a.albumNo, m.musicTitle, m.musicFile, m.songWriter, m.lyricist, m.singer,  m.musicStatus, m.hit, a.image  "
     		+ " FROM music m, album a "
     		+ " where m.albumNo = a.albumNo"
     		+ " and 1=1 ";
@@ -259,9 +263,9 @@ public class MusicDAO extends DAO {
     final String VIEW = "SELECT m.musicNo, m.musicTitle, m.songWriter, m.lyricist, m.singer, m.lyric, m.musicFile, a.albumNo, a.release_Date, a.genre, a.image "
             + "FROM music m JOIN album a ON m.albumNo = a.albumNo WHERE m.musicNo = ?";
 
-    final String WRITE = "INSERT INTO music (musicNo, musicTitle, singer, songWriter, lyricist, lyric, musicFile) VALUES (music_seq.nextval, ?, ?, ?, ?, ?, ?)";
+    final String WRITE = "INSERT INTO music (musicNo, musicTitle, singer, songWriter, lyricist, lyric, musicFile, albumNo, includedNo ) VALUES (music_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ? )";
 
-    final String UPDATE = "UPDATE music SET musicTitle = ?, singer = ?, songWriter = ?, lyricist = ?, lyric = ?, musicFile = ? WHERE musicNo = ?";
+    final String UPDATE = "UPDATE music SET musicTitle = ?, singer = ?, songWriter = ?, lyricist = ?, lyric = ?, musicFile = ?, albumNo = ?, includedNo = ? WHERE musicNo = ?";
 
     final String CHANGESTATUS = "UPDATE music SET MusicStatus = ? WHERE musicNo = ?";
     
@@ -331,3 +335,4 @@ public class MusicDAO extends DAO {
  		}
  	}
 }
+

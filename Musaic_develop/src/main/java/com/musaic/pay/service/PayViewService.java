@@ -18,7 +18,7 @@ public class PayViewService implements Service {
 	public PayVO service(Object obj) throws Exception {
 		// DB 처리는 DAO에서 처리 - BoardDAO.list()
 		// BoardController - (Execute) - [BoardListService] - BoardDAO.view()
-		return dao.view(null);
+		return dao.view( (String) obj);
 	}
 
 }
