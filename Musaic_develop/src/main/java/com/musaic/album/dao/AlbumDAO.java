@@ -235,7 +235,7 @@ public class AlbumDAO extends DAO {
 
 	}// end of view()
 
-	// 2-1. 리스트
+	// 2-1. 수록곡 리스트
 	// AlbumController - (Execute) - AlbumListService - [AlbumDAO.list()]
 	public List<AlbumVO> musicList(Long no) throws Exception {
 
@@ -265,6 +265,7 @@ public class AlbumDAO extends DAO {
 					vo.setSinger(rs.getString("singer"));
 					vo.setMusicStatus(rs.getString("musicStatus"));
 					vo.setImage(rs.getString("image"));
+					vo.setIncludedNo(rs.getLong("includedNo"));
 					// vo -> list
 					list.add(vo);
 				}
@@ -596,11 +597,11 @@ public class AlbumDAO extends DAO {
 	final String DELETE = "delete from Album " + " where albumNo = ? ";
 	final String CHANGEALBUMCOVER = "update Album set image = ? " + " where albumNo = ? ";
 	final String RATING = "select rating from album_reply where albumno = ?";
-	final String MUSICLIST = " SELECT musicNo, musicTitle, musicStatus, singer, image FROM "
-			+ " (  SELECT rownum AS rnum, musicNo, musicTitle, singer, musicStatus, image FROM "
-			+ " (  SELECT m.musicNo, m.musicTitle, m.musicStatus,  m.singer ,a.image"
+	final String MUSICLIST = " SELECT musicNo, musicTitle, musicStatus, singer, image , includedNo FROM "
+			+ " (  SELECT rownum AS rnum, musicNo, musicTitle, singer, musicStatus, image, includedNo FROM "
+			+ " (  SELECT m.musicNo, m.musicTitle, m.musicStatus,  m.singer ,a.image , m.includedNo"
 			+ " FROM music m, album a "
-			+ " where a.albumNo = ? and m.albumNo = a.albumNo ORDER BY musicNo DESC  ) ) "
+			+ " where a.albumNo = ? and m.albumNo = a.albumNo ORDER BY includedNo  ) ) "
 			+ " WHERE rnum BETWEEN 1 AND 100 ";
 	final String INCLUDE =" UPDATE music SET albumNo = ? WHERE musicNo in ( %s ) ";
 	final String TOTALMUSIC =" select count(*) from music where albumNo = ? ";

@@ -174,6 +174,14 @@ $(function() {
     // ------------ Modal 화면안의 처리 버튼 이벤트 처리 --------------
     // 댓글 등록 이벤트
     $('#replyWriteBtn').click(function() {
+    	var isLoggedIn = ${login != null ? "true" : "false"};
+		if (!isLoggedIn) {
+			// 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시
+			$("#modalMessage").text("로그인 후 이용하실 수 있습니다.");
+			$("#resultModal").modal('show');
+			return;
+		}
+    	
         // 제목을 댓글 등록
         $("#albumReplyModal").find(".modal-title").text("댓글 등록");
         // input / text를 선택한다.
@@ -283,10 +291,13 @@ $(function() {
 								style="width: 40px; height: 40px;"> <b class="replyId">${replyVO.id}
 								(${replyVO.name})</b>
 						</div>
+						<!-- 댓글 아이디 권한 처리 -->
+						<c:if test="${login.id == replyVO.id || login.gradeNo == 9}">
 						<div class="float-right">
 							<button class="btn btn-warning replyUpdateBtn">수정</button>
 							<button class="btn btn-danger replyDeleteBtn">삭제</button>
 						</div>
+						</c:if>
 					</div>
 					<div class="card-body">
                         <pre class="replyContent">${replyVO.content}</pre>
@@ -389,6 +400,25 @@ $(function() {
         </div>
     </div>
 </div>
+
+	<!-- 결과 모달 -->
+	<!-- Result Modal -->
+	<div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="resultModalLabel">알림</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="modalMessage"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 <script>
 	const rateWrap = document.querySelectorAll('.rating'),

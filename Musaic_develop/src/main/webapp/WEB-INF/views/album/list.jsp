@@ -234,9 +234,9 @@ $(function() {
                     </div>
                 </div>
             </div>
-            <div class="col-md-2 float-right">
+            <div class="col-md-1 float-right">
             </div>
-            <div class="col-md-2 float-right">
+            <div class="col-md-3 float-right">
                 <div class="input-group float-right">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Rows/Page</span>
@@ -259,7 +259,7 @@ $(function() {
     <c:if test="${!empty list}">
         <div class="row">
             <c:forEach items="${list}" var="vo" varStatus="vs">
-                <c:if test="${vo.status=='발매'}">
+                
                 <c:if test="${(vs.index != 0) && (vs.index % 2 == 0)}">
                     ${"</div><div class='row'>"}
                 </c:if>
@@ -282,14 +282,14 @@ $(function() {
                         </div>
                     </div>
                 </div>
-                </c:if>
+                
             </c:forEach>
         </div>
     </c:if>
     <div>
         <pageNav:pageNav listURI="list.do" pageObject="${pageObject}"></pageNav:pageNav>
     </div>
-    <c:if test="${!empty login}">
+    <c:if test="${!empty login && login.gradeNo == 9}">
         <a href="writeForm.do?perPageNum=${pageObject.perPageNum}">
             <button class="btn btn-primary">등록</button>
         </a>

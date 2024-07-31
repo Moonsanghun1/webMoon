@@ -24,7 +24,8 @@ public class AlbumVO {
 	private String musicTitle; // 수록곡 제목
 	private String singer; // 수록곡 가수
 	private String passNo; // 음원번호 배열
+	private Long totalMusic;
+	private Long includedNo;
 	// 회원
 	private String photo; // 음원번호 배열
-	private Long totalMusic;
 }

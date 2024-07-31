@@ -114,6 +114,16 @@ $(function(){
 	 // 확인 창이 나타나는데 취소를 누르면 삭제페이지 이동을 취소(return false) 시킨다.
 	 if(!confirm("정말 삭제 하시겠습니까?")) return false;
   });
+  // 장바구니 담기버튼 권한처리
+  $("#cartBtn").click(function(){
+	 if (!isLoggedIn) {
+		// 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시
+		$("#modalMessage").text("로그인 후 이용하실 수 있습니다.");
+		$("#resultModal").modal('show');
+		return;
+		}
+		$("#cartModal").modal('show');
+  });
   
 	//앨범 듣기 클릭시 플레이 리스트에 다중 등록
 	$("#albumTotalBtn").click(function() {
@@ -282,12 +292,12 @@ $("#toggleInfo").click(function() {
      <div style="margin-top: 5px;"><span class="replyRating" >${vo.rating}</span><span class= "mb-2" style="font-size: 30px;" >${vo.decimalRating }/10</span></div>
     <br>
     <button class="btn btn-info" id="albumTotalBtn" data-album-no="${vo.albumNo}" data-id="${login.id}"><i class='fa fa-play'></i> 앨범 듣기</button>
-    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#cartModal"><i class='fa fa-shopping-cart'></i> 장바구니 담기</button>
-    <%-- <c:if test="${login.id == vo.id }"> --%>
+    <button type="button" class="btn btn-secondary"  id = "cartBtn"><i class='fa fa-shopping-cart'></i> 장바구니 담기</button>
+    <c:if test="${!empty login && login.gradeNo == 9}">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeImageModal">
 			이미지 변경
 		</button>
-<%-- 	</c:if> --%>
+	</c:if>
     </div>
   </div>
 	
@@ -299,10 +309,13 @@ $("#toggleInfo").click(function() {
   		 </div>
    		 <button id="toggleInfo" class="btn btn-link btn-sm">펼치기<i class="fa fa-angle-down"></i></button>
 	</div>
-	
+		 	<!-- 수록곡 등록 버튼 -->
+			<c:if test="${!empty login && login.gradeNo == 9}">
 			<a class="btn btn-info" href="includeForm.do?no=${param.no }&page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}">수록곡 등록</a>
+			</c:if>
+			<!-- 수록곡 리스트 -->
 			<table class="table">
-				<!-- 게시판 데이터의 제목 -->
+				<!-- 수록곡 데이터의 제목 -->
 				<tr>
 					<th>번호</th>
 					<th>제목</th>
@@ -319,7 +332,7 @@ $("#toggleInfo").click(function() {
 							test="${vo.musicStatus == '공개' || (!empty login && login.gradeNo == 9)}">
 							<tr class="dataRow ${vo.musicStatus == '비공개' ? 'disabled' : ''}"
 								data-music-no="${vo.musicNo}">
-								<td class="no">&nbsp;&nbsp;${vo.musicNo}</td>
+								<td class="no">&nbsp;&nbsp;${vo.includedNo}</td>
 								<td><img src="${vo.image}" alt="${vo.musicTitle}" class="musicImg"/>
 									${vo.musicTitle}</td>
 								<td>${vo.singer}</td>
@@ -345,10 +358,10 @@ $("#toggleInfo").click(function() {
 	
 
 	<!-- a tag : 데이터를 클릭하면 href의 정보를 가져와서 페이지 이동시킨다. -->
-<%-- 	<c:if test="${!empty login && login.id == vo.id }"> --%>
+	<c:if test="${!empty login && login.gradeNo == 9}">
 	<a href="updateForm.do?no=${param.no }&page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="이미지를 제외한 항목만 수정가능합니다">수정</a>
 	<a class="btn btn-danger" href = "delete.do?albumNo=${vo.albumNo }&deleteImageName=${vo.image}&perPageNum=${param.perPageNum}" id = "deleteBtn">삭제 </a>
-<%-- 	</c:if> --%>
+	</c:if>
 	<a href="list.do?page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}" class="btn btn-info">리스트</a>
 	
 	<!-- 댓글 처리 시작 -->
