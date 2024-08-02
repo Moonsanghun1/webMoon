@@ -1,8 +1,6 @@
 package com.musaic.album.controller;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +49,10 @@ public class AlbumController {
 					// 페이지 처리를 위한 객체
 					// getInstance - 기본 값이 있고 넘어오는 페이지와 검색 정보를 세팅 처리
 					PageObject pageObject = PageObject.getInstance(request);
+					// 이미지 게시판의 한 페이지 이미지의 개수의 기본 값을 6으로 처리하자.
+				    // 중복처리 - 앞의 데이터에 덮어쓰기가 된다.
+				    String strPerPageNum = request.getParameter("perPageNum");
+				    if(strPerPageNum == null) pageObject.setPerPageNum(6);
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<AlbumVO>
 					result = Execute.execute(Init.get(uri), pageObject);
 					// PageObject 확인하기ㅏ
@@ -95,12 +97,13 @@ public class AlbumController {
 				    pageObject = PageObject.getInstance(request);
 
 				    // perPageNum 파라미터 가져오기
-				    String strPerPageNum = request.getParameter("perPageNum");
+				    strPerPageNum = request.getParameter("perPageNum");
 				    String albumNo1 = request.getParameter("no");
 
 				    // 페이지 그룹 내 항목 수 설정 (이 설정은 페이지당 항목 수와 관련이 없음)
 				    pageObject.setPerGroupPageNum(6L);
-
+				    // 페이지당 항목 수
+				    if(strPerPageNum == null)pageObject.setPerPageNum(25);
 				    System.out.println("perPageNum parameter: " + strPerPageNum);
 
 				    // 음악 리스트 가져오기

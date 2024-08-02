@@ -222,10 +222,8 @@ $(function() {
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <select name="key" id="key" class="form-control">
-                            <option value="t">제목</option>
-                            <option value="c">내용</option>
-                            <option value="tc">제목/내용</option>
-                            <option value="f">파일명</option>
+                            <option value="t">앨범명</option>
+                            <option value="a">아티스트</option>
                         </select>
                     </div>
                     <input type="text" class="form-control" placeholder="검색" id="word" value="${pageObject.word}" name="word">
@@ -242,7 +240,7 @@ $(function() {
                         <span class="input-group-text">Rows/Page</span>
                     </div>
                     <select id="perPageNum" name="perPageNum" class="form-control">
-                        <option selected="selected">6</option>
+                        <option selected>6</option>
                         <option>9</option>
                         <option>12</option>
                         <option>18</option>
@@ -272,7 +270,7 @@ $(function() {
                             <h5 class="card-title">
                             </h5>
                                 <span class="float-left cardTitle"  style="color: #333; font-size: 25px;" data-albumNo="${vo.albumNo }" id="cardTitle">${vo.title}</span><br>
-                                <div class="float-left"  style="color: #333; height: 5px;"> </div><br>
+                                <div class= "float-left"  style="color: #333; height: 5px;"> </div><br>
                                 <span class="float-left"  style="color: #333; font-size: 15px;">${vo.artist}</span><br>
                                 <span class="float-left" style="color: #767676; font-size: 13px;">${vo.release_date}</span><br>
                                 <span class="float-left musicCnt" style="color: #767676; font-size: 13px;"></span><br>

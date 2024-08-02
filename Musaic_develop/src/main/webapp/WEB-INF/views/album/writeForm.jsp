@@ -44,7 +44,7 @@ $(function() {
 </head>
 <body>
 <div class= "container" >
-<h2>이미지 게시판 등록폼</h2>
+<h2>앨범 등록폼</h2>
 <form action="write.do" method="post" enctype="multipart/form-data">
 <input name = "perPageNum" value = "${param.perPageNum}" type = "hidden">
 	 

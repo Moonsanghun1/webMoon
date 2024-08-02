@@ -311,7 +311,7 @@ $("#toggleInfo").click(function() {
 	</div>
 		 	<!-- 수록곡 등록 버튼 -->
 			<c:if test="${!empty login && login.gradeNo == 9}">
-			<a class="btn btn-info" href="includeForm.do?no=${param.no }&page=${param.page }&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}">수록곡 등록</a>
+			<a class="btn btn-info" href="includeForm.do?no=${param.no }">수록곡 등록</a>
 			</c:if>
 			<!-- 수록곡 리스트 -->
 			<table class="table">

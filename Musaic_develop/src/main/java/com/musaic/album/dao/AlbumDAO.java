@@ -31,7 +31,6 @@ public class AlbumDAO extends DAO {
 			System.out.println(getListSQL(pageObject));
 			// 4. 실행 객체 & 데이터 세팅
 			pstmt = con.prepareStatement(getListSQL(pageObject));
-			
 			// 검색에 대한 데이터 세팅 - list()만 사용 
 			int idx = 0; // pstmt의 순서번호로 사용. 먼저 1 증가하고 사용한다.
 			idx = setSearchData(pageObject, pstmt, idx);
@@ -298,7 +297,7 @@ public class AlbumDAO extends DAO {
 //			System.out.println("@@@@@@@@@ musicNosArray = "+musicNosArray);
 			// vo.getMusicArray() 배열을 플레이스홀더로 변환
             String placeholders = Arrays.stream(vo.getMusicArray())
-                                        .map(no -> "?")
+            							.map(no -> "?")
                                         .collect(Collectors.joining(","));
             System.out.println("@@@@@@@@@ placeholders = "+placeholders);
             // SQL 쿼리 생성
@@ -314,7 +313,6 @@ public class AlbumDAO extends DAO {
             }
 			// 3. sql - 아래 LIST
 			// 4. 실행 객체 & 데이터 세팅
-			System.out.println(vo.getPassNo());
 			//INCLUDE ="UPDATE music SET albumNo = ? WHERE musicNo in ( ? ) "
 //			pstmt = con.prepareStatement(INCLUDE);
 //			//title, release_date, artist, price, genre, info, image
@@ -526,7 +524,7 @@ public class AlbumDAO extends DAO {
 						+ " to_char(a.release_date, 'yyyy-mm-dd') release_date, a.image, a.price, a.status "
 						+ " from Album a " // 여기에 검색이 있어야 한다.
 						// where 1=1 and (일반조건) and (조인조건) 
-						+ " where 1 = 1 ";
+						+ " where 1 = 1 and (a.status = '발매') ";
 	
 	// 검색이 있는 경우 TOTALROW + search문 
 	final String TOTALROW = "select count(*) from Album ";
@@ -561,8 +559,7 @@ public class AlbumDAO extends DAO {
 			sql += " and ( 1 = 0 ";
 			// key 안에 t가 포함 되어있으면 title로 검색을 한다.
 		if(key.indexOf("t" ) >= 0) sql += " or title like ? ";
-		if(key.indexOf("c" ) >= 0) sql += " or content like ? ";
-		if(key.indexOf("f" ) >= 0) sql += " or fileName like ? ";	
+		if(key.indexOf("a" ) >= 0) sql += " or artist like ? ";	
 		sql += " ) ";
 		}
 		return sql;
@@ -577,8 +574,8 @@ public class AlbumDAO extends DAO {
 					if(word != null && !word.equals("")) {
 					// key 안에 t가 포함 되어있으면 title로 검색을 한다.
 					if(key.indexOf("t") >= 0) pstmt.setString(++idx, "%" + word + "%");
-					if(key.indexOf("c") >= 0) pstmt.setString(++idx, "%" + word + "%");
-					if(key.indexOf("f") >= 0) pstmt.setString(++idx, "%" + word + "%");
+					if(key.indexOf("a") >= 0) pstmt.setString(++idx, "%" + word + "%");
+				
 					}
 					return idx;
 	}

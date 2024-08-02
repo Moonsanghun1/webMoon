@@ -56,62 +56,13 @@ img {
 		$("#key").val("${(empty pageObject.key)?'t':pageObject.key}");
 		$("#perPageNum").val("${(empty pageObject.perPageNum)?'6':pageObject.perPageNum}");
 
-		$(".btn-add").click(function(event) {
-			// 이벤트 전파 막기
-			event.stopPropagation();
-
-			if (!isLoggedIn) {
-				// 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시
-				$("#modalMessage").text("로그인 후 이용하실 수 있습니다.");
-				$("#resultModal").modal('show');
-				return;
-			}
-
-			let musicNo = $(this).data("music-no");
-			if (typeof musicNo === 'undefined') {
-				console.error("musicNo is undefined");
-				return;
-			}
-
-			$.ajax({
-				url: "increaseHit.do",
-				type: "POST",
-				data: {
-					musicNo: musicNo
-				},
-				success: function(response) {
-					let modalMessage = response === "success" ? "플레이 리스트 목록에 추가되었습니다."
-						: "플레이 리스트 목록에 담기지 않았습니다.";
-					$("#modalMessage").text(modalMessage);
-					$("#resultModal").modal('show');
-				},
-				error: function() {
-					$("#modalMessage").text("서버와의 통신에 실패했습니다.");
-					$("#resultModal").modal('show');
-				}
-			});
-		});
-
-// 		// 데이터 행 클릭 시 view.do로 이동
-// 		$(".dataRow").click(function() {
-// 			if ($(this).hasClass("disabled")) {
-// 				return; // 비활성화된 행의 클릭 이벤트 무시
-// 			}
-// 			let musicNo = $(this).data("music-no");
-// 			if (typeof musicNo === 'undefined') {
-// 				console.error("musicNo is undefined");
-// 				return;
-// 			}
-// 			console.log("Redirecting to view.do?musicNo=" + musicNo); // 로그 확인
-// 			location.href = "view.do?musicNo=" + musicNo; // location.href를 사용하여 페이지 이동
-// 		});
 	});
 </script>
 </head>
 <body>
 	<div class="container">
 		<br> <br>
-		<h1>New Music</h1>
+		<h1>수록곡 선택</h1>
 		<br> <br>
 		<form action="includeForm.do" id="searchForm">
 			<!-- 검색을 하면 무조건 1페이지로 처음에 나오게 설정 -->
