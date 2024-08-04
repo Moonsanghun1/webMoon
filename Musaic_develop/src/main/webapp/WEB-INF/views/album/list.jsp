@@ -122,7 +122,6 @@ $(function() {
 	//앨범 듣기 클릭시 플레이 리스트에 다중 등록
 	$(".albumBtn")
 	.click(function() {
-				// 이벤트 전파 막기
 
 				if (!isLoggedIn) {
 					// 사용자가 로그인하지 않은 상태면, 로그인 필요 모달 표시

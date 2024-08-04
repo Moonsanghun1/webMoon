@@ -89,8 +89,12 @@ public class AlbumDAO extends DAO {
 			// 4. 실행 객체 & 데이터 세팅
 
 			// 전체 데이터 개수 쿼리인 경우 조건이 있으면 where를 붙여라 : true
-			pstmt = con.prepareStatement(TOTALROW + getSearch(pageObject, true));
-					
+			if(pageObject.getAcceptMode() != 9) {
+				pstmt = con.prepareStatement(TOTALROW + "where status = '공개' " +getSearch(pageObject, true));
+			}else {
+				pstmt = con.prepareStatement(TOTALROW + getSearch(pageObject, true));
+			};
+			
 			int idx= 0;
 			idx = setSearchData(pageObject, pstmt, idx);
 			// 5. 실행
@@ -293,31 +297,23 @@ public class AlbumDAO extends DAO {
 			// 1. 드라이버 확인 - DB
 			// 2. 연결
 			con = DB.getConnection();
-//			String[] musicNosArray = vo.getPassNo().split(",");
-//			System.out.println("@@@@@@@@@ musicNosArray = "+musicNosArray);
-			// vo.getMusicArray() 배열을 플레이스홀더로 변환
+
             String placeholders = Arrays.stream(vo.getMusicArray())
             							.map(no -> "?")
                                         .collect(Collectors.joining(","));
-            System.out.println("@@@@@@@@@ placeholders = "+placeholders);
             // SQL 쿼리 생성
+            // 3. sql - 아래 LIST
             String sql = String.format(INCLUDE, placeholders);
             System.out.println("sql = "+sql);
+            // 4. 실행 객체 & 데이터 세팅
             pstmt = con.prepareStatement(sql);
             pstmt.setLong(1, vo.getAlbumNo());
             
             // 각 음악 번호를 PreparedStatement에 설정
             for (int i = 0; i < vo.getMusicArray().length; i++) {
                 pstmt.setLong(i + 2, Long.parseLong(vo.getMusicArray()[i].trim())); // 인덱스는 2부터 시작
-                System.out.println("vo.getMusicArray()[i].trim() = "+ vo.getMusicArray()[i].trim());
             }
-			// 3. sql - 아래 LIST
-			// 4. 실행 객체 & 데이터 세팅
-			//INCLUDE ="UPDATE music SET albumNo = ? WHERE musicNo in ( ? ) "
-//			pstmt = con.prepareStatement(INCLUDE);
-//			//title, release_date, artist, price, genre, info, image
-//			pstmt.setLong(1, vo.getAlbumNo());
-//			pstmt.setString(2, "(37)");
+
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
@@ -377,7 +373,7 @@ public class AlbumDAO extends DAO {
 		return result;
 	} // end of increase()
 
-	// 4 . 글 수정 처리
+	// 4 . 앨범 수정 처리
 	// AlbumController - (Execute) - AlbumListService - [AlbumDAO.list()]
 	public int update(AlbumVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
@@ -426,7 +422,7 @@ public class AlbumDAO extends DAO {
 		return result;
 	} // end of increase()
 
-	// 5 . 글 삭제 처리
+	// 5 . 앨범 삭제 처리
 	// AlbumController - (Execute) - AlbumListService - [AlbumDAO.list()]
 	public int delete(AlbumVO vo) throws Exception {
 		// 결과를 저장할 수 있는 변수 선언.
@@ -444,8 +440,8 @@ public class AlbumDAO extends DAO {
 			// 5. 실행 - Update : executeUpdate() -> int 결과가 나옴.
 			result = pstmt.executeUpdate();
 			// 6. 표시 또는 담기
-			if (result == 0) { // 글번호가 존재하지 않는다. -> 예외로 처리한다.
-				throw new Exception("예외 발생 : 글번호가 맞지 않거나 본인 글이 아닙니다. 정보를 확인해 주세요");
+			if (result == 0) { // 앨범 번호가 존재하지 않는다. -> 예외로 처리한다.
+				throw new Exception("예외 발생 : 앨범 번호가 맞지 않거나 관리자가 아닙니다. 정보를 확인해 주세요");
 
 			}
 
@@ -524,7 +520,7 @@ public class AlbumDAO extends DAO {
 						+ " to_char(a.release_date, 'yyyy-mm-dd') release_date, a.image, a.price, a.status "
 						+ " from Album a " // 여기에 검색이 있어야 한다.
 						// where 1=1 and (일반조건) and (조인조건) 
-						+ " where 1 = 1 and (a.status = '발매') ";
+						+ " where 1 = 1 ";
 	
 	// 검색이 있는 경우 TOTALROW + search문 
 	final String TOTALROW = "select count(*) from Album ";
@@ -533,6 +529,9 @@ public class AlbumDAO extends DAO {
 	private String getListSQL(PageObject pageObject) {
 		String sql = LIST;
 		//String word = pageObject.getWord();
+				int gradeNo = pageObject.getAcceptMode();
+				if(gradeNo != 9) {
+				sql += " and (a.status = '발매') ";}
 				// 검색 쿼리 추가 - where를 추가 안한다. : false
 				sql += getSearch(pageObject, false); 
 				// sql +=  " and (m.id = a.id ) ";
@@ -591,15 +590,21 @@ public class AlbumDAO extends DAO {
 
 	final String UPDATE = "update Album set " + " title = ?, release_date = ?, artist = ?, price = ?, "
 				+ "genre = ?, info = ?, status = ?  " + " where albumNo = ? ";
+	
 	final String DELETE = "delete from Album " + " where albumNo = ? ";
+	
 	final String CHANGEALBUMCOVER = "update Album set image = ? " + " where albumNo = ? ";
+	
 	final String RATING = "select rating from album_reply where albumno = ?";
+	
 	final String MUSICLIST = " SELECT musicNo, musicTitle, musicStatus, singer, image , includedNo FROM "
 			+ " (  SELECT rownum AS rnum, musicNo, musicTitle, singer, musicStatus, image, includedNo FROM "
 			+ " (  SELECT m.musicNo, m.musicTitle, m.musicStatus,  m.singer ,a.image , m.includedNo"
 			+ " FROM music m, album a "
 			+ " where a.albumNo = ? and m.albumNo = a.albumNo ORDER BY includedNo  ) ) "
 			+ " WHERE rnum BETWEEN 1 AND 100 ";
+	
 	final String INCLUDE =" UPDATE music SET albumNo = ? WHERE musicNo in ( %s ) ";
+	
 	final String TOTALMUSIC =" select count(*) from music where albumNo = ? ";
 }

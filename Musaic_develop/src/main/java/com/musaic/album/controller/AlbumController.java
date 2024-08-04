@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import com.musaic.album.vo.AlbumVO;
 import com.musaic.main.controller.Init;
+import com.musaic.member.db.LoginVO;
 import com.musaic.music.vo.MusicVO;
 import com.musaic.util.exe.Execute;
 import com.oreilly.servlet.MultipartRequest;
@@ -16,6 +17,7 @@ import com.webjjang.util.page.ReplyPageObject;
 // Album Module에 맞는 메뉴 선택, 데이터 수집, 예외 처리
 public class AlbumController {
 
+	@SuppressWarnings("unchecked")
 	public String execute(HttpServletRequest request) {
 		System.out.println("AlbumController.execute() --------------------------");
 		
@@ -27,7 +29,14 @@ public class AlbumController {
 			Object result = null;
 			// 메뉴 처리
 			Long no = 0L;
+			String id = null;
+			Integer gradeNo = 0;
+			LoginVO login=(LoginVO) session.getAttribute("login");
 			
+			if(login!=null) {
+				id =login.getId();
+				gradeNo = login.getGradeNo().intValue();
+			}
 			String jsp = null;
 			
 			// 파일 업로드 설정 -----------
@@ -53,6 +62,7 @@ public class AlbumController {
 				    // 중복처리 - 앞의 데이터에 덮어쓰기가 된다.
 				    String strPerPageNum = request.getParameter("perPageNum");
 				    if(strPerPageNum == null) pageObject.setPerPageNum(6);
+				    pageObject.setAcceptMode(gradeNo);
 					// DB에서 데이터 가져오기 - 가져온 데이터는 List<AlbumVO>
 					result = Execute.execute(Init.get(uri), pageObject);
 					// PageObject 확인하기ㅏ
@@ -123,6 +133,7 @@ public class AlbumController {
 					
 					
 					Long albumNo = Long.parseLong(request.getParameter("albumNo"));
+					// 수록곡 등록 처리할 음원번호를 배열로 받아온다.
 					String [] musicNo = request.getParameterValues("musicNo");
 					String perPageNum = request.getParameter("perPageNum");
 					// 배열을 문자열로 변환

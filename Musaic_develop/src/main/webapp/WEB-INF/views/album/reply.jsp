@@ -278,78 +278,7 @@ $(function() {
         <h3>댓글 리스트</h3>
         <button class="btn btn-primary float-right" id="replyWriteBtn">등록</button>
     </div>
-    <div class="card-body">
-                <!-- Modal body -->
-            <form id="albumReplyForm" method="post">
-                <input type="hidden" name="rno" id="rno">
-                <input type="hidden" name="no" value="${param.no}">
-                <input type="hidden" name="page" value="${param.page}">
-                <input type="hidden" name="perPageNum" value="${param.perPageNum}">
-                <input type="hidden" name="key" value="${param.key}">
-                <input type="hidden" name="word" value="${param.word}">
-                <div class="modal-body">
-                    <div class="wrap">
-                        <div class="form-group" id="ratingDiv"> 
-                            <div class="rating">
-                                <label class="rating__label rating__label--half" for="starhalf">
-                                    <input type="radio" id="starhalf" class="rating__input" name="rating" value="1">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--full" for="star1">
-                                    <input type="radio" id="star1" class="rating__input" name="rating" value="2">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--half" for="star1half">
-                                    <input type="radio" id="star1half" class="rating__input" name="rating" value="3">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--full" for="star2">
-                                    <input type="radio" id="star2" class="rating__input" name="rating" value="4">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--half" for="star2half">
-                                    <input type="radio" id="star2half" class="rating__input" name="rating" value="5">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--full" for="star3">
-                                    <input type="radio" id="star3" class="rating__input" name="rating" value="6">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--half" for="star3half">
-                                    <input type="radio" id="star3half" class="rating__input" name="rating" value="7">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--full" for="star4">
-                                    <input type="radio" id="star4" class="rating__input" name="rating" value="8">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--half" for="star4half">
-                                    <input type="radio" id="star4half" class="rating__input" name="rating" value="9">
-                                    <span class="star-icon"></span>
-                                </label>
-                                <label class="rating__label rating__label--full" for="star5">
-                                    <input type="radio" id="star5" class="rating__input" name="rating" value="10">
-                                    <span class="star-icon"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>                        
-                    <div class="form-group" id="contentDiv">
-                        <label for="content">내용</label>
-                        <textarea class="form-control" rows="2" id="content" name="content"></textarea>
-                    </div>
-                </div>
 
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="replyModalWriteBtn">등록</button>
-                    <button type="button" class="btn btn-success" id="replyModalUpdateBtn">수정</button>
-                    <button type="button" class="btn btn-danger" id="replyModalDeleteBtn">삭제</button>
-                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
-                </div>
-            </form>
-    
-    </div>
     <div class="card-body">
         <c:if test="${empty replyList}">
             데이터가 존재하지 않습니다.
@@ -493,10 +422,15 @@ $(function() {
 	</div>
 
 <script>
+	// 별점 div 전체
 	const rateWrap = document.querySelectorAll('.rating'),
+	// 별점 라디오 input 태그를 감싸고 있는 라벨
 	      label = document.querySelectorAll('.rating .rating__label'),
+	// 별점 라디오 input 태그
 	      input = document.querySelectorAll('.rating .rating__input'),
+	// 별점 라디오 input 태그를 감싸고 있는 라벨의 개수
 	      labelLength = label.length,
+	// 투명도 설정
 	      opacityHover = '0.5';
 	
 	let stars = document.querySelectorAll('.rating .star-icon');
